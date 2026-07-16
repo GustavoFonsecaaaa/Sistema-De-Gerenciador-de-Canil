@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanilManager - Dashboard</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          marromescuro: '#1C1105',     
+          marromescuro2: '#3C240B',    
+          laranja: '#D97706',          
+          laranjaclaro: '#FEF3C7',     
+          creme: '#F8F5F0',            
+          bege: '#EFECE6',             
+          verdeok: '#10B981',
+          verdeokbg: '#D1FAE5',
+          vermelho: '#EF4444',
+          vermelhobg: '#FEE2E2',
+        },
+        fontFamily: {
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+          sans: ['Plus Jakarta Sans', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<!-- Remix Icon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<!-- Fontes do Google -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans bg-creme text-marromescuro flex min-h-screen">
+
+  <!-- SIDEBAR (Ajustada para acompanhar as proporções) -->
+  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between">
+    <div class="sidebar-top">
+      <div class="font-serif text-xl font-extrabold mb-1 text-white">Canil<span class="text-laranja">Manager</span></div>
+      <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
+
+      <nav class="flex flex-col gap-1.5">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-marromescuro2 text-laranja font-semibold text-xs">
+          <i class="ri-layout-grid-fill text-base"></i> Dashboard
+        </a>
+        <a href="cachorros.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-baidu-line text-base"></i> Cachorros
+        </a>
+        <a href="vacinas.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-syringe-line text-base"></i> Vacinas
+        </a>
+        <a href="racoes.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-goblet-line text-base"></i> Rações
+        </a>
+      </nav>
+    </div>
+
+    <!-- Perfil do Usuário -->
+    <div class="flex items-center gap-2.5 pt-4 border-t border-white/10">
+      <div class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs">C</div>
+      <div>
+        <div class="text-[11px] font-bold text-[#f0e6da]">Criador</div>
+        <div class="text-[9px] text-[#a8998a]">admin@canil.com</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTEUDO (Paddings e margens reduzidos para compactar) -->
+  <main class="ml-60 flex-1 p-8">
+    <header class="mb-6">
+      <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Dashboard</h1>
+      <p class="text-xs text-[#6B7280] mt-1">Visão geral do seu canil — quinta-feira, 16 de julho</p>
+    </header>
+
+    <!-- CARDS DE ESTATISTICA (Mais baixos e compactos) -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Total de Cães</div>
+          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">8</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
+          <i class="ri-heart-pulse-line text-lg"></i>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Machos</div>
+          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">4</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-verdeokbg flex items-center justify-center text-verdeok">
+          <i class="ri-genderless-line text-lg font-bold rotate-45"></i>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Fêmeas</div>
+          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">4</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-500">
+          <i class="ri-women-line text-lg"></i>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Filhotes</div>
+          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">0</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
+          <i class="ri-emotion-happy-line text-lg"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PAINEIS DETALHADOS -->
+    <div class="grid grid-cols-2 gap-6">
+
+      <!-- Últimos Cios -->
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-serif text-lg font-bold text-[#111827]">Últimos Cios Registrados</h2>
+          <a href="#" class="text-laranja text-xs font-bold hover:underline">Ver todas as fêmeas</a>
+        </div>
+
+        <div class="flex items-center justify-between p-3 rounded-xl bg-[#FAFAF9] border border-[#F3F3F2]">
+          <div class="flex items-center gap-3.5">
+            <div class="w-9 h-9 rounded-lg bg-[#F5EFEB] flex items-center justify-center text-laranja">
+              <i class="ri-calendar-event-line text-base"></i>
+            </div>
+            <div>
+              <div class="font-bold text-xs text-[#1F2937]">Nina</div>
+              <div class="text-[11px] text-[#6B7280] mt-0.5">14/09/2025 — 04/10/2025</div>
+            </div>
+          </div>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FFEDD5] text-[#EA580C]">Cruzou</span>
+        </div>
+      </div>
+
+      <!-- Cães Recentes -->
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="font-serif text-lg font-bold text-[#111827]">Cães Recentes</h2>
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-xl bg-[#FAFAF9] border border-[#F3F3F2] mb-3">
+            <div class="flex items-center gap-3.5">
+              <div class="w-9 h-9 rounded-full bg-bege flex items-center justify-center text-[#6B7280]">
+                <i class="ri-user-heart-line text-base"></i>
+              </div>
+              <div>
+                <div class="font-bold text-xs text-[#1F2937]">Thor</div>
+                <div class="text-[11px] text-[#6B7280] mt-0.5">Golden Retriever</div>
+              </div>
+            </div>
+            <div class="flex gap-1.5">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-verdeokbg text-verdeok">Macho</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Adulto</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="cachorros.html" class="block text-center bg-[#FEF3C7] text-[#B45309] font-bold py-2.5 rounded-xl hover:bg-[#FDE68A] transition-colors text-xs">
+          Ver todos os cachorros
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
