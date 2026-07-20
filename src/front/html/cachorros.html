@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanilManager - Cachorros</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          marromescuro: '#2b1608',
+          laranja: '#ff8c1a',
+          laranjaclaro: '#ffe3c2',
+          creme: '#faf6f0',
+          bege: '#f0e6da',
+          verdeokbg: '#d9f2e6',
+        },
+        fontFamily: { serif: ['Georgia', 'Times New Roman', 'serif'] }
+      }
+    }
+  }
+</script>
+</head>
+<body class="font-serif bg-creme text-marromescuro flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-marromescuro text-[#d8cabb] flex flex-col p-6 fixed top-0 left-0 bottom-0">
+    <div class="text-2xl font-bold mb-1">Canil<span class="text-laranja">Manager</span></div>
+    <div class="text-sm text-[#a8998a] mb-10">Gestão do seu canil</div>
+
+    <nav class="flex flex-col gap-1 flex-1">
+      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
+        <i class="ri-dashboard-line text-lg"></i> Dashboard
+      </a>
+      <a href="cachorros.html" class="flex items-center gap-3 px-3 py-3 rounded-lg bg-gradient-to-r from-[#6b3312] to-[#7a3a12] text-laranja font-bold">
+        <i class="ri-heart-line text-lg"></i> Cachorros
+      </a>
+      <a href="vacinas.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
+        <i class="ri-syringe-line text-lg"></i> Vacinas
+      </a>
+      <a href="racoes.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
+        <i class="ri-restaurant-2-line text-lg"></i> Rações
+      </a>
+    </nav>
+
+    <div class="flex items-center gap-3 pt-5 border-t border-white/10">
+      <div class="w-9 h-9 rounded-full bg-laranja text-marromescuro flex items-center justify-center font-bold">C</div>
+      <div>
+        <div class="text-sm font-bold text-[#f0e6da]">Criador</div>
+        <div class="text-xs text-[#a8998a]">admin@canil.com</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTEUDO -->
+  <main class="ml-64 flex-1 p-10">
+
+    <div class="flex justify-between items-start mb-6">
+      <div>
+        <h1 class="text-4xl font-bold mb-1">Cachorros</h1>
+        <p class="text-[#7a6f66]">8 cães cadastrados no canil</p>
+      </div>
+      <button class="bg-laranja hover:bg-[#e97c0c] text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 transition">
+        <i class="ri-add-line"></i> Novo Cachorro
+      </button>
+    </div>
+
+    <!-- BUSCA E FILTROS -->
+    <div class="flex gap-3 mb-7 flex-wrap">
+      <div class="flex-1 min-w-[240px] flex items-center gap-2 bg-white border border-[#ece4d8] rounded-xl px-4 py-3">
+        <i class="ri-search-line text-[#7a6f66]"></i>
+        <input type="text" placeholder="Buscar por nome ou raça..." class="flex-1 outline-none bg-transparent text-sm">
+      </div>
+      <div class="flex bg-white border border-[#ece4d8] rounded-xl p-1 gap-1">
+        <button class="px-4 py-2 rounded-lg text-sm font-bold bg-marromescuro text-white">Todos</button>
+        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Machos</button>
+        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Fêmeas</button>
+        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Filhotes</button>
+        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Adultos</button>
+      </div>
+    </div>
+
+    <!-- GRID DE CACHORROS -->
+    <div class="grid grid-cols-4 gap-5">
+
+      <!-- Card 1 -->
+      <div class="bg-white border border-[#ece4d8] rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 transition">
+        <div class="relative h-56 bg-bege">
+          <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=400" class="w-full h-full object-cover" alt="Thor">
+          <div class="absolute top-3 left-3 flex gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-verdeokbg text-[#278a5b]">Macho</span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Adulto</span>
+          </div>
+        </div>
+        <div class="p-4">
+          <h3 class="text-lg font-bold">Thor</h3>
+          <p class="text-sm text-[#7a6f66] mb-3">Golden Retriever</p>
+          <div class="flex justify-between text-xs text-[#7a6f66] border-t border-[#ece4d8] pt-3">
+            <span><i class="ri-cake-2-line"></i> 3a 2m</span>
+            <span><i class="ri-calendar-line"></i> 11/05/2023</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bg-white border border-[#ece4d8] rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 transition">
+        <div class="relative h-56 bg-bege">
+          <img src="https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=400" class="w-full h-full object-cover" alt="Luna">
+          <div class="absolute top-3 left-3 flex gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Fêmea</span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Adulto</span>
+          </div>
+        </div>
+        <div class="p-4">
+          <h3 class="text-lg font-bold">Luna</h3>
+          <p class="text-sm text-[#7a6f66] mb-3">Pastor Alemão</p>
+          <div class="flex justify-between text-xs text-[#7a6f66] border-t border-[#ece4d8] pt-3">
+            <span><i class="ri-cake-2-line"></i> 2a 6m</span>
+            <span><i class="ri-calendar-line"></i> 19/01/2024</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-white border border-[#ece4d8] rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 transition">
+        <div class="relative h-56 bg-bege">
+          <img src="https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?w=400" class="w-full h-full object-cover" alt="Max">
+          <div class="absolute top-3 left-3 flex gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-verdeokbg text-[#278a5b]">Macho</span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Adulto</span>
+          </div>
+        </div>
+        <div class="p-4">
+          <h3 class="text-lg font-bold">Max</h3>
+          <p class="text-sm text-[#7a6f66] mb-3">Bulldog Francês</p>
+          <div class="flex justify-between text-xs text-[#7a6f66] border-t border-[#ece4d8] pt-3">
+            <span><i class="ri-cake-2-line"></i> 1a 11m</span>
+            <span><i class="ri-calendar-line"></i> 04/08/2024</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="bg-white border border-[#ece4d8] rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 transition">
+        <div class="relative h-56 bg-bege">
+          <img src="https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=400" class="w-full h-full object-cover" alt="Nina">
+          <div class="absolute top-3 left-3 flex gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Fêmea</span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Adulto</span>
+          </div>
+        </div>
+        <div class="p-4">
+          <h3 class="text-lg font-bold">Nina</h3>
+          <p class="text-sm text-[#7a6f66] mb-3">Golden Retriever</p>
+          <div class="flex justify-between text-xs text-[#7a6f66] border-t border-[#ece4d8] pt-3">
+            <span><i class="ri-cake-2-line"></i> 3a 8m</span>
+            <span><i class="ri-calendar-line"></i> 14/11/2022</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
