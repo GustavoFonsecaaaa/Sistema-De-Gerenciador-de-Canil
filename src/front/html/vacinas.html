@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanilManager - Vacinas</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          marromescuro: '#2b1608',
+          laranja: '#ff8c1a',
+          laranjaclaro: '#ffe3c2',
+          creme: '#faf6f0',
+          bege: '#f0e6da',
+          verdeokbg: '#d9f2e6',
+          vermelho: '#e2564f',
+          vermelhobg: '#fbe0de',
+          amarelobg: '#fff2d6',
+        },
+        fontFamily: { serif: ['Georgia', 'Times New Roman', 'serif'] }
+      }
+    }
+  }
+</script>
+</head>
+<body class="font-serif bg-creme text-marromescuro flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-marromescuro text-[#d8cabb] flex flex-col p-6 fixed top-0 left-0 bottom-0">
+    <div class="text-2xl font-bold mb-1">Canil<span class="text-laranja">Manager</span></div>
+    <div class="text-sm text-[#a8998a] mb-10">Gestão do seu canil</div>
+
+    <nav class="flex flex-col gap-1 flex-1">
+      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
+        <i class="ri-dashboard-line text-lg"></i> Dashboard
+      </a>
+      <a href="cachorros.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
+        <i class="ri-heart-line text-lg"></i> Cachorros
+      </a>
+      <a href="vacinas.html" class="flex items-center gap-3 px-3 py-3 rounded-lg bg-gradient-to-r from-[#6b3312] to-[#7a3a12] text-laranja font-bold">
+        <i class="ri-syringe-line text-lg"></i> Vacinas
+      </a>
+      <a href="racoes.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
+        <i class="ri-restaurant-2-line text-lg"></i> Rações
+      </a>
+    </nav>
+
+    <div class="flex items-center gap-3 pt-5 border-t border-white/10">
+      <div class="w-9 h-9 rounded-full bg-laranja text-marromescuro flex items-center justify-center font-bold">C</div>
+      <div>
+        <div class="text-sm font-bold text-[#f0e6da]">Criador</div>
+        <div class="text-xs text-[#a8998a]">admin@canil.com</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTEUDO -->
+  <main class="ml-64 flex-1 p-10">
+
+    <div class="flex justify-between items-start mb-6">
+      <div>
+        <h1 class="text-4xl font-bold mb-1">Vacinas</h1>
+        <p class="text-[#7a6f66]">Controle de vacinação dos cães</p>
+      </div>
+      <button class="bg-laranja hover:bg-[#e97c0c] text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 transition">
+        <i class="ri-add-line"></i> Registrar Vacina
+      </button>
+    </div>
+
+    <!-- CARDS DE ESTATISTICA -->
+    <div class="grid grid-cols-4 gap-5 mb-7">
+      <div class="bg-white border border-[#ece4d8] rounded-2xl p-5 flex justify-between items-start">
+        <div>
+          <div class="text-xs uppercase text-[#7a6f66] mb-2">Registros</div>
+          <div class="text-3xl font-bold">25</div>
+          <div class="text-xs text-[#7a6f66] mt-1">Total de aplicações</div>
+        </div>
+        <div class="w-11 h-11 rounded-xl bg-laranjaclaro flex items-center justify-center text-xl text-laranja">
+          <i class="ri-syringe-line"></i>
+        </div>
+      </div>
+      <div class="bg-white border border-[#ece4d8] rounded-2xl p-5 flex justify-between items-start">
+        <div>
+          <div class="text-xs uppercase text-[#7a6f66] mb-2">Cães Vacinados</div>
+          <div class="text-3xl font-bold">8</div>
+          <div class="text-xs text-[#7a6f66] mt-1">de 8 cães no canil</div>
+        </div>
+        <div class="w-11 h-11 rounded-xl bg-verdeokbg flex items-center justify-center text-xl text-[#278a5b]">
+          <i class="ri-group-line"></i>
+        </div>
+      </div>
+      <div class="bg-white border border-[#ece4d8] rounded-2xl p-5 flex justify-between items-start">
+        <div>
+          <div class="text-xs uppercase text-[#7a6f66] mb-2">Vencidas</div>
+          <div class="text-3xl font-bold text-vermelho">25</div>
+          <div class="text-xs text-[#7a6f66] mt-1">Precisam de atenção</div>
+        </div>
+        <div class="w-11 h-11 rounded-xl bg-vermelhobg flex items-center justify-center text-xl text-vermelho">
+          <i class="ri-error-warning-line"></i>
+        </div>
+      </div>
+      <div class="bg-white border border-[#ece4d8] rounded-2xl p-5 flex justify-between items-start">
+        <div>
+          <div class="text-xs uppercase text-[#7a6f66] mb-2">Vencem em Breve</div>
+          <div class="text-3xl font-bold">0</div>
+          <div class="text-xs text-[#7a6f66] mt-1">Próximos 7 dias</div>
+        </div>
+        <div class="w-11 h-11 rounded-xl bg-amarelobg flex items-center justify-center text-xl text-[#b3860c]">
+          <i class="ri-alarm-warning-line"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUSCA E FILTROS -->
+    <div class="flex gap-3 mb-6 flex-wrap">
+      <div class="flex-1 min-w-[240px] flex items-center gap-2 bg-white border border-[#ece4d8] rounded-xl px-4 py-3">
+        <i class="ri-search-line text-[#7a6f66]"></i>
+        <input type="text" placeholder="Buscar por nome ou raça..." class="flex-1 outline-none bg-transparent text-sm">
+      </div>
+      <div class="flex bg-white border border-[#ece4d8] rounded-xl p-1 gap-1">
+        <button class="px-4 py-2 rounded-lg text-sm font-bold bg-laranja text-white">Todas</button>
+        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">V10</button>
+        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Antirrábica</button>
+        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Gripe Canina</button>
+        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Giardíase</button>
+      </div>
+    </div>
+
+    <!-- TABELA -->
+    <div class="bg-white border border-[#ece4d8] rounded-2xl overflow-hidden">
+      <table class="w-full border-collapse">
+        <thead class="bg-creme">
+          <tr>
+            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Cachorro</th>
+            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Vacina</th>
+            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Data Aplicação</th>
+            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Próxima Dose</th>
+            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Status</th>
+            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t border-[#ece4d8]">
+            <td class="px-5 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-bege overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=100" class="w-full h-full object-cover" alt="Thor">
+                </div>
+                <div>
+                  <div class="font-bold text-sm">Thor</div>
+                  <div class="text-xs text-[#7a6f66]">Golden Retriever</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-5 py-4 text-sm">V10</td>
+            <td class="px-5 py-4 text-sm">15/01/2025</td>
+            <td class="px-5 py-4 text-sm">15/01/2026</td>
+            <td class="px-5 py-4">
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-vermelhobg text-[#c73a32]">Vencida</span>
+            </td>
+            <td class="px-5 py-4">
+              <button class="text-[#7a6f66] hover:text-vermelho transition"><i class="ri-delete-bin-line"></i></button>
+            </td>
+          </tr>
+          <tr class="border-t border-[#ece4d8]">
+            <td class="px-5 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-bege overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=100" class="w-full h-full object-cover" alt="Luna">
+                </div>
+                <div>
+                  <div class="font-bold text-sm">Luna</div>
+                  <div class="text-xs text-[#7a6f66]">Pastor Alemão</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-5 py-4 text-sm">Antirrábica</td>
+            <td class="px-5 py-4 text-sm">18/02/2025</td>
+            <td class="px-5 py-4 text-sm">18/02/2026</td>
+            <td class="px-5 py-4">
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-vermelhobg text-[#c73a32]">Vencida</span>
+            </td>
+            <td class="px-5 py-4">
+              <button class="text-[#7a6f66] hover:text-vermelho transition"><i class="ri-delete-bin-line"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</body>
+</html>
