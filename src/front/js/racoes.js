@@ -6,16 +6,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const statTotalKg = document.getElementById('stat-total-kg');
   const statEstoqueBaixo = document.getElementById('stat-estoque-baixo');
 
+  // Elementos do Modal Customizado
+  const modalExcluir = document.getElementById('modal-excluir');
+  const modalContent = modalExcluir ? modalExcluir.querySelector('.transform') : null;
+  const btnCancelarModal = document.getElementById('btn-cancelar-modal');
+  const btnConfirmarModal = document.getElementById('btn-confirmar-modal');
+  
+  let cardParaExcluir = null;
+
   // Função principal para recalcular os cards de estatísticas superiores
   function atualizarEstatisticasGlobais() {
-    // Captura os cards atualizados que ainda restam na tela
-    const cardsRacao = document.querySelectorAll('.container-racoes > div');
+    const cardsRacaoAtuais = document.querySelectorAll('.container-racoes > div');
     
     let totalSacos = 0;
     let totalKg = 0;
     let totalEstoqueBaixo = 0;
 
-    cardsRacao.forEach(card => {
+    cardsRacaoAtuais.forEach(card => {
       const textQuantidade = card.querySelector('span.px-3');
       const qtd = parseInt(textQuantidade.textContent) || 0;
 
@@ -41,15 +48,68 @@ document.addEventListener('DOMContentLoaded', () => {
     if (statEstoqueBaixo) statEstoqueBaixo.textContent = totalEstoqueBaixo;
   }
 
-  // Função isolada para configurar os eventos de um card específico
+  // Funções de controle do Modal
+  function abrirModal(card) {
+    cardParaExcluir = card;
+    if (modalExcluir && modalContent) {
+      modalExcluir.classList.remove('hidden');
+      setTimeout(() => {
+        modalExcluir.classList.remove('opacity-0');
+        modalContent.classList.remove('scale-95');
+      }, 10);
+    }
+  }
+
+  function fecharModal() {
+    if (modalExcluir && modalContent) {
+      modalExcluir.classList.add('opacity-0');
+      modalContent.classList.add('scale-95');
+      setTimeout(() => {
+        modalExcluir.classList.add('hidden');
+        cardParaExcluir = null;
+      }, 200);
+    }
+  }
+
+  if (btnCancelarModal) {
+    btnCancelarModal.onclick = (e) => {
+      e.preventDefault();
+      fecharModal();
+    };
+  }
+
+  if (btnConfirmarModal) {
+    btnConfirmarModal.onclick = (e) => {
+      e.preventDefault();
+      if (cardParaExcluir) {
+        // Transição suave de fade-out clássica
+        cardParaExcluir.style.transition = 'all 0.2s ease';
+        cardParaExcluir.style.opacity = '0';
+        cardParaExcluir.style.transform = 'scale(0.95)';
+        
+        fecharModal();
+
+        setTimeout(() => {
+          cardParaExcluir.remove();
+          atualizarEstatisticasGlobais(); // O Flexbox do CSS vai reorganizar o alinhamento na hora!
+        }, 200);
+      }
+    };
+  }
+
+  if (modalExcluir) {
+    modalExcluir.onclick = (e) => {
+      if (e.target === modalExcluir) {
+        fecharModal();
+      }
+    };
+  }
+
   function inicializarCard(card) {
-    const botoes = card.querySelectorAll('button');
-    // Os botões de + e - estão dentro da div do seletor de unidades
     const btnMenos = card.querySelector('.flex.items-center.bg-\\[\\#FAFAF9\\] button:nth-child(1)');
     const btnMais = card.querySelector('.flex.items-center.bg-\\[\\#FAFAF9\\] button:nth-child(3)');
     const textQuantidade = card.querySelector('span.px-3');
     
-    // Botões de ação da direita
     const btnEditar = card.querySelector('.btn-editar');
     const btnExcluir = card.querySelector('.btn-excluir');
     
@@ -72,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Eventos do seletor de quantidade
     if (btnMenos && btnMais && textQuantidade) {
       btnMenos.onclick = (e) => {
         e.preventDefault();
@@ -101,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
-    // Ação do Botão Editar
     if (btnEditar) {
       btnEditar.onclick = (e) => {
         e.preventDefault();
@@ -109,32 +167,17 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
-    // Ação do Botão Excluir
     if (btnExcluir) {
       btnExcluir.onclick = (e) => {
         e.preventDefault();
-        const nomeRacao = card.querySelector('h3').textContent;
-        
-        if (confirm(`Tem certeza que deseja remover a ração ${nomeRacao} do estoque?`)) {
-          // Efeito suave de saída antes de remover
-          card.style.transition = 'all 0.3s ease';
-          card.style.opacity = '0';
-          card.style.transform = 'scale(0.95)';
-          
-          setTimeout(() => {
-            card.remove();
-            atualizarEstatisticasGlobais(); // Recalcula tudo sem o card removido
-          }, 300);
-        }
+        abrirModal(card);
       };
     }
   }
 
-  // Inicializa todos os cards presentes no carregamento da página
   const cardsIniciais = document.querySelectorAll('.container-racoes > div');
   cardsIniciais.forEach(card => inicializarCard(card));
 
-  // Sincroniza o painel superior no carregamento
   atualizarEstatisticasGlobais();
 });
 
