@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanilManager - Rações</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          marromescuro: '#1C1105',     
+          marromescuro2: '#3C240B',    
+          laranja: '#D97706',          
+          laranjaclaro: '#FEF3C7',     
+          creme: '#F8F5F0',            
+          bege: '#EFECE6',             
+          verdeok: '#10B981',
+          verdeokbg: '#D1FAE5',
+          vermelho: '#EF4444',
+          vermelhobg: '#FEE2E2',
+        },
+        fontFamily: {
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+          sans: ['Plus Jakarta Sans', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<!-- Remix Icon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<!-- Fontes do Google -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans bg-creme text-marromescuro flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between">
+    <div class="sidebar-top">
+      <div class="font-serif text-xl font-extrabold mb-1 text-white">Canil<span class="text-laranja">Manager</span></div>
+      <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
+
+      <nav class="flex flex-col gap-1.5">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-layout-grid-line text-base"></i> Dashboard
+        </a>
+        <a href="cachorros.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-baidu-line text-base"></i> Cachorros
+        </a>
+        <a href="vacinas.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-syringe-line text-base"></i> Vacinas
+        </a>
+        <a href="racoes.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-marromescuro2 text-laranja font-semibold text-xs">
+          <i class="ri-goblet-fill text-base"></i> Rações
+        </a>
+      </nav>
+    </div>
+
+    <!-- Perfil do Usuário -->
+    <div class="flex items-center gap-2.5 pt-4 border-t border-white/10">
+      <div class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs">C</div>
+      <div>
+        <div class="text-[11px] font-bold text-[#f0e6da]">Criador</div>
+        <div class="text-[9px] text-[#a8998a]">admin@canil.com</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTEUDO PRINCIPAL -->
+  <main class="ml-60 flex-1 p-8">
+    <header class="mb-6 flex justify-between items-center">
+      <div>
+        <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Rações</h1>
+        <p class="text-xs text-[#6B7280] mt-1">Controle de estoque de ração</p>
+      </div>
+      <button class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
+        <i class="ri-add-line text-base"></i> Adicionar Ração
+      </button>
+    </header>
+
+    <!-- CARDS DE ESTATISTICA -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Total Sacos</div>
+          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">6</div>
+          <div class="text-[10px] text-[#6B7280] mt-0.5">3 tipos cadastrados</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
+          <i class="ri-archive-line text-lg"></i>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Total em KG</div>
+          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">77 <span class="text-sm font-normal text-[#6B7280]">kg</span></div>
+          <div class="text-[10px] text-[#6B7280] mt-0.5">Considerando todos os sacos</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-verdeokbg flex items-center justify-center text-verdeok">
+          <i class="ri-scales-3-line text-lg"></i>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Estoque Baixo</div>
+          <div class="text-2xl font-extrabold text-[#B45309] mt-0.5">1</div>
+          <div class="text-[10px] text-[#6B7280] mt-0.5">Sacos com 1 ou menos unidades</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-[#B45309]">
+          <i class="ri-alert-line text-lg"></i>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Marcas</div>
+          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">3</div>
+          <div class="text-[10px] text-[#6B7280] mt-0.5">Marcas diferentes</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
+          <i class="ri-price-tag-3-line text-lg"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BARRA DE BUSCA -->
+    <div class="mb-6 max-w-sm">
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+          <i class="ri-search-line"></i>
+        </span>
+        <input type="text" placeholder="Buscar por marca ou tipo..." class="w-full bg-white border border-[#EFECE6] rounded-xl py-2 pl-9 pr-4 text-xs shadow-sm focus:outline-none focus:border-laranja transition-colors">
+      </div>
+    </div>
+
+    <!-- GRID DE CARDS DE RAÇÃO -->
+    <div class="grid grid-cols-3 gap-5">
+
+      <!-- Card 1: Royal Canin -->
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-verdeokbg flex items-center justify-center text-verdeok">
+                <i class="ri-goblet-line text-lg"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-sm text-[#111827]">Royal Canin</h3>
+                <p class="text-[11px] text-[#6B7280]">Adulto - Porte Grande</p>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-verdeokbg text-verdeok">OK</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-y-3 gap-x-4 border-b border-[#FAFAF9] pb-4 mb-4 text-xs">
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Peso do saco</span>
+              <span class="font-bold text-[#111827]">15 kg</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Compra</span>
+              <span class="font-bold text-[#111827]">20/06/2025</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Total em estoque</span>
+              <span class="font-bold text-[#111827]">45 kg</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Data compra</span>
+              <span class="font-bold text-[#111827]">20/06/2025</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 text-xs">
+          <span class="text-[#6B7280]">Unidades:</span>
+          <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
+            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
+            <span class="px-3 font-bold text-[#111827]">3</span>
+            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Premier -->
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-verdeokbg flex items-center justify-center text-verdeok">
+                <i class="ri-goblet-line text-lg"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-sm text-[#111827]">Premier</h3>
+                <p class="text-[11px] text-[#6B7280]">Filhote - Raças Médias</p>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-verdeokbg text-verdeok">OK</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-y-3 gap-x-4 border-b border-[#FAFAF9] pb-4 mb-4 text-xs">
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Peso do saco</span>
+              <span class="font-bold text-[#111827]">10 kg</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Compra</span>
+              <span class="font-bold text-[#111827]">28/06/2025</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Total em estoque</span>
+              <span class="font-bold text-[#111827]">20 kg</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Data compra</span>
+              <span class="font-bold text-[#111827]">28/06/2025</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 text-xs">
+          <span class="text-[#6B7280]">Unidades:</span>
+          <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
+            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
+            <span class="px-3 font-bold text-[#111827]">2</span>
+            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Hill's (Estoque Baixo) -->
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-verdeokbg flex items-center justify-center text-verdeok">
+                <i class="ri-goblet-line text-lg"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-sm text-[#111827]">Hill's</h3>
+                <p class="text-[11px] text-[#6B7280]">Adulto - Light</p>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Baixo</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-y-3 gap-x-4 border-b border-[#FAFAF9] pb-4 mb-4 text-xs">
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Peso do saco</span>
+              <span class="font-bold text-[#111827]">12 kg</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Compra</span>
+              <span class="font-bold text-[#111827]">01/07/2025</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Total em estoque</span>
+              <span class="font-bold text-[#111827]">12 kg</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Data compra</span>
+              <span class="font-bold text-[#111827]">01/07/2025</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 text-xs">
+          <span class="text-[#6B7280]">Unidades:</span>
+          <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
+            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
+            <span class="px-3 font-bold text-[#B45309]">1</span>
+            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
