@@ -147,7 +147,7 @@
     <div class="grid grid-cols-3 gap-5 container-racoes">
 
       <!-- Card 1: Royal Canin -->
-      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between group">
         <div>
           <div class="flex justify-between items-start mb-4">
             <div class="flex items-center gap-3">
@@ -182,18 +182,29 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-2 text-xs">
-          <span class="text-[#6B7280]">Unidades:</span>
-          <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
-            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
-            <span class="px-3 font-bold text-[#111827]">3</span>
-            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">+</button>
+        <div class="flex items-center justify-between text-xs mt-4 pt-3 border-t border-[#FAFAF9]">
+          <div class="flex items-center gap-2">
+            <span class="text-[#6B7280]">Unidades:</span>
+            <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
+              <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
+              <span class="px-3 font-bold text-[#111827]">3</span>
+              <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">+</button>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-1 bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <button class="btn-editar w-7 h-7 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 transition-colors" title="Editar ração">
+              <i class="ri-edit-line text-sm"></i>
+            </button>
+            <button class="btn-excluir w-7 h-7 flex items-center justify-center hover:bg-red-50 hover:text-red-500 rounded text-gray-400 transition-colors" title="Excluir ração">
+              <i class="ri-delete-bin-line text-sm"></i>
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Card 2: Premier -->
-      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between group">
         <div>
           <div class="flex justify-between items-start mb-4">
             <div class="flex items-center gap-3">
@@ -228,18 +239,29 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-2 text-xs">
-          <span class="text-[#6B7280]">Unidades:</span>
-          <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
-            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
-            <span class="px-3 font-bold text-[#111827]">2</span>
-            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">+</button>
+        <div class="flex items-center justify-between text-xs mt-4 pt-3 border-t border-[#FAFAF9]">
+          <div class="flex items-center gap-2">
+            <span class="text-[#6B7280]">Unidades:</span>
+            <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
+              <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
+              <span class="px-3 font-bold text-[#111827]">2</span>
+              <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">+</button>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-1 bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <button class="btn-editar w-7 h-7 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 transition-colors" title="Editar ração">
+              <i class="ri-edit-line text-sm"></i>
+            </button>
+            <button class="btn-excluir w-7 h-7 flex items-center justify-center hover:bg-red-50 hover:text-red-500 rounded text-gray-400 transition-colors" title="Excluir ração">
+              <i class="ri-delete-bin-line text-sm"></i>
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Card 3: Hill's (Estoque Baixo) -->
-      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between group">
         <div>
           <div class="flex justify-between items-start mb-4">
             <div class="flex items-center gap-3">
@@ -274,12 +296,23 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-2 text-xs">
-          <span class="text-[#6B7280]">Unidades:</span>
-          <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
-            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
-            <span class="px-3 font-bold text-[#B45309]">1</span>
-            <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">+</button>
+        <div class="flex items-center justify-between text-xs mt-4 pt-3 border-t border-[#FAFAF9]">
+          <div class="flex items-center gap-2">
+            <span class="text-[#6B7280]">Unidades:</span>
+            <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
+              <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
+              <span class="px-3 font-bold text-[#B45309]">1</span>
+              <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">+</button>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-1 bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <button class="btn-editar w-7 h-7 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 transition-colors" title="Editar ração">
+              <i class="ri-edit-line text-sm"></i>
+            </button>
+            <button class="btn-excluir w-7 h-7 flex items-center justify-center hover:bg-red-50 hover:text-red-500 rounded text-gray-400 transition-colors" title="Excluir ração">
+              <i class="ri-delete-bin-line text-sm"></i>
+            </button>
           </div>
         </div>
       </div>

@@ -1,9 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Script racoes.js carregado com sucesso!");
 
-  // Captura apenas os cards que estão dentro do grid de rações
-  const cardsRacao = document.querySelectorAll('.container-racoes > div');
-
   // Elementos do painel superior
   const statTotalSacos = document.getElementById('stat-total-sacos');
   const statTotalKg = document.getElementById('stat-total-kg');
@@ -11,16 +8,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Função principal para recalcular os cards de estatísticas superiores
   function atualizarEstatisticasGlobais() {
+    // Captura os cards atualizados que ainda restam na tela
+    const cardsRacao = document.querySelectorAll('.container-racoes > div');
+    
     let totalSacos = 0;
     let totalKg = 0;
     let totalEstoqueBaixo = 0;
 
     cardsRacao.forEach(card => {
-      // Pega a quantidade atual do card
       const textQuantidade = card.querySelector('span.px-3');
       const qtd = parseInt(textQuantidade.textContent) || 0;
 
-      // Pega o peso unitário do saco
       const spansNegrito = card.querySelectorAll('span.font-bold');
       let pesoUnitario = 0;
       spansNegrito.forEach(span => {
@@ -30,28 +28,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // Soma para as estatísticas globais
       totalSacos += qtd;
       totalKg += (qtd * pesoUnitario);
 
-      // Se for entre 0 e 3 unidades, conta como estoque baixo
       if (qtd <= 3) {
         totalEstoqueBaixo++;
       }
     });
 
-    // Injeta os valores calculados de volta no painel superior do HTML
     if (statTotalSacos) statTotalSacos.textContent = totalSacos;
     if (statTotalKg) statTotalKg.innerHTML = `${totalKg} <span class="text-sm font-normal text-[#6B7280]">kg</span>`;
     if (statEstoqueBaixo) statEstoqueBaixo.textContent = totalEstoqueBaixo;
   }
 
-  // Configuração inicial dos botões dos cards
-  cardsRacao.forEach((card) => {
+  // Função isolada para configurar os eventos de um card específico
+  function inicializarCard(card) {
     const botoes = card.querySelectorAll('button');
-    const btnMenos = botoes[0];
-    const btnMais = botoes[1];
+    // Os botões de + e - estão dentro da div do seletor de unidades
+    const btnMenos = card.querySelector('.flex.items-center.bg-\\[\\#FAFAF9\\] button:nth-child(1)');
+    const btnMais = card.querySelector('.flex.items-center.bg-\\[\\#FAFAF9\\] button:nth-child(3)');
     const textQuantidade = card.querySelector('span.px-3');
+    
+    // Botões de ação da direita
+    const btnEditar = card.querySelector('.btn-editar');
+    const btnExcluir = card.querySelector('.btn-excluir');
     
     const spansNegrito = card.querySelectorAll('span.font-bold');
     let textTotalEstoque = null;
@@ -72,19 +72,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // Eventos do seletor de quantidade
     if (btnMenos && btnMais && textQuantidade) {
-      
       btnMenos.onclick = (e) => {
         e.preventDefault();
         let qtd = parseInt(textQuantidade.textContent) || 0;
         if (qtd > 0) {
           qtd--;
           textQuantidade.textContent = qtd;
-          
           if (textTotalEstoque && pesoUnitario > 0) {
             textTotalEstoque.textContent = `${qtd * pesoUnitario} kg`;
           }
-          
           atualizarBadgeStatus(card, qtd);
           atualizarEstatisticasGlobais();
         }
@@ -95,18 +93,48 @@ document.addEventListener('DOMContentLoaded', () => {
         let qtd = parseInt(textQuantidade.textContent) || 0;
         qtd++;
         textQuantidade.textContent = qtd;
-        
         if (textTotalEstoque && pesoUnitario > 0) {
           textTotalEstoque.textContent = `${qtd * pesoUnitario} kg`;
         }
-        
         atualizarBadgeStatus(card, qtd);
         atualizarEstatisticasGlobais();
       };
     }
-  });
 
-  // Executa uma vez na inicialização para sincronizar os dados
+    // Ação do Botão Editar
+    if (btnEditar) {
+      btnEditar.onclick = (e) => {
+        e.preventDefault();
+        alert('Funcionalidade de abrir o formulário de edição será conectada à API em breve!');
+      };
+    }
+
+    // Ação do Botão Excluir
+    if (btnExcluir) {
+      btnExcluir.onclick = (e) => {
+        e.preventDefault();
+        const nomeRacao = card.querySelector('h3').textContent;
+        
+        if (confirm(`Tem certeza que deseja remover a ração ${nomeRacao} do estoque?`)) {
+          // Efeito suave de saída antes de remover
+          card.style.transition = 'all 0.3s ease';
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.95)';
+          
+          setTimeout(() => {
+            card.remove();
+            atualizarEstatisticasGlobais(); // Recalcula tudo sem o card removido
+          }, 300);
+        }
+      };
+    }
+  }
+
+  // Inicializa todos os cards presentes no carregamento da página
+  const cardsIniciais = document.querySelectorAll('.container-racoes > div');
+  cardsIniciais.forEach(card => inicializarCard(card));
+
+  // Sincroniza o painel superior no carregamento
   atualizarEstatisticasGlobais();
 });
 
