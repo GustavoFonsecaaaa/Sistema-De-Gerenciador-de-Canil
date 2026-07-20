@@ -90,7 +90,7 @@
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Total Sacos</div>
-          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">6</div>
+          <div id="stat-total-sacos" class="text-2xl font-extrabold text-[#111827] mt-0.5">6</div>
           <div class="text-[10px] text-[#6B7280] mt-0.5">3 tipos cadastrados</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
@@ -101,7 +101,7 @@
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Total em KG</div>
-          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">77 <span class="text-sm font-normal text-[#6B7280]">kg</span></div>
+          <div id="stat-total-kg" class="text-2xl font-extrabold text-[#111827] mt-0.5">77 <span class="text-sm font-normal text-[#6B7280]">kg</span></div>
           <div class="text-[10px] text-[#6B7280] mt-0.5">Considerando todos os sacos</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-verdeokbg flex items-center justify-center text-verdeok">
@@ -112,8 +112,8 @@
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Estoque Baixo</div>
-          <div class="text-2xl font-extrabold text-[#B45309] mt-0.5">1</div>
-          <div class="text-[10px] text-[#6B7280] mt-0.5">Sacos com 1 ou menos unidades</div>
+          <div id="stat-estoque-baixo" class="text-2xl font-extrabold text-[#B45309] mt-0.5">1</div>
+          <div class="text-[10px] text-[#6B7280] mt-0.5">Sacos com 3 ou menos unidades</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-[#B45309]">
           <i class="ri-alert-line text-lg"></i>
@@ -144,7 +144,7 @@
     </div>
 
     <!-- GRID DE CARDS DE RAÇÃO -->
-    <div class="grid grid-cols-3 gap-5">
+    <div class="grid grid-cols-3 gap-5 container-racoes">
 
       <!-- Card 1: Royal Canin -->
       <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
@@ -285,11 +285,9 @@
       </div>
 
     </div>
-  ...
   </main>
 
   <!-- Script de Rações -->
   <script src="/src/front/js/racoes.js"></script>
 </body>
-</html>
 </html>
