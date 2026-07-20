@@ -5,188 +5,205 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CanilManager - Vacinas</title>
 
+<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 <script>
   tailwind.config = {
     theme: {
       extend: {
         colors: {
-          marromescuro: '#2b1608',
-          laranja: '#ff8c1a',
-          laranjaclaro: '#ffe3c2',
-          creme: '#faf6f0',
-          bege: '#f0e6da',
-          verdeokbg: '#d9f2e6',
-          vermelho: '#e2564f',
-          vermelhobg: '#fbe0de',
-          amarelobg: '#fff2d6',
+          marromescuro: '#1C1105',     
+          marromescuro2: '#3C240B',    
+          laranja: '#D97706',          
+          laranjaclaro: '#FEF3C7',     
+          creme: '#F8F5F0',            
+          bege: '#EFECE6',             
+          verdeok: '#10B981',
+          verdeokbg: '#D1FAE5',
+          vermelho: '#EF4444',
+          vermelhobg: '#FEE2E2',
+          amarelobg: '#FEF3C7',
         },
-        fontFamily: { serif: ['Georgia', 'Times New Roman', 'serif'] }
+        fontFamily: {
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+          sans: ['Plus Jakarta Sans', 'sans-serif'],
+        }
       }
     }
   }
 </script>
+<!-- Remix Icon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="font-serif bg-creme text-marromescuro flex min-h-screen">
+<body class="font-sans bg-creme text-marromescuro flex min-h-screen">
 
   <!-- SIDEBAR -->
-  <aside class="w-64 bg-marromescuro text-[#d8cabb] flex flex-col p-6 fixed top-0 left-0 bottom-0">
-    <div class="text-2xl font-bold mb-1">Canil<span class="text-laranja">Manager</span></div>
-    <div class="text-sm text-[#a8998a] mb-10">Gestão do seu canil</div>
+  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between">
+    <div class="sidebar-top">
+      <div class="font-serif text-xl font-extrabold mb-1 text-white">Canil<span class="text-laranja">Manager</span></div>
+      <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
 
-    <nav class="flex flex-col gap-1 flex-1">
-      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
-        <i class="ri-dashboard-line text-lg"></i> Dashboard
-      </a>
-      <a href="cachorros.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
-        <i class="ri-heart-line text-lg"></i> Cachorros
-      </a>
-      <a href="vacinas.html" class="flex items-center gap-3 px-3 py-3 rounded-lg bg-gradient-to-r from-[#6b3312] to-[#7a3a12] text-laranja font-bold">
-        <i class="ri-syringe-line text-lg"></i> Vacinas
-      </a>
-      <a href="racoes.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
-        <i class="ri-restaurant-2-line text-lg"></i> Rações
-      </a>
-    </nav>
+      <nav class="flex flex-col gap-1.5">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-layout-grid-line text-base"></i> Dashboard
+        </a>
+        <a href="cachorros.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-baidu-line text-base"></i> Cachorros
+        </a>
+        <a href="vacinas.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-marromescuro2 text-laranja font-semibold text-xs">
+          <i class="ri-syringe-fill text-base"></i> Vacinas
+        </a>
+        <a href="racoes.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-goblet-line text-base"></i> Rações
+        </a>
+      </nav>
+    </div>
 
-    <div class="flex items-center gap-3 pt-5 border-t border-white/10">
-      <div class="w-9 h-9 rounded-full bg-laranja text-marromescuro flex items-center justify-center font-bold">C</div>
+    <div class="flex items-center gap-2.5 pt-4 border-t border-white/10">
+      <div class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs">C</div>
       <div>
-        <div class="text-sm font-bold text-[#f0e6da]">Criador</div>
-        <div class="text-xs text-[#a8998a]">admin@canil.com</div>
+        <div class="text-[11px] font-bold text-[#f0e6da]">Criador</div>
+        <div class="text-[9px] text-[#a8998a]">admin@canil.com</div>
       </div>
     </div>
   </aside>
 
   <!-- CONTEUDO -->
-  <main class="ml-64 flex-1 p-10">
-
-    <div class="flex justify-between items-start mb-6">
+  <main class="ml-60 flex-1 p-8">
+    <header class="mb-6 flex justify-between items-center">
       <div>
-        <h1 class="text-4xl font-bold mb-1">Vacinas</h1>
-        <p class="text-[#7a6f66]">Controle de vacinação dos cães</p>
+        <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Vacinas</h1>
+        <p class="text-xs text-[#6B7280] mt-1">Controle de vacinação dos cães</p>
       </div>
-      <button class="bg-laranja hover:bg-[#e97c0c] text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 transition">
-        <i class="ri-add-line"></i> Registrar Vacina
+      <button class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
+        <i class="ri-add-line text-base"></i> Registrar Vacina
       </button>
-    </div>
+    </header>
 
     <!-- CARDS DE ESTATISTICA -->
-    <div class="grid grid-cols-4 gap-5 mb-7">
-      <div class="bg-white border border-[#ece4d8] rounded-2xl p-5 flex justify-between items-start">
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
-          <div class="text-xs uppercase text-[#7a6f66] mb-2">Registros</div>
-          <div class="text-3xl font-bold">25</div>
-          <div class="text-xs text-[#7a6f66] mt-1">Total de aplicações</div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Registros</div>
+          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">25</div>
+          <div class="text-[10px] text-[#6B7280] mt-0.5">Total de aplicações</div>
         </div>
-        <div class="w-11 h-11 rounded-xl bg-laranjaclaro flex items-center justify-center text-xl text-laranja">
-          <i class="ri-syringe-line"></i>
+        <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
+          <i class="ri-syringe-line text-lg"></i>
         </div>
       </div>
-      <div class="bg-white border border-[#ece4d8] rounded-2xl p-5 flex justify-between items-start">
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
-          <div class="text-xs uppercase text-[#7a6f66] mb-2">Cães Vacinados</div>
-          <div class="text-3xl font-bold">8</div>
-          <div class="text-xs text-[#7a6f66] mt-1">de 8 cães no canil</div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Cães Vacinados</div>
+          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">8</div>
+          <div class="text-[10px] text-[#6B7280] mt-0.5">de 8 cães no canil</div>
         </div>
-        <div class="w-11 h-11 rounded-xl bg-verdeokbg flex items-center justify-center text-xl text-[#278a5b]">
-          <i class="ri-group-line"></i>
+        <div class="w-10 h-10 rounded-full bg-verdeokbg flex items-center justify-center text-verdeok">
+          <i class="ri-group-line text-lg"></i>
         </div>
       </div>
-      <div class="bg-white border border-[#ece4d8] rounded-2xl p-5 flex justify-between items-start">
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
-          <div class="text-xs uppercase text-[#7a6f66] mb-2">Vencidas</div>
-          <div class="text-3xl font-bold text-vermelho">25</div>
-          <div class="text-xs text-[#7a6f66] mt-1">Precisam de atenção</div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Vencidas</div>
+          <div class="text-2xl font-extrabold text-vermelho mt-0.5">2</div>
+          <div class="text-[10px] text-[#6B7280] mt-0.5">Precisam de atenção</div>
         </div>
-        <div class="w-11 h-11 rounded-xl bg-vermelhobg flex items-center justify-center text-xl text-vermelho">
-          <i class="ri-error-warning-line"></i>
+        <div class="w-10 h-10 rounded-full bg-vermelhobg flex items-center justify-center text-vermelho">
+          <i class="ri-error-warning-line text-lg"></i>
         </div>
       </div>
-      <div class="bg-white border border-[#ece4d8] rounded-2xl p-5 flex justify-between items-start">
+
+      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
-          <div class="text-xs uppercase text-[#7a6f66] mb-2">Vencem em Breve</div>
-          <div class="text-3xl font-bold">0</div>
-          <div class="text-xs text-[#7a6f66] mt-1">Próximos 7 dias</div>
+          <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Vencem em Breve</div>
+          <div class="text-2xl font-extrabold text-[#B45309] mt-0.5">0</div>
+          <div class="text-[10px] text-[#6B7280] mt-0.5">Próximos 7 dias</div>
         </div>
-        <div class="w-11 h-11 rounded-xl bg-amarelobg flex items-center justify-center text-xl text-[#b3860c]">
-          <i class="ri-alarm-warning-line"></i>
+        <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-[#B45309]">
+          <i class="ri-alarm-warning-line text-lg"></i>
         </div>
       </div>
     </div>
 
     <!-- BUSCA E FILTROS -->
-    <div class="flex gap-3 mb-6 flex-wrap">
-      <div class="flex-1 min-w-[240px] flex items-center gap-2 bg-white border border-[#ece4d8] rounded-xl px-4 py-3">
-        <i class="ri-search-line text-[#7a6f66]"></i>
-        <input type="text" placeholder="Buscar por nome ou raça..." class="flex-1 outline-none bg-transparent text-sm">
+    <div class="flex gap-4 mb-6 flex-wrap items-center">
+      <div class="w-80 relative shadow-sm">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+          <i class="ri-search-line"></i>
+        </span>
+        <input type="text" placeholder="Buscar por nome ou raça..." class="w-full bg-white border border-[#EFECE6] rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-laranja transition-colors">
       </div>
-      <div class="flex bg-white border border-[#ece4d8] rounded-xl p-1 gap-1">
-        <button class="px-4 py-2 rounded-lg text-sm font-bold bg-laranja text-white">Todas</button>
-        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">V10</button>
-        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Antirrábica</button>
-        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Gripe Canina</button>
-        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Giardíase</button>
+      
+      <div class="flex bg-white border border-[#EFECE6] rounded-xl p-0.5 gap-0.5 shadow-sm">
+        <button class="px-3 py-1.5 rounded-lg text-xs font-bold bg-laranja text-white">Todas</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">V10</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Antirrábica</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Gripe Canina</button>
       </div>
     </div>
 
     <!-- TABELA -->
-    <div class="bg-white border border-[#ece4d8] rounded-2xl overflow-hidden">
+    <div class="bg-white border border-[#EFECE6] rounded-xl overflow-hidden shadow-sm">
       <table class="w-full border-collapse">
-        <thead class="bg-creme">
+        <thead class="bg-[#FAFAF9] border-b border-[#EFECE6]">
           <tr>
-            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Cachorro</th>
-            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Vacina</th>
-            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Data Aplicação</th>
-            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Próxima Dose</th>
-            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Status</th>
-            <th class="text-left px-5 py-4 text-xs uppercase text-[#7a6f66] tracking-wide">Ações</th>
+            <th class="text-left px-5 py-3 text-[10px] font-bold uppercase text-[#6B7280] tracking-wider">Cachorro</th>
+            <th class="text-left px-5 py-3 text-[10px] font-bold uppercase text-[#6B7280] tracking-wider">Vacina</th>
+            <th class="text-left px-5 py-3 text-[10px] font-bold uppercase text-[#6B7280] tracking-wider">Data Aplicação</th>
+            <th class="text-left px-5 py-3 text-[10px] font-bold uppercase text-[#6B7280] tracking-wider">Próxima Dose</th>
+            <th class="text-left px-5 py-3 text-[10px] font-bold uppercase text-[#6B7280] tracking-wider">Status</th>
+            <th class="text-left px-5 py-3 text-[10px] font-bold uppercase text-[#6B7280] tracking-wider">Ações</th>
           </tr>
         </thead>
-        <tbody>
-          <tr class="border-t border-[#ece4d8]">
-            <td class="px-5 py-4">
+        <tbody class="divide-y divide-[#FAFAF9]">
+          <tr>
+            <td class="px-5 py-3.5">
               <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-bege overflow-hidden">
+                <div class="w-8 h-8 rounded-full bg-bege overflow-hidden">
                   <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=100" class="w-full h-full object-cover" alt="Thor">
                 </div>
                 <div>
-                  <div class="font-bold text-sm">Thor</div>
-                  <div class="text-xs text-[#7a6f66]">Golden Retriever</div>
+                  <div class="font-bold text-xs text-[#111827]">Thor</div>
+                  <div class="text-[10px] text-[#6B7280]">Golden Retriever</div>
                 </div>
               </div>
             </td>
-            <td class="px-5 py-4 text-sm">V10</td>
-            <td class="px-5 py-4 text-sm">15/01/2025</td>
-            <td class="px-5 py-4 text-sm">15/01/2026</td>
-            <td class="px-5 py-4">
-              <span class="px-3 py-1 rounded-full text-xs font-bold bg-vermelhobg text-[#c73a32]">Vencida</span>
+            <td class="px-5 py-3.5 text-xs font-medium text-[#111827]">V10</td>
+            <td class="px-5 py-3.5 text-xs text-[#6B7280]">15/01/2025</td>
+            <td class="px-5 py-3.5 text-xs text-[#6B7280]">15/01/2026</td>
+            <td class="px-5 py-3.5">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-vermelhobg text-vermelho">Vencida</span>
             </td>
-            <td class="px-5 py-4">
-              <button class="text-[#7a6f66] hover:text-vermelho transition"><i class="ri-delete-bin-line"></i></button>
+            <td class="px-5 py-3.5">
+              <button class="text-gray-400 hover:text-vermelho transition-colors text-sm"><i class="ri-delete-bin-line"></i></button>
             </td>
           </tr>
-          <tr class="border-t border-[#ece4d8]">
-            <td class="px-5 py-4">
+          <tr>
+            <td class="px-5 py-3.5">
               <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-bege overflow-hidden">
+                <div class="w-8 h-8 rounded-full bg-bege overflow-hidden">
                   <img src="https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=100" class="w-full h-full object-cover" alt="Luna">
                 </div>
                 <div>
-                  <div class="font-bold text-sm">Luna</div>
-                  <div class="text-xs text-[#7a6f66]">Pastor Alemão</div>
+                  <div class="font-bold text-xs text-[#111827]">Luna</div>
+                  <div class="text-[10px] text-[#6B7280]">Pastor Alemão</div>
                 </div>
               </div>
             </td>
-            <td class="px-5 py-4 text-sm">Antirrábica</td>
-            <td class="px-5 py-4 text-sm">18/02/2025</td>
-            <td class="px-5 py-4 text-sm">18/02/2026</td>
-            <td class="px-5 py-4">
-              <span class="px-3 py-1 rounded-full text-xs font-bold bg-vermelhobg text-[#c73a32]">Vencida</span>
+            <td class="px-5 py-3.5 text-xs font-medium text-[#111827]">Antirrábica</td>
+            <td class="px-5 py-3.5 text-xs text-[#6B7280]">18/02/2025</td>
+            <td class="px-5 py-3.5 text-xs text-[#6B7280]">18/02/2026</td>
+            <td class="px-5 py-3.5">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-vermelhobg text-vermelho">Vencida</span>
             </td>
-            <td class="px-5 py-4">
-              <button class="text-[#7a6f66] hover:text-vermelho transition"><i class="ri-delete-bin-line"></i></button>
+            <td class="px-5 py-3.5">
+              <button class="text-gray-400 hover:text-vermelho transition-colors text-sm"><i class="ri-delete-bin-line"></i></button>
             </td>
           </tr>
         </tbody>

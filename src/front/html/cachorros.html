@@ -5,101 +5,115 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CanilManager - Cachorros</title>
 
+<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 <script>
   tailwind.config = {
     theme: {
       extend: {
         colors: {
-          marromescuro: '#2b1608',
-          laranja: '#ff8c1a',
-          laranjaclaro: '#ffe3c2',
-          creme: '#faf6f0',
-          bege: '#f0e6da',
-          verdeokbg: '#d9f2e6',
+          marromescuro: '#1C1105',     
+          marromescuro2: '#3C240B',    
+          laranja: '#D97706',          
+          laranjaclaro: '#FEF3C7',     
+          creme: '#F8F5F0',            
+          bege: '#EFECE6',             
+          verdeok: '#10B981',
+          verdeokbg: '#D1FAE5',
         },
-        fontFamily: { serif: ['Georgia', 'Times New Roman', 'serif'] }
+        fontFamily: {
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+          sans: ['Plus Jakarta Sans', 'sans-serif'],
+        }
       }
     }
   }
 </script>
+<!-- Remix Icon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="font-serif bg-creme text-marromescuro flex min-h-screen">
+<body class="font-sans bg-creme text-marromescuro flex min-h-screen">
 
   <!-- SIDEBAR -->
-  <aside class="w-64 bg-marromescuro text-[#d8cabb] flex flex-col p-6 fixed top-0 left-0 bottom-0">
-    <div class="text-2xl font-bold mb-1">Canil<span class="text-laranja">Manager</span></div>
-    <div class="text-sm text-[#a8998a] mb-10">Gestão do seu canil</div>
+  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between">
+    <div class="sidebar-top">
+      <div class="font-serif text-xl font-extrabold mb-1 text-white">Canil<span class="text-laranja">Manager</span></div>
+      <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
 
-    <nav class="flex flex-col gap-1 flex-1">
-      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
-        <i class="ri-dashboard-line text-lg"></i> Dashboard
-      </a>
-      <a href="cachorros.html" class="flex items-center gap-3 px-3 py-3 rounded-lg bg-gradient-to-r from-[#6b3312] to-[#7a3a12] text-laranja font-bold">
-        <i class="ri-heart-line text-lg"></i> Cachorros
-      </a>
-      <a href="vacinas.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
-        <i class="ri-syringe-line text-lg"></i> Vacinas
-      </a>
-      <a href="racoes.html" class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#cdbfaf] hover:bg-white/5 transition">
-        <i class="ri-restaurant-2-line text-lg"></i> Rações
-      </a>
-    </nav>
+      <nav class="flex flex-col gap-1.5">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-layout-grid-line text-base"></i> Dashboard
+        </a>
+        <a href="cachorros.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-marromescuro2 text-laranja font-semibold text-xs">
+          <i class="ri-baidu-fill text-base"></i> Cachorros
+        </a>
+        <a href="vacinas.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-syringe-line text-base"></i> Vacinas
+        </a>
+        <a href="racoes.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-goblet-line text-base"></i> Rações
+        </a>
+      </nav>
+    </div>
 
-    <div class="flex items-center gap-3 pt-5 border-t border-white/10">
-      <div class="w-9 h-9 rounded-full bg-laranja text-marromescuro flex items-center justify-center font-bold">C</div>
+    <div class="flex items-center gap-2.5 pt-4 border-t border-white/10">
+      <div class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs">C</div>
       <div>
-        <div class="text-sm font-bold text-[#f0e6da]">Criador</div>
-        <div class="text-xs text-[#a8998a]">admin@canil.com</div>
+        <div class="text-[11px] font-bold text-[#f0e6da]">Criador</div>
+        <div class="text-[9px] text-[#a8998a]">admin@canil.com</div>
       </div>
     </div>
   </aside>
 
   <!-- CONTEUDO -->
-  <main class="ml-64 flex-1 p-10">
-
-    <div class="flex justify-between items-start mb-6">
+  <main class="ml-60 flex-1 p-8">
+    <header class="mb-6 flex justify-between items-center">
       <div>
-        <h1 class="text-4xl font-bold mb-1">Cachorros</h1>
-        <p class="text-[#7a6f66]">8 cães cadastrados no canil</p>
+        <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Cachorros</h1>
+        <p class="text-xs text-[#6B7280] mt-1">8 cães cadastrados no canil</p>
       </div>
-      <button class="bg-laranja hover:bg-[#e97c0c] text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 transition">
-        <i class="ri-add-line"></i> Novo Cachorro
+      <button class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
+        <i class="ri-add-line text-base"></i> Novo Cachorro
       </button>
-    </div>
+    </header>
 
     <!-- BUSCA E FILTROS -->
-    <div class="flex gap-3 mb-7 flex-wrap">
-      <div class="flex-1 min-w-[240px] flex items-center gap-2 bg-white border border-[#ece4d8] rounded-xl px-4 py-3">
-        <i class="ri-search-line text-[#7a6f66]"></i>
-        <input type="text" placeholder="Buscar por nome ou raça..." class="flex-1 outline-none bg-transparent text-sm">
+    <div class="flex gap-4 mb-6 flex-wrap items-center">
+      <div class="w-80 relative shadow-sm">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+          <i class="ri-search-line"></i>
+        </span>
+        <input type="text" placeholder="Buscar por nome ou raça..." class="w-full bg-white border border-[#EFECE6] rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-laranja transition-colors">
       </div>
-      <div class="flex bg-white border border-[#ece4d8] rounded-xl p-1 gap-1">
-        <button class="px-4 py-2 rounded-lg text-sm font-bold bg-marromescuro text-white">Todos</button>
-        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Machos</button>
-        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Fêmeas</button>
-        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Filhotes</button>
-        <button class="px-4 py-2 rounded-lg text-sm text-[#7a6f66]">Adultos</button>
+      
+      <div class="flex bg-white border border-[#EFECE6] rounded-xl p-0.5 gap-0.5 shadow-sm">
+        <button class="px-3 py-1.5 rounded-lg text-xs font-bold bg-marromescuro text-white">Todos</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Machos</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Fêmeas</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Filhotes</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Adultos</button>
       </div>
     </div>
 
     <!-- GRID DE CACHORROS -->
-    <div class="grid grid-cols-4 gap-5">
-
+    <div class="grid grid-cols-4 gap-4">
       <!-- Card 1 -->
-      <div class="bg-white border border-[#ece4d8] rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 transition">
-        <div class="relative h-56 bg-bege">
+      <div class="bg-white border border-[#EFECE6] rounded-xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-all">
+        <div class="relative h-44 bg-bege">
           <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=400" class="w-full h-full object-cover" alt="Thor">
-          <div class="absolute top-3 left-3 flex gap-2">
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-verdeokbg text-[#278a5b]">Macho</span>
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Adulto</span>
+          <div class="absolute top-2 left-2 flex gap-1">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-verdeokbg text-verdeok">Macho</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Adulto</span>
           </div>
         </div>
-        <div class="p-4">
-          <h3 class="text-lg font-bold">Thor</h3>
-          <p class="text-sm text-[#7a6f66] mb-3">Golden Retriever</p>
-          <div class="flex justify-between text-xs text-[#7a6f66] border-t border-[#ece4d8] pt-3">
+        <div class="p-3.5">
+          <h3 class="font-bold text-sm text-[#111827]">Thor</h3>
+          <p class="text-[11px] text-[#6B7280] mb-2.5">Golden Retriever</p>
+          <div class="flex justify-between text-[10px] text-[#6B7280] border-t border-[#FAFAF9] pt-2.5">
             <span><i class="ri-cake-2-line"></i> 3a 2m</span>
             <span><i class="ri-calendar-line"></i> 11/05/2023</span>
           </div>
@@ -107,18 +121,18 @@
       </div>
 
       <!-- Card 2 -->
-      <div class="bg-white border border-[#ece4d8] rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 transition">
-        <div class="relative h-56 bg-bege">
+      <div class="bg-white border border-[#EFECE6] rounded-xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-all">
+        <div class="relative h-44 bg-bege">
           <img src="https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=400" class="w-full h-full object-cover" alt="Luna">
-          <div class="absolute top-3 left-3 flex gap-2">
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Fêmea</span>
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Adulto</span>
+          <div class="absolute top-2 left-2 flex gap-1">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100 text-pink-500">Fêmea</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Adulto</span>
           </div>
         </div>
-        <div class="p-4">
-          <h3 class="text-lg font-bold">Luna</h3>
-          <p class="text-sm text-[#7a6f66] mb-3">Pastor Alemão</p>
-          <div class="flex justify-between text-xs text-[#7a6f66] border-t border-[#ece4d8] pt-3">
+        <div class="p-3.5">
+          <h3 class="font-bold text-sm text-[#111827]">Luna</h3>
+          <p class="text-[11px] text-[#6B7280] mb-2.5">Pastor Alemão</p>
+          <div class="flex justify-between text-[10px] text-[#6B7280] border-t border-[#FAFAF9] pt-2.5">
             <span><i class="ri-cake-2-line"></i> 2a 6m</span>
             <span><i class="ri-calendar-line"></i> 19/01/2024</span>
           </div>
@@ -126,18 +140,18 @@
       </div>
 
       <!-- Card 3 -->
-      <div class="bg-white border border-[#ece4d8] rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 transition">
-        <div class="relative h-56 bg-bege">
+      <div class="bg-white border border-[#EFECE6] rounded-xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-all">
+        <div class="relative h-44 bg-bege">
           <img src="https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?w=400" class="w-full h-full object-cover" alt="Max">
-          <div class="absolute top-3 left-3 flex gap-2">
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-verdeokbg text-[#278a5b]">Macho</span>
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Adulto</span>
+          <div class="absolute top-2 left-2 flex gap-1">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-verdeokbg text-verdeok">Macho</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Adulto</span>
           </div>
         </div>
-        <div class="p-4">
-          <h3 class="text-lg font-bold">Max</h3>
-          <p class="text-sm text-[#7a6f66] mb-3">Bulldog Francês</p>
-          <div class="flex justify-between text-xs text-[#7a6f66] border-t border-[#ece4d8] pt-3">
+        <div class="p-3.5">
+          <h3 class="font-bold text-sm text-[#111827]">Max</h3>
+          <p class="text-[11px] text-[#6B7280] mb-2.5">Bulldog Francês</p>
+          <div class="flex justify-between text-[10px] text-[#6B7280] border-t border-[#FAFAF9] pt-2.5">
             <span><i class="ri-cake-2-line"></i> 1a 11m</span>
             <span><i class="ri-calendar-line"></i> 04/08/2024</span>
           </div>
@@ -145,24 +159,23 @@
       </div>
 
       <!-- Card 4 -->
-      <div class="bg-white border border-[#ece4d8] rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 transition">
-        <div class="relative h-56 bg-bege">
+      <div class="bg-white border border-[#EFECE6] rounded-xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-all">
+        <div class="relative h-44 bg-bege">
           <img src="https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=400" class="w-full h-full object-cover" alt="Nina">
-          <div class="absolute top-3 left-3 flex gap-2">
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Fêmea</span>
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-bege text-[#6b5637]">Adulto</span>
+          <div class="absolute top-2 left-2 flex gap-1">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100 text-pink-500">Fêmea</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Adulto</span>
           </div>
         </div>
-        <div class="p-4">
-          <h3 class="text-lg font-bold">Nina</h3>
-          <p class="text-sm text-[#7a6f66] mb-3">Golden Retriever</p>
-          <div class="flex justify-between text-xs text-[#7a6f66] border-t border-[#ece4d8] pt-3">
+        <div class="p-3.5">
+          <h3 class="font-bold text-sm text-[#111827]">Nina</h3>
+          <p class="text-[11px] text-[#6B7280] mb-2.5">Golden Retriever</p>
+          <div class="flex justify-between text-[10px] text-[#6B7280] border-t border-[#FAFAF9] pt-2.5">
             <span><i class="ri-cake-2-line"></i> 3a 8m</span>
             <span><i class="ri-calendar-line"></i> 14/11/2022</span>
           </div>
         </div>
       </div>
-
     </div>
   </main>
 
