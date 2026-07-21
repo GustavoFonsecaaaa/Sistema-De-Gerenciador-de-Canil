@@ -5,36 +5,56 @@ document.addEventListener('DOMContentLoaded', () => {
   const statTotalSacos = document.getElementById('stat-total-sacos');
   const statTotalKg = document.getElementById('stat-total-kg');
   const statEstoqueBaixo = document.getElementById('stat-estoque-baixo');
+  const containerRacoes = document.querySelector('.container-racoes');
 
-  // Elementos do Modal Customizado
+  // Botão abrir adicionar
+  const btnAdicionarRacao = document.getElementById('btn-adicionar-racao');
+
+  // Elementos do Modal Excluir
   const modalExcluir = document.getElementById('modal-excluir');
-  const modalContent = modalExcluir ? modalExcluir.querySelector('.transform') : null;
+  const modalContentExcluir = modalExcluir ? modalExcluir.querySelector('.transform') : null;
   const btnCancelarModal = document.getElementById('btn-cancelar-modal');
   const btnConfirmarModal = document.getElementById('btn-confirmar-modal');
 
-  // Elemento do Toast de Notificação
+  // Elementos do Modal Editar
+  const modalEditar = document.getElementById('modal-editar');
+  const modalContentEditar = modalEditar ? modalEditar.querySelector('.transform') : null;
+  const btnFecharModalEditar = document.getElementById('btn-fechar-modal-editar');
+  const btnCancelarEditar = document.getElementById('btn-cancelar-editar');
+  const formEditar = document.getElementById('form-editar-racao');
+
+  // Elementos do Modal Adicionar
+  const modalAdicionar = document.getElementById('modal-adicionar');
+  const modalContentAdicionar = modalAdicionar ? modalAdicionar.querySelector('.transform') : null;
+  const btnFecharModalAdicionar = document.getElementById('btn-fechar-modal-adicionar');
+  const btnCancelarAdicionar = document.getElementById('btn-cancelar-adicionar');
+  const formAdicionar = document.getElementById('form-adicionar-racao');
+
+  // Toast
   const toastSucesso = document.getElementById('toast-sucesso');
   
   let cardParaExcluir = null;
+  let cardParaEditar = null;
   let toastTimeout = null;
 
-  // Função para exibir a mensagem Toast de sucesso
-  function mostrarToast() {
+  function mostrarToast(mensagem = "Operação realizada com sucesso!") {
     if (!toastSucesso) return;
+    const spanText = toastSucesso.querySelector('span');
+    if (spanText) spanText.textContent = mensagem;
 
-    // Se já houver um temporizador rodando, limpa antes de reiniciar
     if (toastTimeout) clearTimeout(toastTimeout);
 
-    // Exibe o toast animando a entrada
     toastSucesso.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
     toastSucesso.classList.add('opacity-100', 'translate-y-0');
 
-    // Esconde o toast após 3 segundos
     toastTimeout = setTimeout(() => {
       toastSucesso.classList.remove('opacity-100', 'translate-y-0');
       toastSucesso.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
     }, 3000);
   }
+
+  const statTiposCadastrados = document.getElementById('stat-tipos-cadastrados');
+  const statTotalMarcas = document.getElementById('stat-total-marcas');
 
   function atualizarEstatisticasGlobais() {
     const cardsRacaoAtuais = document.querySelectorAll('.container-racoes > div');
@@ -43,9 +63,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let totalKg = 0;
     let totalEstoqueBaixo = 0;
 
+    // Set para armazenar e contar marcas únicas
+    const marcasUnicas = new Set();
+
     cardsRacaoAtuais.forEach(card => {
       const textQuantidade = card.querySelector('span.px-3');
       const qtd = parseInt(textQuantidade.textContent) || 0;
+
+      // Captura a marca do card para contar marcas diferentes
+      const marcaNome = card.querySelector('h3')?.textContent.trim().toLowerCase();
+      if (marcaNome) {
+        marcasUnicas.add(marcaNome);
+      }
 
       const spansNegrito = card.querySelectorAll('span.font-bold');
       let pesoUnitario = 0;
@@ -64,26 +93,149 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    const totalTipos = cardsRacaoAtuais.length;
+
     if (statTotalSacos) statTotalSacos.textContent = totalSacos;
     if (statTotalKg) statTotalKg.innerHTML = `${totalKg} <span class="text-sm font-normal text-[#6B7280]">kg</span>`;
     if (statEstoqueBaixo) statEstoqueBaixo.textContent = totalEstoqueBaixo;
+    
+    // Atualiza os textos dinâmicos de Tipos e Marcas
+    if (statTiposCadastrados) {
+      statTiposCadastrados.textContent = `${totalTipos} ${totalTipos === 1 ? 'tipo cadastrado' : 'tipos cadastrados'}`;
+    }
+    if (statTotalMarcas) {
+      statTotalMarcas.textContent = marcasUnicas.size;
+    }
   }
 
-  function abrirModal(card) {
-    cardParaExcluir = card;
-    if (modalExcluir && modalContent) {
-      modalExcluir.classList.remove('hidden');
+  // CONTROLE MODAL ADICIONAR
+  function abrirModalAdicionar() {
+    if (formAdicionar) formAdicionar.reset();
+    if (modalAdicionar && modalContentAdicionar) {
+      modalAdicionar.classList.remove('hidden');
       setTimeout(() => {
-        modalExcluir.classList.remove('opacity-0');
-        modalContent.classList.remove('scale-95');
+        modalAdicionar.classList.remove('opacity-0');
+        modalContentAdicionar.classList.remove('scale-95');
       }, 10);
     }
   }
 
-  function fecharModal() {
-    if (modalExcluir && modalContent) {
+  function fecharModalAdicionar() {
+    if (modalAdicionar && modalContentAdicionar) {
+      modalAdicionar.classList.add('opacity-0');
+      modalContentAdicionar.classList.add('scale-95');
+      setTimeout(() => {
+        modalAdicionar.classList.add('hidden');
+      }, 200);
+    }
+  }
+
+  if (btnAdicionarRacao) btnAdicionarRacao.onclick = (e) => { e.preventDefault(); abrirModalAdicionar(); };
+  if (btnFecharModalAdicionar) btnFecharModalAdicionar.onclick = (e) => { e.preventDefault(); fecharModalAdicionar(); };
+  if (btnCancelarAdicionar) btnCancelarAdicionar.onclick = (e) => { e.preventDefault(); fecharModalAdicionar(); };
+
+  if (formAdicionar) {
+    formAdicionar.onsubmit = (e) => {
+      e.preventDefault();
+
+      const marca = document.getElementById('add-marca').value;
+      const tipo = document.getElementById('add-tipo').value;
+      const peso = parseFloat(document.getElementById('add-peso').value) || 0;
+      const qtd = parseInt(document.getElementById('add-qtd').value) || 0;
+      const dataRaw = document.getElementById('add-data').value;
+
+      let dataFmt = '20/06/2025';
+      if (dataRaw) {
+        const [ano, mes, dia] = dataRaw.split('-');
+        dataFmt = `${dia}/${mes}/${ano}`;
+      }
+
+      // Cria a div do novo card
+      const novoCard = document.createElement('div');
+      novoCard.className = 'bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between group';
+      
+      novoCard.innerHTML = `
+        <div>
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-verdeokbg flex items-center justify-center text-verdeok">
+                <i class="ri-goblet-line text-lg"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-sm text-[#111827]">${marca}</h3>
+                <p class="text-[11px] text-[#6B7280]">${tipo}</p>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold"></span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-y-3 gap-x-4 border-b border-[#FAFAF9] pb-4 mb-4 text-xs">
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Peso do saco</span>
+              <span class="font-bold text-[#111827]">${peso} kg</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Compra</span>
+              <span class="font-bold text-[#111827]">${dataFmt}</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Total em estoque</span>
+              <span class="font-bold text-[#111827]">${qtd * peso} kg</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-[#6B7280] block">Data compra</span>
+              <span class="font-bold text-[#111827]">${dataFmt}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs mt-4 pt-3 border-t border-[#FAFAF9]">
+          <div class="flex items-center gap-2">
+            <span class="text-[#6B7280]">Unidades:</span>
+            <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
+              <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
+              <span class="px-3 font-bold text-[#111827]">${qtd}</span>
+              <button class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">+</button>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-1 bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <button class="btn-editar w-7 h-7 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 transition-colors" title="Editar ração">
+              <i class="ri-edit-line text-sm"></i>
+            </button>
+            <button class="btn-excluir w-7 h-7 flex items-center justify-center hover:bg-red-50 hover:text-red-500 rounded text-gray-400 transition-colors" title="Excluir ração">
+              <i class="ri-delete-bin-line text-sm"></i>
+            </button>
+          </div>
+        </div>
+      `;
+
+      if (containerRacoes) containerRacoes.appendChild(novoCard);
+
+      inicializarCard(novoCard);
+      atualizarBadgeStatus(novoCard, qtd);
+      atualizarEstatisticasGlobais();
+      fecharModalAdicionar();
+      mostrarToast("Ração adicionada ao estoque!");
+    };
+  }
+
+  // CONTROLE DO MODAL DE EXCLUSÃO
+  function abrirModalExcluir(card) {
+    cardParaExcluir = card;
+    if (modalExcluir && modalContentExcluir) {
+      modalExcluir.classList.remove('hidden');
+      setTimeout(() => {
+        modalExcluir.classList.remove('opacity-0');
+        modalContentExcluir.classList.remove('scale-95');
+      }, 10);
+    }
+  }
+
+  function fecharModalExcluir() {
+    if (modalExcluir && modalContentExcluir) {
       modalExcluir.classList.add('opacity-0');
-      modalContent.classList.add('scale-95');
+      modalContentExcluir.classList.add('scale-95');
       setTimeout(() => {
         modalExcluir.classList.add('hidden');
         cardParaExcluir = null; 
@@ -91,41 +243,133 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (btnCancelarModal) {
-    btnCancelarModal.onclick = (e) => {
-      e.preventDefault();
-      fecharModal();
-    };
-  }
+  if (btnCancelarModal) btnCancelarModal.onclick = (e) => { e.preventDefault(); fecharModalExcluir(); };
 
   if (btnConfirmarModal) {
     btnConfirmarModal.onclick = (e) => {
       e.preventDefault();
       if (cardParaExcluir) {
         const cardAlvo = cardParaExcluir;
-        
         cardAlvo.style.transition = 'all 0.3s ease';
         cardAlvo.style.opacity = '0';
         cardAlvo.style.transform = 'scale(0.9)';
-        
-        fecharModal();
+        fecharModalExcluir();
 
         setTimeout(() => {
           cardAlvo.remove(); 
           atualizarEstatisticasGlobais();
-          mostrarToast(); // <--- Notificação ativada no momento exato da remoção!
+          mostrarToast("Ração removida do estoque.");
         }, 300);
       }
     };
   }
 
-  if (modalExcluir) {
-    modalExcluir.onclick = (e) => {
-      if (e.target === modalExcluir) {
-        fecharModal();
+  // CONTROLE DO MODAL DE EDIÇÃO
+  function abrirModalEditar(card) {
+    cardParaEditar = card;
+
+    const marca = card.querySelector('h3')?.textContent.trim() || '';
+    const tipo = card.querySelector('p')?.textContent.trim() || '';
+    const textQuantidade = card.querySelector('span.px-3')?.textContent.trim() || '0';
+
+    let pesoVal = '';
+    let dataVal = '';
+
+    const divsGrid = card.querySelectorAll('.grid > div');
+    divsGrid.forEach(div => {
+      const label = div.querySelector('span:not(.font-bold)')?.textContent.toLowerCase() || '';
+      const valor = div.querySelector('span.font-bold')?.textContent.trim() || '';
+
+      if (label.includes('peso do saco')) {
+        pesoVal = valor.replace('kg', '').trim();
+      }
+      if (label.includes('data compra') || label.includes('compra')) {
+        const partes = valor.split('/');
+        if (partes.length === 3) {
+          dataVal = `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+        }
+      }
+    });
+
+    if (document.getElementById('edit-marca')) document.getElementById('edit-marca').value = marca;
+    if (document.getElementById('edit-tipo')) document.getElementById('edit-tipo').value = tipo;
+    if (document.getElementById('edit-peso')) document.getElementById('edit-peso').value = pesoVal;
+    if (document.getElementById('edit-qtd')) document.getElementById('edit-qtd').value = textQuantidade;
+    if (document.getElementById('edit-data')) document.getElementById('edit-data').value = dataVal;
+    if (document.getElementById('edit-obs')) document.getElementById('edit-obs').value = '';
+
+    if (modalEditar && modalContentEditar) {
+      modalEditar.classList.remove('hidden');
+      setTimeout(() => {
+        modalEditar.classList.remove('opacity-0');
+        modalContentEditar.classList.remove('scale-95');
+      }, 10);
+    }
+  }
+
+  function fecharModalEditar() {
+    if (modalEditar && modalContentEditar) {
+      modalEditar.classList.add('opacity-0');
+      modalContentEditar.classList.add('scale-95');
+      setTimeout(() => {
+        modalEditar.classList.add('hidden');
+        cardParaEditar = null;
+      }, 200);
+    }
+  }
+
+  if (btnFecharModalEditar) btnFecharModalEditar.onclick = (e) => { e.preventDefault(); fecharModalEditar(); };
+  if (btnCancelarEditar) btnCancelarEditar.onclick = (e) => { e.preventDefault(); fecharModalEditar(); };
+
+  if (formEditar) {
+    formEditar.onsubmit = (e) => {
+      e.preventDefault();
+
+      if (cardParaEditar) {
+        const novaMarca = document.getElementById('edit-marca').value;
+        const novoTipo = document.getElementById('edit-tipo').value;
+        const novoPeso = parseFloat(document.getElementById('edit-peso').value) || 0;
+        const novaQtd = parseInt(document.getElementById('edit-qtd').value) || 0;
+        const novaDataRaw = document.getElementById('edit-data').value;
+
+        let novaDataFmt = '20/06/2025';
+        if (novaDataRaw) {
+          const [ano, mes, dia] = novaDataRaw.split('-');
+          novaDataFmt = `${dia}/${mes}/${ano}`;
+        }
+
+        const titleEl = cardParaEditar.querySelector('h3');
+        const descEl = cardParaEditar.querySelector('p');
+        const qtdEl = cardParaEditar.querySelector('span.px-3');
+
+        if (titleEl) titleEl.textContent = novaMarca;
+        if (descEl) descEl.textContent = novoTipo;
+        if (qtdEl) qtdEl.textContent = novaQtd;
+
+        const divsGrid = cardParaEditar.querySelectorAll('.grid > div');
+        divsGrid.forEach(div => {
+          const label = div.querySelector('span:not(.font-bold)')?.textContent.toLowerCase() || '';
+          const valorEl = div.querySelector('span.font-bold');
+
+          if (valorEl) {
+            if (label.includes('peso do saco')) valorEl.textContent = `${novoPeso} kg`;
+            if (label.includes('total em estoque')) valorEl.textContent = `${novaQtd * novoPeso} kg`;
+            if (label.includes('compra')) valorEl.textContent = novaDataFmt;
+          }
+        });
+
+        atualizarBadgeStatus(cardParaEditar, novaQtd);
+        atualizarEstatisticasGlobais();
+        fecharModalEditar();
+        mostrarToast("Ração atualizada com sucesso!");
       }
     };
   }
+
+  // Fechar modais ao clicar no fundo escuro
+  if (modalExcluir) modalExcluir.onclick = (e) => { if (e.target === modalExcluir) fecharModalExcluir(); };
+  if (modalEditar) modalEditar.onclick = (e) => { if (e.target === modalEditar) fecharModalEditar(); };
+  if (modalAdicionar) modalAdicionar.onclick = (e) => { if (e.target === modalAdicionar) fecharModalAdicionar(); };
 
   function inicializarCard(card) {
     const btnMenos = card.querySelector('.flex.items-center.bg-\\[\\#FAFAF9\\] button:nth-child(1)');
@@ -185,14 +429,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnEditar) {
       btnEditar.onclick = (e) => {
         e.preventDefault();
-        alert('Funcionalidade de editar será conectada à API em breve!');
+        abrirModalEditar(card);
       };
     }
 
     if (btnExcluir) {
       btnExcluir.onclick = (e) => {
         e.preventDefault();
-        abrirModal(card);
+        abrirModalExcluir(card);
       };
     }
   }

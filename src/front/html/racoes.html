@@ -79,9 +79,9 @@
         <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Rações</h1>
         <p class="text-xs text-[#6B7280] mt-1">Controle de estoque de ração</p>
       </div>
-      <button class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
-        <i class="ri-add-line text-base"></i> Adicionar Ração
-      </button>
+     <button id="btn-adicionar-racao" class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
+  <i class="ri-add-line text-base"></i> Adicionar Ração
+</button>
     </header>
 
     <!-- CARDS DE ESTATISTICA -->
@@ -90,8 +90,8 @@
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Total Sacos</div>
-          <div id="stat-total-sacos" class="text-2xl font-extrabold text-[#111827] mt-0.5">6</div>
-          <div class="text-[10px] text-[#6B7280] mt-0.5">3 tipos cadastrados</div>
+          <div id="stat-total-sacos" class="text-2xl font-extrabold text-[#111827] mt-0.5">0</div>
+          <div id="stat-tipos-cadastrados" class="text-[10px] text-[#6B7280] mt-0.5">0 tipos cadastrados</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
           <i class="ri-archive-line text-lg"></i>
@@ -101,7 +101,7 @@
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Total em KG</div>
-          <div id="stat-total-kg" class="text-2xl font-extrabold text-[#111827] mt-0.5">77 <span class="text-sm font-normal text-[#6B7280]">kg</span></div>
+          <div id="stat-total-kg" class="text-2xl font-extrabold text-[#111827] mt-0.5">0 <span class="text-sm font-normal text-[#6B7280]">kg</span></div>
           <div class="text-[10px] text-[#6B7280] mt-0.5">Considerando todos os sacos</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-verdeokbg flex items-center justify-center text-verdeok">
@@ -112,7 +112,7 @@
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Estoque Baixo</div>
-          <div id="stat-estoque-baixo" class="text-2xl font-extrabold text-[#B45309] mt-0.5">1</div>
+          <div id="stat-estoque-baixo" class="text-2xl font-extrabold text-[#B45309] mt-0.5">0</div>
           <div class="text-[10px] text-[#6B7280] mt-0.5">Sacos com 3 ou menos unidades</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-[#B45309]">
@@ -123,7 +123,7 @@
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Marcas</div>
-          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">3</div>
+          <div id="stat-total-marcas" class="text-2xl font-extrabold text-[#111827] mt-0.5">0</div>
           <div class="text-[10px] text-[#6B7280] mt-0.5">Marcas diferentes</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
@@ -358,5 +358,121 @@
   </div>
   <!-- Script de Rações -->
   <script src="/src/front/js/racoes.js"></script>
+  <!-- MODAL DE EDIÇÃO DE RAÇÃO (Estilo Fiel ao Protótipo) -->
+  <div id="modal-editar" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-7 max-w-[440px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative">
+      
+      <!-- Botão Fechar (X) -->
+      <button id="btn-fechar-modal-editar" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors">
+        <i class="ri-close-line text-lg"></i>
+      </button>
+
+      <!-- Título em Serif com a cor exata do projeto -->
+      <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Editar Ração</h3>
+
+      <!-- Formulário -->
+      <form id="form-editar-racao" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Marca *</label>
+          <input type="text" id="edit-marca" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Tipo / Fase *</label>
+          <input type="text" id="edit-tipo" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Peso do saco (kg) *</label>
+            <input type="number" id="edit-peso" step="0.1" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Quantidade *</label>
+            <input type="number" id="edit-qtd" min="0" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data da Compra</label>
+          <input type="date" id="edit-data" class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Observações</label>
+          <textarea id="edit-obs" rows="3" placeholder="Ex: Ração para os filhotes..." class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm resize-none placeholder:text-[#1C1105]/30"></textarea>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex items-center gap-3 pt-3">
+          <button type="button" id="btn-cancelar-editar" class="flex-1 bg-[#FAF8F5] border border-[#EFECE6] hover:bg-white text-[#1C1105] font-bold text-xs py-3.5 rounded-2xl transition-all shadow-sm">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3.5 rounded-2xl transition-all shadow-sm">
+            Salvar
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+  <!-- MODAL DE ADICIONAR RAÇÃO -->
+  <div id="modal-adicionar" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-7 max-w-[440px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative">
+      
+      <!-- Botão Fechar (X) -->
+      <button id="btn-fechar-modal-adicionar" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors">
+        <i class="ri-close-line text-lg"></i>
+      </button>
+
+      <!-- Título -->
+      <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Adicionar Ração</h3>
+
+      <!-- Formulário -->
+      <form id="form-adicionar-racao" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Marca *</label>
+          <input type="text" id="add-marca" placeholder="Ex: Royal Canin" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm placeholder:text-[#1C1105]/30">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Tipo / Fase *</label>
+          <input type="text" id="add-tipo" placeholder="Ex: Adulto - Porte Grande" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm placeholder:text-[#1C1105]/30">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Peso do saco (kg) *</label>
+            <input type="number" id="add-peso" step="0.1" placeholder="15" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm placeholder:text-[#1C1105]/30">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Quantidade *</label>
+            <input type="number" id="add-qtd" min="0" placeholder="3" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm placeholder:text-[#1C1105]/30">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data da Compra</label>
+          <input type="date" id="add-data" class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Observações</label>
+          <textarea id="add-obs" rows="3" placeholder="Ex: Ração para os filhotes..." class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm resize-none placeholder:text-[#1C1105]/30"></textarea>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex items-center gap-3 pt-3">
+          <button type="button" id="btn-cancelar-adicionar" class="flex-1 bg-[#FAF8F5] border border-[#EFECE6] hover:bg-white text-[#1C1105] font-bold text-xs py-3.5 rounded-2xl transition-all shadow-sm">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3.5 rounded-2xl transition-all shadow-sm">
+            Adicionar
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
 </body>
 </html>
