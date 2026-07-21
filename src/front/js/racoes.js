@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
   let cardParaExcluir = null;
 
-  // Função principal para recalcular os cards de estatísticas superiores
   function atualizarEstatisticasGlobais() {
     const cardsRacaoAtuais = document.querySelectorAll('.container-racoes > div');
     
@@ -48,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (statEstoqueBaixo) statEstoqueBaixo.textContent = totalEstoqueBaixo;
   }
 
-  // Funções de controle do Modal
   function abrirModal(card) {
     cardParaExcluir = card;
     if (modalExcluir && modalContent) {
@@ -66,7 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
       modalContent.classList.add('scale-95');
       setTimeout(() => {
         modalExcluir.classList.add('hidden');
-        cardParaExcluir = null;
+        // Limpa a variável global para segurança
+        cardParaExcluir = null; 
       }, 200);
     }
   }
@@ -82,17 +81,22 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmarModal.onclick = (e) => {
       e.preventDefault();
       if (cardParaExcluir) {
-        // Transição suave de fade-out clássica
-        cardParaExcluir.style.transition = 'all 0.2s ease';
-        cardParaExcluir.style.opacity = '0';
-        cardParaExcluir.style.transform = 'scale(0.95)';
+        // A SOLUÇÃO: Salva a referência na memória antes que o fecharModal a destrua!
+        const cardAlvo = cardParaExcluir;
         
+        // Efeito de saída suave
+        cardAlvo.style.transition = 'all 0.3s ease';
+        cardAlvo.style.opacity = '0';
+        cardAlvo.style.transform = 'scale(0.9)';
+        
+        // Fecha a janela de confirmação
         fecharModal();
 
+        // Só DEPOIS remove da tela definitivamente usando a referência salva
         setTimeout(() => {
-          cardParaExcluir.remove();
-          atualizarEstatisticasGlobais(); // O Flexbox do CSS vai reorganizar o alinhamento na hora!
-        }, 200);
+          cardAlvo.remove(); // Agora sim o elemento desaparece do HTML!
+          atualizarEstatisticasGlobais();
+        }, 300);
       }
     };
   }
@@ -163,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnEditar) {
       btnEditar.onclick = (e) => {
         e.preventDefault();
-        alert('Funcionalidade de abrir o formulário de edição será conectada à API em breve!');
+        alert('Funcionalidade de editar será conectada à API em breve!');
       };
     }
 
