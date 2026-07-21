@@ -5,7 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const statTotalSacos = document.getElementById('stat-total-sacos');
   const statTotalKg = document.getElementById('stat-total-kg');
   const statEstoqueBaixo = document.getElementById('stat-estoque-baixo');
+  const statTiposCadastrados = document.getElementById('stat-tipos-cadastrados');
+  const statTotalMarcas = document.getElementById('stat-total-marcas');
   const containerRacoes = document.querySelector('.container-racoes');
+
+  // Barra de Busca
+  const inputBusca = document.querySelector('input[placeholder*="Buscar por marca"]');
 
   // Botão abrir adicionar
   const btnAdicionarRacao = document.getElementById('btn-adicionar-racao');
@@ -53,24 +58,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3000);
   }
 
-  const statTiposCadastrados = document.getElementById('stat-tipos-cadastrados');
-  const statTotalMarcas = document.getElementById('stat-total-marcas');
-
   function atualizarEstatisticasGlobais() {
     const cardsRacaoAtuais = document.querySelectorAll('.container-racoes > div');
     
     let totalSacos = 0;
     let totalKg = 0;
     let totalEstoqueBaixo = 0;
-
-    // Set para armazenar e contar marcas únicas
     const marcasUnicas = new Set();
 
     cardsRacaoAtuais.forEach(card => {
       const textQuantidade = card.querySelector('span.px-3');
       const qtd = parseInt(textQuantidade.textContent) || 0;
 
-      // Captura a marca do card para contar marcas diferentes
       const marcaNome = card.querySelector('h3')?.textContent.trim().toLowerCase();
       if (marcaNome) {
         marcasUnicas.add(marcaNome);
@@ -99,13 +98,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (statTotalKg) statTotalKg.innerHTML = `${totalKg} <span class="text-sm font-normal text-[#6B7280]">kg</span>`;
     if (statEstoqueBaixo) statEstoqueBaixo.textContent = totalEstoqueBaixo;
     
-    // Atualiza os textos dinâmicos de Tipos e Marcas
     if (statTiposCadastrados) {
       statTiposCadastrados.textContent = `${totalTipos} ${totalTipos === 1 ? 'tipo cadastrado' : 'tipos cadastrados'}`;
     }
     if (statTotalMarcas) {
       statTotalMarcas.textContent = marcasUnicas.size;
     }
+  }
+
+  // FUNCIONALIDADE DA BARRA DE BUSCA
+  if (inputBusca) {
+    inputBusca.addEventListener('input', (e) => {
+      const termoBusca = e.target.value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.container-racoes > div');
+
+      cards.forEach(card => {
+        const marca = card.querySelector('h3')?.textContent.toLowerCase() || '';
+        const tipo = card.querySelector('p')?.textContent.toLowerCase() || '';
+
+        // Se o termo pesquisado bater com a marca ou com o tipo/fase
+        if (marca.includes(termoBusca) || tipo.includes(termoBusca)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
   }
 
   // CONTROLE MODAL ADICIONAR
@@ -150,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dataFmt = `${dia}/${mes}/${ano}`;
       }
 
-      // Cria a div do novo card
       const novoCard = document.createElement('div');
       novoCard.className = 'bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between group';
       
