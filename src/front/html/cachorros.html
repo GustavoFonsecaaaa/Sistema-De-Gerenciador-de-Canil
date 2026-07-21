@@ -76,9 +76,9 @@
         <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Cachorros</h1>
         <p class="text-xs text-[#6B7280] mt-1">8 cães cadastrados no canil</p>
       </div>
-      <button class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
-        <i class="ri-add-line text-base"></i> Novo Cachorro
-      </button>
+     <button id="btn-novo-cachorro" class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
+  <i class="ri-add-line text-base"></i> Novo Cachorro
+</button>
     </header>
 
     <!-- BUSCA E FILTROS -->
@@ -178,6 +178,72 @@
       </div>
     </div>
   </main>
+<!-- MODAL DE ADICIONAR CACHORRO -->
+  <div id="modal-adicionar-cachorro" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-7 max-w-[480px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative max-h-[90vh] overflow-y-auto">
+      
+      <!-- Botão Fechar (X) -->
+      <button id="btn-fechar-modal-cadastrar" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors">
+        <i class="ri-close-line text-lg"></i>
+      </button>
 
+      <!-- Título -->
+      <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Novo Cachorro</h3>
+
+      <!-- Formulário -->
+      <form id="form-adicionar-cachorro" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome do Cão *</label>
+          <input type="text" id="add-nome-cao" placeholder="Ex: Thor" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm placeholder:text-[#1C1105]/30">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Raça *</label>
+          <input type="text" id="add-raca-cao" placeholder="Ex: Golden Retriever" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm placeholder:text-[#1C1105]/30">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Sexo *</label>
+            <select id="add-sexo-cao" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+              <option value="Macho">Macho</option>
+              <option value="Fêmea">Fêmea</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data de Nascimento *</label>
+            <input type="date" id="add-nascimento-cao" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Foto do Cão</label>
+          <input type="file" id="add-foto-file-cao" accept="image/*" class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-2.5 px-3 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-laranja file:text-white hover:file:bg-opacity-90 cursor-pointer">
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex items-center gap-3 pt-3">
+          <button type="button" id="btn-cancelar-cadastrar" class="flex-1 bg-[#FAF8F5] border border-[#EFECE6] hover:bg-white text-[#1C1105] font-bold text-xs py-3.5 rounded-2xl transition-all shadow-sm">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3.5 rounded-2xl transition-all shadow-sm">
+            Cadastrar
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- TOAST DE NOTIFICAÇÃO -->
+  <div id="toast-sucesso-cao" class="fixed top-6 right-8 z-50 flex items-center gap-2.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
+    <div class="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs">
+      <i class="ri-check-line"></i>
+    </div>
+    <span class="text-xs font-semibold">Cão cadastrado com sucesso!</span>
+  </div>
+
+  <!-- Script de Cachorros -->
+  <script src="/src/front/js/cachorros.js"></script>
 </body>
 </html>
