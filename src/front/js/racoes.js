@@ -11,8 +11,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalContent = modalExcluir ? modalExcluir.querySelector('.transform') : null;
   const btnCancelarModal = document.getElementById('btn-cancelar-modal');
   const btnConfirmarModal = document.getElementById('btn-confirmar-modal');
+
+  // Elemento do Toast de Notificação
+  const toastSucesso = document.getElementById('toast-sucesso');
   
   let cardParaExcluir = null;
+  let toastTimeout = null;
+
+  // Função para exibir a mensagem Toast de sucesso
+  function mostrarToast() {
+    if (!toastSucesso) return;
+
+    // Se já houver um temporizador rodando, limpa antes de reiniciar
+    if (toastTimeout) clearTimeout(toastTimeout);
+
+    // Exibe o toast animando a entrada
+    toastSucesso.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+    toastSucesso.classList.add('opacity-100', 'translate-y-0');
+
+    // Esconde o toast após 3 segundos
+    toastTimeout = setTimeout(() => {
+      toastSucesso.classList.remove('opacity-100', 'translate-y-0');
+      toastSucesso.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+    }, 3000);
+  }
 
   function atualizarEstatisticasGlobais() {
     const cardsRacaoAtuais = document.querySelectorAll('.container-racoes > div');
@@ -64,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
       modalContent.classList.add('scale-95');
       setTimeout(() => {
         modalExcluir.classList.add('hidden');
-        // Limpa a variável global para segurança
         cardParaExcluir = null; 
       }, 200);
     }
@@ -81,21 +102,18 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmarModal.onclick = (e) => {
       e.preventDefault();
       if (cardParaExcluir) {
-        // A SOLUÇÃO: Salva a referência na memória antes que o fecharModal a destrua!
         const cardAlvo = cardParaExcluir;
         
-        // Efeito de saída suave
         cardAlvo.style.transition = 'all 0.3s ease';
         cardAlvo.style.opacity = '0';
         cardAlvo.style.transform = 'scale(0.9)';
         
-        // Fecha a janela de confirmação
         fecharModal();
 
-        // Só DEPOIS remove da tela definitivamente usando a referência salva
         setTimeout(() => {
-          cardAlvo.remove(); // Agora sim o elemento desaparece do HTML!
+          cardAlvo.remove(); 
           atualizarEstatisticasGlobais();
+          mostrarToast(); // <--- Notificação ativada no momento exato da remoção!
         }, 300);
       }
     };
