@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnVoltarLista = document.getElementById('btn-voltar-lista');
   const btnVoltarDetalhes = document.getElementById('btn-voltar-detalhes');
   const btnCancelarEditarCao = document.getElementById('btn-cancelar-editar-cao');
+  
+  // Elemento do botão de edição na view de detalhes
   const btnEditarCabecalho = document.querySelector('#view-detalhes-cao button[title="Editar cão"]');
 
   // Elementos da Tela de Detalhes
@@ -65,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let cardAtualEmExibicao = null;
 
+  // Mostra notificação toast
   function mostrarToast(msg = "Operação realizada com sucesso!") {
     if (!toastSucesso) return;
     const span = toastSucesso.querySelector('span');
@@ -80,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3000);
   }
 
+  // Calcula idade e fase da vida
   function calcularIdadeEFase(dataNascimento) {
     const hoje = new Date();
     const nascAno = dataNascimento.getFullYear();
@@ -103,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return { textoIdade, textoFase, ehFilhote };
   }
 
+  // Atualiza o contador de cães no cabeçalho
   function atualizarContadorHeader() {
     const total = document.querySelectorAll('.container-caes > div').length;
     const headerSub = document.querySelector('header p');
@@ -111,13 +116,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ABRIR TELA DE DETALHES
+  // --- VIEW DETALHES ---
+
+  // Função para abrir a view de detalhes e preencher com dados do card clicado [source: 2]
   function abrirDetalhesDoCao(card) {
     cardAtualEmExibicao = card;
     const fotoSrc = card.querySelector('img')?.src || '';
     const nome = card.querySelector('h3')?.textContent.trim() || 'Cão';
     const raca = card.querySelector('p')?.textContent.trim() || '';
     
+    // Captura badges de sexo e classificação (localizados sobre a imagem) [source: 2]
     const spansBadges = card.querySelectorAll('.relative span');
     let sexo = 'Macho';
     let classificacao = 'Adulto';
@@ -128,10 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (txt === 'Adulto' || txt === 'Filhote') classificacao = txt;
     });
 
+    // Captura idade e nascimento dos spans no rodapé do card [source: 2]
     const spansRodape = card.querySelectorAll('div.flex.justify-between span');
-    const idade = spansRodape[0]?.textContent.trim() || '3a 2m';
-    const nascimento = spansRodape[1]?.textContent.trim() || '11/05/2023';
+    // spansRodape[0] deve ser a idade, spansRodape[1] deve ser o nascimento [source: 2]
+    const idade = spansRodape[0]?.textContent.trim() || 'Desconhecida';
+    const nascimento = spansRodape[1]?.textContent.trim() || '00/00/0000';
 
+    // Preenche Painel Esquerdo na view de detalhes [source: 2]
     if (detalheFoto) detalheFoto.src = fotoSrc;
     if (detalheNome) detalheNome.textContent = nome;
     if (detalheRaca) detalheRaca.textContent = raca;
@@ -139,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (detalheNascimento) detalheNascimento.textContent = nascimento;
     if (detalheClassificacao) detalheClassificacao.textContent = classificacao;
 
+    // Configura a badge de sexo com cor correta [source: 2]
     if (detalheBadgeSexo) {
       detalheBadgeSexo.textContent = sexo;
       detalheBadgeSexo.className = sexo === 'Macho' 
@@ -146,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         : 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FCE7F3] text-[#EC4899]';
     }
 
+    // Preenche Aba de Informações Gerais na view de detalhes [source: 2]
     if (infoNome) infoNome.textContent = nome;
     if (infoRaca) infoRaca.textContent = raca;
     if (infoSexo) infoSexo.textContent = sexo;
@@ -153,8 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (infoIdade) infoIdade.textContent = idade;
     if (infoClassificacao) infoClassificacao.textContent = classificacao;
 
+    // Reseta para a aba vacinas
     ativarAbaVacinas();
 
+    // Mostra view de detalhes [source: 2]
     if (viewLista) viewLista.classList.add('hidden');
     if (viewEditar) viewEditar.classList.add('hidden');
     if (viewDetalhes) viewDetalhes.classList.remove('hidden');
@@ -162,7 +177,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // SELETOR DE SEXO NA EDITAR
+  // --- VIEW EDIÇÃO ---
+
+  // Controla o seletor de sexo na edição [source: 2]
   function selecionarSexoEdit(sexo) {
     sexoSelecionadoEdit = sexo;
     if (sexo === 'Macho') {
@@ -174,13 +191,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Configura cliques nos botões de sexo na edição [source: 2]
   if (btnSexoMacho) btnSexoMacho.onclick = () => selecionarSexoEdit('Macho');
   if (btnSexoFemea) btnSexoFemea.onclick = () => selecionarSexoEdit('Fêmea');
 
-  // ABRIR TELA DE EDIÇÃO
+  // Abre a view de edição preenchida com dados atuais [source: 2]
   function abrirTelaEditarCao() {
     if (!cardAtualEmExibicao) return;
 
+    // Captura dados da view de detalhes, pois ela já está preenchida com os dados corretos do card [source: 2]
     const nome = detalheNome?.textContent || '';
     const raca = detalheRaca?.textContent || '';
     const sexo = detalheBadgeSexo?.textContent || 'Macho';
@@ -188,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const foto = detalheFoto?.src || '';
     const obs = detalheObs?.textContent || '';
 
+    // Preenche o formulário de edição [source: 2]
     if (editSubtitulo) editSubtitulo.textContent = `Atualize as informações de ${nome}`;
     if (editPreviewFoto) editPreviewFoto.src = foto;
     if (editNome) editNome.value = nome;
@@ -197,18 +217,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (editCharCount) editCharCount.textContent = obs.length;
     }
 
-    // Converte a data DD/MM/YYYY para YYYY-MM-DD
+    // Converte a data DD/MM/YYYY para YYYY-MM-DD para o input date [source: 2]
     const partes = nascRaw.split('/');
     if (partes.length === 3) {
       editNascimento.value = `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
       
       const dt = new Date(partes[2], parseInt(partes[1]) - 1, partes[0]);
       const { textoIdade, textoFase } = calcularIdadeEFase(dt);
+      // Mostra prévia da idade calculada na view de edição [source: 2]
       if (editIdadeCalculada) editIdadeCalculada.textContent = `${textoFase} · ${textoIdade}`;
     }
 
     selecionarSexoEdit(sexo);
 
+    // Mostra view de edição [source: 2]
     if (viewDetalhes) viewDetalhes.classList.add('hidden');
     if (viewLista) viewLista.classList.add('hidden');
     if (viewEditar) viewEditar.classList.remove('hidden');
@@ -216,9 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  // Configura clique no botão de editar (ícone do lápis) na view de detalhes [source: 2]
   if (btnEditarCabecalho) btnEditarCabecalho.onclick = (e) => { e.preventDefault(); abrirTelaEditarCao(); };
 
-  // PREVIEW DA FOTO AO SELECIONAR NOVO ARQUIVO
+  // Preview da foto ao selecionar arquivo [source: 2]
   if (editFileInput) {
     editFileInput.onchange = (e) => {
       if (e.target.files && e.target.files[0]) {
@@ -231,14 +254,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // ATUALIZA CONTADOR DE CARACTERES
+  // Contador de caracteres para observações na edição [source: 2]
   if (editObs) {
     editObs.oninput = () => {
       if (editCharCount) editCharCount.textContent = editObs.value.length;
     };
   }
 
-  // ATUALIZA IDADE CALCULADA AO MUDAR A DATA NA EDIÇÃO
+  // Recalcula idade ao mudar data de nascimento na edição [source: 2]
   if (editNascimento) {
     editNascimento.onchange = () => {
       if (editNascimento.value) {
@@ -250,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // SUBMIT DO FORMULÁRIO DE EDIÇÃO
+  // SUBMIT DO FORMULÁRIO DE EDIÇÃO (CORRIGIDO PARA ATUALIZAÇÃO PRECISA)
   if (formEditar) {
     formEditar.onsubmit = (e) => {
       e.preventDefault();
@@ -260,49 +283,72 @@ document.addEventListener('DOMContentLoaded', () => {
       const novoNome = editNome.value;
       const novaRaca = editRaca.value;
       const novoSexo = sexoSelecionadoEdit;
-      const novaDataRaw = editNascimento.value;
+      const novaDataRaw = editNascimento.value; // Formato YYYY-MM-DD
       const novaFotoSrc = editPreviewFoto.src;
       const novaObs = editObs.value;
 
+      // Converte data para formato legível (DD/MM/YYYY)
       const [ano, mes, dia] = novaDataRaw.split('-');
       const dt = new Date(ano, mes - 1, dia);
       const dataFmt = `${dia}/${mes}/${ano}`;
       const { textoIdade, textoFase } = calcularIdadeEFase(dt);
 
-      // Atualiza o Card na Listagem
+      // --- ATUALIZAÇÃO PRECISA DO CARD NA LISTAGEM ---
       const cardTitle = cardAtualEmExibicao.querySelector('h3');
       const cardRaca = cardAtualEmExibicao.querySelector('p');
       const cardImg = cardAtualEmExibicao.querySelector('img');
-      const spansBadges = cardAtualEmExibicao.querySelectorAll('.relative span');
-      const spansRodape = cardAtualEmExibicao.querySelectorAll('div.flex.justify-between span');
 
       if (cardTitle) cardTitle.textContent = novoNome;
       if (cardRaca) cardRaca.textContent = novaRaca;
       if (cardImg) cardImg.src = novaFotoSrc;
 
-      if (spansBadges.length >= 2) {
-        spansBadges[0].textContent = novoSexo;
-        spansBadges[0].className = novoSexo === 'Macho' 
-          ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-verdeokbg text-verdeok' 
-          : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100 text-pink-500';
-        
-        spansBadges[1].textContent = textoFase;
+      // Atualização Segura das Badges (Macho/Fêmea e Adulto/Filhote) [source: 1, 20]
+      // Procuramos apenas as badges na div relativa da foto [source: 20]
+      const containerFoto = cardAtualEmExibicao.querySelector('.relative');
+      if (containerFoto) {
+        // Remove as badges antigas para não duplicar, caso haja erro [source: 1]
+        const badgesAntigas = containerFoto.querySelectorAll('.absolute.top-2.left-2 span');
+        badgesAntigas.forEach(b => b.remove());
+
+        // Cria a div container das badges [source: 1]
+        const divBadges = document.createElement('div');
+        divBadges.className = 'absolute top-2 left-2 flex gap-1';
+
+        const bgSexo = novoSexo === 'Macho' ? 'bg-verdeokbg text-verdeok' : 'bg-pink-100 text-pink-500';
+
+        // Cria as duas novas badges [source: 1]
+        divBadges.innerHTML = `
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${bgSexo}">${novoSexo}</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">${textoFase}</span>
+        `;
+        // Insere as novas badges [source: 1]
+        containerFoto.appendChild(divBadges);
       }
 
-      if (spansRodape.length >= 2) {
-        spansRodape[0].innerHTML = `<i class="ri-cake-2-line"></i> ${textoIdade}`;
-        spansRodape[1].innerHTML = `<i class="ri-calendar-line"></i> ${dataFmt}`;
+      // Atualização dos Dados no Rodapé (Idade e Data de Nascimento) [source: 20]
+      const rodape = cardAtualEmExibicao.querySelector('.border-t');
+      if (rodape) {
+        // Procura os spans específicos usando seletores precisos baseados nos ícones [source: 1, 20]
+        const spanIdade = rodape.querySelector('span:first-child'); // Procura o primeiro span (com ícone de bolo)
+        const spanNascimento = rodape.querySelector('span:last-child'); // Procura o último span (com ícone de calendário)
+
+        if (spanIdade) spanIdade.innerHTML = `<i class="ri-cake-2-line"></i> ${textoIdade}`;
+        if (spanNascimento) spanNascimento.innerHTML = `<i class="ri-calendar-line"></i> ${dataFmt}`;
       }
 
+      // Atualiza Observações na Tela de Detalhes
       if (detalheObs) detalheObs.textContent = novaObs || 'Sem observações cadastradas.';
 
-      // Atualiza a Tela de Detalhes
+      // --- FINALIZAÇÃO ---
+      // Atualiza a Tela de Detalhes com os novos dados
       abrirDetalhesDoCao(cardAtualEmExibicao);
       mostrarToast(`Informações de ${novoNome} atualizadas com sucesso!`);
     };
   }
 
-  // BOTÕES CANCELAR / VOLTAR DA EDIÇÃO
+  // --- NAVEGAÇÃO / OUTROS ---
+
+  // Botões de voltar/cancelar da edição para detalhes [source: 2]
   if (btnVoltarDetalhes) {
     btnVoltarDetalhes.onclick = (e) => {
       e.preventDefault();
@@ -319,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // CONTROLE DE ABAS DA TELA DE DETALHES
+  // Controle de Abas da View Detalhes [source: 2]
   function ativarAbaVacinas() {
     if (tabVacinas && tabInformacoes) {
       tabVacinas.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all";
@@ -341,6 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabVacinas) tabVacinas.onclick = (e) => { e.preventDefault(); ativarAbaVacinas(); };
   if (tabInformacoes) tabInformacoes.onclick = (e) => { e.preventDefault(); ativarAbaInformacoes(); };
 
+  // Botão voltar global (para lista) [source: 2]
   if (btnVoltarLista) {
     btnVoltarLista.onclick = (e) => {
       e.preventDefault();
@@ -350,6 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  // Inicializa cliques nos cards existentes [source: 2]
   function inicializarCard(card) {
     card.onclick = () => {
       abrirDetalhesDoCao(card);
@@ -359,7 +407,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const cardsIniciais = document.querySelectorAll('.container-caes > div');
   cardsIniciais.forEach(card => inicializarCard(card));
 
-  // MODAL NOVO CÃO
+  // --- MODAL NOVO CÃO --- [sources: 2, 7]
+
+  // Controle de abertura/fechamento do modal de cadastro [source: 2]
   function abrirModal() {
     if (formAdicionar) formAdicionar.reset();
     if (modalAdicionar && modalContent) {
@@ -386,6 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCancelarModal) btnCancelarModal.onclick = (e) => { e.preventDefault(); fecharModal(); };
   if (modalAdicionar) modalAdicionar.onclick = (e) => { if (e.target === modalAdicionar) fecharModal(); };
 
+  // Submit do formulário de cadastro de novo cão [source: 2]
   if (formAdicionar) {
     formAdicionar.onsubmit = (e) => {
       e.preventDefault();
@@ -408,6 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const novoCard = document.createElement('div');
         novoCard.className = 'bg-white border border-[#EFECE6] hover:border-laranja rounded-xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col justify-between';
 
+        // Estrutura HTML do Card correta [source: 2]
         novoCard.innerHTML = `
           <div class="relative h-44 bg-bege">
             <img src="${fotoUrl}" alt="${nome}" class="w-full h-full object-cover">
@@ -446,6 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         reader.readAsDataURL(fileInput.files[0]);
       } else {
+        // Foto padrão caso não escolha nada
         const fotoPadrao = 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
         criarECadastrarCard(fotoPadrao);
       }
