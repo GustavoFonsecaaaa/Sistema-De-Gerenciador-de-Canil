@@ -65,6 +65,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let cardAtualEmExibicao = null;
 
+  // FUNÇÃO DE SINCRONIZAÇÃO COM O LOCALSTORAGE (Para o Dashboard)
+  function salvarEstadoCaesNoLocalStorage() {
+    const cards = document.querySelectorAll('.container-caes > div');
+    const lista = [];
+
+    cards.forEach(card => {
+      const nome = card.querySelector('h3')?.textContent.trim() || '';
+      const raca = card.querySelector('p')?.textContent.trim() || '';
+      const foto = card.querySelector('img')?.src || '';
+      
+      const spansBadges = card.querySelectorAll('.relative span');
+      let sexo = 'Macho';
+      let fase = 'Adulto';
+
+      spansBadges.forEach(s => {
+        const txt = s.textContent.trim();
+        if (txt === 'Macho' || txt === 'Fêmea') sexo = txt;
+        if (txt === 'Adulto' || txt === 'Filhote') fase = txt;
+      });
+
+      if (nome) {
+        lista.push({ nome, raca, sexo, fase, foto });
+      }
+    });
+
+    localStorage.setItem('canil_cachorros', JSON.stringify(lista));
+  }
+
   function mostrarToast(msg = "Operação realizada com sucesso!") {
     if (!toastSucesso) return;
     const span = toastSucesso.querySelector('span');
@@ -305,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (detalheObs) detalheObs.textContent = novaObs || 'Sem observações cadastradas.';
 
       abrirDetalhesDoCao(cardAtualEmExibicao);
+      salvarEstadoCaesNoLocalStorage();
       mostrarToast(`Informações de ${novoNome} atualizadas com sucesso!`);
     };
   }
@@ -365,6 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const cardsIniciais = document.querySelectorAll('.container-caes > div');
   cardsIniciais.forEach(card => inicializarCard(card));
+  salvarEstadoCaesNoLocalStorage(); // Salva estado inicial dos cards no localStorage
 
   // MODAL NOVO CÃO
   function abrirModal() {
@@ -444,6 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         atualizarContadorHeader();
         fecharModal();
         aplicarFiltrosEBusca();
+        salvarEstadoCaesNoLocalStorage();
         mostrarToast(`Cão ${nome} cadastrado com sucesso!`);
       };
 

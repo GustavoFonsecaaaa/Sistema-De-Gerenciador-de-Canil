@@ -20,8 +20,6 @@
           bege: '#EFECE6',             
           verdeok: '#10B981',
           verdeokbg: '#D1FAE5',
-          vermelho: '#EF4444',
-          vermelhobg: '#FEE2E2',
         },
         fontFamily: {
           serif: ['Playfair Display', 'Georgia', 'serif'],
@@ -41,7 +39,7 @@
 <body class="font-sans bg-creme text-marromescuro flex min-h-screen">
 
   <!-- SIDEBAR -->
-  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between">
+  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between z-40">
     <div class="sidebar-top">
       <div class="font-serif text-xl font-extrabold mb-1 text-white">Canil<span class="text-laranja">Manager</span></div>
       <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
@@ -72,106 +70,148 @@
     </div>
   </aside>
 
-  <!-- CONTEUDO -->
+  <!-- CONTEÚDO PRINCIPAL -->
   <main class="ml-60 flex-1 p-8">
     <header class="mb-6">
       <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Dashboard</h1>
-      <p class="text-xs text-[#6B7280] mt-1">Visão geral do seu canil</p>
+      <p id="dash-data-hoje" class="text-xs text-[#6B7280] mt-1">Visão geral do seu canil</p>
     </header>
 
-    <!-- CARDS DE ESTATISTICA -->
+    <!-- CARDS DE ESTATÍSTICA (KPIs) -->
     <div class="grid grid-cols-4 gap-4 mb-6">
-      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+      <!-- Total de Cães -->
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Total de Cães</div>
-          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">8</div>
+          <div id="kpi-total-caes" class="text-2xl font-extrabold text-[#111827] mt-0.5">0</div>
         </div>
-        <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
+        <div class="w-10 h-10 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
           <i class="ri-heart-pulse-line text-lg"></i>
         </div>
       </div>
 
-      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+      <!-- Machos -->
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Machos</div>
-          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">4</div>
+          <div id="kpi-machos" class="text-2xl font-extrabold text-[#111827] mt-0.5">0</div>
         </div>
-        <div class="w-10 h-10 rounded-full bg-verdeokbg flex items-center justify-center text-verdeok">
-          <i class="ri-genderless-line text-lg font-bold rotate-45"></i>
+        <div class="w-10 h-10 rounded-xl bg-verdeokbg flex items-center justify-center text-verdeok">
+          <i class="ri-mars-line text-lg font-bold"></i>
         </div>
       </div>
 
-      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+      <!-- Fêmeas -->
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Fêmeas</div>
-          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">4</div>
+          <div id="kpi-femeas" class="text-2xl font-extrabold text-[#111827] mt-0.5">0</div>
         </div>
-        <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-500">
-          <i class="ri-women-line text-lg"></i>
+        <div class="w-10 h-10 rounded-xl bg-[#FCE7F3] flex items-center justify-center text-[#EC4899]">
+          <i class="ri-venus-line text-lg font-bold"></i>
         </div>
       </div>
 
-      <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
+      <!-- Filhotes -->
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Filhotes</div>
-          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">0</div>
+          <div id="kpi-filhotes" class="text-2xl font-extrabold text-[#111827] mt-0.5">0</div>
         </div>
-        <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
+        <div class="w-10 h-10 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
           <i class="ri-emotion-happy-line text-lg"></i>
         </div>
       </div>
     </div>
 
-    <!-- PAINEIS DETALHADOS -->
-    <div class="grid grid-cols-2 gap-6">
-      <!-- Últimos Cios -->
-      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm">
-        <div class="flex justify-between items-center mb-4">
+    <!-- PAINÉIS DETALHADOS -->
+    <div class="grid grid-cols-2 gap-6 items-start">
+      
+      <!-- ÚLTIMOS CIOS REGISTRADOS -->
+      <div class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-4">
+        <div class="flex justify-between items-center mb-1">
           <h2 class="font-serif text-lg font-bold text-[#111827]">Últimos Cios Registrados</h2>
           <a href="#" class="text-laranja text-xs font-bold hover:underline">Ver todas as fêmeas</a>
         </div>
-        <div class="flex items-center justify-between p-3 rounded-xl bg-[#FAFAF9] border border-[#F3F3F2]">
-          <div class="flex items-center gap-3.5">
-            <div class="w-9 h-9 rounded-lg bg-[#F5EFEB] flex items-center justify-center text-laranja">
-              <i class="ri-calendar-event-line text-base"></i>
+
+        <div class="space-y-3">
+          <!-- Item 1 -->
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6]">
+            <div class="flex items-center gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
+                <i class="ri-calendar-event-line text-base"></i>
+              </div>
+              <div>
+                <div class="font-bold text-xs text-[#111827]">Nina</div>
+                <div class="text-[11px] text-[#6B7280] mt-0.5">14/09/2025 — 04/10/2025</div>
+              </div>
             </div>
-            <div>
-              <div class="font-bold text-xs text-[#1F2937]">Nina</div>
-              <div class="text-[11px] text-[#6B7280] mt-0.5">14/09/2025 — 04/10/2025</div>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Cruzou</span>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6]">
+            <div class="flex items-center gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
+                <i class="ri-calendar-event-line text-base"></i>
+              </div>
+              <div>
+                <div class="font-bold text-xs text-[#111827]">Luna</div>
+                <div class="text-[11px] text-[#6B7280] mt-0.5">09/05/2025 — 27/05/2025</div>
+              </div>
             </div>
           </div>
-          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FFEDD5] text-[#EA580C]">Cruzou</span>
+
+          <!-- Item 3 -->
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6]">
+            <div class="flex items-center gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
+                <i class="ri-calendar-event-line text-base"></i>
+              </div>
+              <div>
+                <div class="font-bold text-xs text-[#111827]">Kira</div>
+                <div class="text-[11px] text-[#6B7280] mt-0.5">19/04/2025 — 07/05/2025</div>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Cruzou</span>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6]">
+            <div class="flex items-center gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
+                <i class="ri-calendar-event-line text-base"></i>
+              </div>
+              <div>
+                <div class="font-bold text-xs text-[#111827]">Nina</div>
+                <div class="text-[11px] text-[#6B7280] mt-0.5">28/02/2025 — 20/03/2025</div>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Cruzou</span>
+          </div>
         </div>
       </div>
 
-      <!-- Cães Recentes -->
-      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+      <!-- CÃES RECENTES (DINÂMICO) -->
+      <div class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between min-h-[380px]">
         <div>
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="font-serif text-lg font-bold text-[#111827]">Cães Recentes</h2>
-          </div>
-          <div class="flex items-center justify-between p-3 rounded-xl bg-[#FAFAF9] border border-[#F3F3F2] mb-3">
-            <div class="flex items-center gap-3.5">
-              <div class="w-9 h-9 rounded-full bg-bege flex items-center justify-center text-[#6B7280]">
-                <i class="ri-user-heart-line text-base"></i>
-              </div>
-              <div>
-                <div class="font-bold text-xs text-[#1F2937]">Thor</div>
-                <div class="text-[11px] text-[#6B7280] mt-0.5">Golden Retriever</div>
-              </div>
-            </div>
-            <div class="flex gap-1.5">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-verdeokbg text-verdeok">Macho</span>
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Adulto</span>
-            </div>
+          <h2 class="font-serif text-lg font-bold text-[#111827] mb-4">Cães Recentes</h2>
+          
+          <!-- Lista de Cães Recentes -->
+          <div id="container-caes-recentes" class="space-y-3">
+            <!-- Renderizado via JavaScript -->
           </div>
         </div>
-        <a href="cachorros.html" class="block text-center bg-[#FEF3C7] text-[#B45309] font-bold py-2.5 rounded-xl hover:bg-[#FDE68A] transition-colors text-xs">
+
+        <a href="cachorros.html" class="block text-center bg-[#FEF3C7] text-[#B45309] font-bold py-3 rounded-2xl hover:bg-[#FDE68A] transition-colors text-xs shadow-sm mt-4">
           Ver todos os cachorros
         </a>
       </div>
+
     </div>
   </main>
 
+  <!-- Script do Dashboard -->
+  <script src="/src/front/js/dashboard.js"></script>
 </body>
 </html>
