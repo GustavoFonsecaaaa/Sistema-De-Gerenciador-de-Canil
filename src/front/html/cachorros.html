@@ -373,6 +373,97 @@
       </div>
     </div>
 
+    <!-- VIEW 3: TELA DE EDITAR CACHORRO (Centralizada) -->
+    <div id="view-editar-cao" class="p-8 hidden max-w-4xl mx-auto w-full">
+      <!-- Botão Voltar para Detalhes -->
+      <button id="btn-voltar-detalhes" class="flex items-center gap-2 text-xs font-semibold text-[#6B7280] hover:text-[#111827] mb-6 transition-colors">
+        <i class="ri-arrow-left-line text-sm"></i> Voltar para detalhes
+      </button>
+
+      <!-- Cabeçalho da Tela -->
+      <div class="mb-8">
+        <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Editar Cachorro</h1>
+        <p id="edit-subtitulo" class="text-xs text-[#6B7280] mt-1">Atualize as informações do cão</p>
+      </div>
+
+      <!-- Card do Formulário de Edição -->
+      <div class="bg-white border border-[#EFECE6] rounded-3xl p-8 shadow-sm">
+        <form id="form-editar-cao" class="space-y-6">
+          
+          <div class="grid grid-cols-12 gap-8 items-start">
+            
+            <!-- Coluna da Esquerda: Foto -->
+            <div class="col-span-5 space-y-4">
+              <label class="block text-xs font-bold text-[#1C1105]">Foto do Cachorro</label>
+              <div class="h-64 rounded-2xl overflow-hidden bg-bege border border-[#EFECE6]">
+                <img id="edit-preview-foto" src="" alt="Preview" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-[#6B7280] mb-1.5">Alterar Foto (Galeria)</label>
+                <input type="file" id="edit-foto-file" accept="image/*" class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-2 px-3 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja transition-all file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-laranja file:text-white cursor-pointer">
+              </div>
+            </div>
+
+            <!-- Coluna da Direita: Campos do Formulário -->
+            <div class="col-span-7 space-y-4">
+              
+              <!-- Nome e Raça -->
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome <span class="text-red-500">*</span></label>
+                  <input type="text" id="edit-nome" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Raça <span class="text-red-500">*</span></label>
+                  <input type="text" id="edit-raca" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+                </div>
+              </div>
+
+              <!-- Seletor de Sexo (Botões Estilizados) -->
+              <div>
+                <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Sexo <span class="text-red-500">*</span></label>
+                <div class="grid grid-cols-2 gap-3">
+                  <button type="button" id="btn-sexo-macho" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border text-xs font-bold transition-all shadow-sm">
+                    <i class="ri-mars-line text-sm"></i> Macho
+                  </button>
+                  <button type="button" id="btn-sexo-femea" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border text-xs font-bold transition-all shadow-sm">
+                    <i class="ri-venus-line text-sm"></i> Fêmea
+                  </button>
+                </div>
+              </div>
+
+              <!-- Data de Nascimento & Idade Calculada -->
+              <div>
+                <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data de Nascimento <span class="text-red-500">*</span></label>
+                <input type="date" id="edit-nascimento" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+                <p id="edit-idade-calculada" class="text-[11px] text-[#6B7280] mt-1.5 font-medium pl-1"></p>
+              </div>
+
+              <!-- Observações -->
+              <div>
+                <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Observações</label>
+                <textarea id="edit-obs" rows="4" maxlength="500" placeholder="Ex: Muito dócil e brincalhão..." class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm resize-none placeholder:text-[#1C1105]/30"></textarea>
+                <div class="text-right text-[10px] text-[#6B7280] mt-1"><span id="edit-char-count">0</span>/500</div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Botões de Ação na Parte Inferior -->
+          <div class="flex items-center gap-4 pt-4 border-t border-[#FAFAF9]">
+            <button type="submit" class="bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3.5 px-6 rounded-2xl transition-all shadow-sm flex items-center gap-2">
+              <i class="ri-save-line text-sm"></i> Salvar Alterações
+            </button>
+            <button type="button" id="btn-cancelar-editar-cao" class="bg-[#FAF8F5] border border-[#EFECE6] hover:bg-white text-[#1C1105] font-bold text-xs py-3.5 px-6 rounded-2xl transition-all shadow-sm">
+              Cancelar
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
   </div>
 
   <!-- MODAL DE ADICIONAR CACHORRO -->

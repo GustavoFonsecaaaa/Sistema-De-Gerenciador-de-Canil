@@ -4,7 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Elementos das Views Principais
   const viewLista = document.getElementById('view-lista-caes');
   const viewDetalhes = document.getElementById('view-detalhes-cao');
+  const viewEditar = document.getElementById('view-editar-cao');
+
+  // Botões de Navegação entre Views
   const btnVoltarLista = document.getElementById('btn-voltar-lista');
+  const btnVoltarDetalhes = document.getElementById('btn-voltar-detalhes');
+  const btnCancelarEditarCao = document.getElementById('btn-cancelar-editar-cao');
+  const btnEditarCabecalho = document.querySelector('#view-detalhes-cao button[title="Editar cão"]');
 
   // Elementos da Tela de Detalhes
   const detalheFoto = document.getElementById('detalhe-foto');
@@ -14,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const detalheIdade = document.getElementById('detalhe-idade');
   const detalheNascimento = document.getElementById('detalhe-nascimento');
   const detalheClassificacao = document.getElementById('detalhe-classificacao');
+  const detalheObs = document.getElementById('detalhe-obs');
 
   // Elementos da Aba de Informações
   const infoNome = document.getElementById('info-nome');
@@ -23,13 +30,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const infoIdade = document.getElementById('info-idade');
   const infoClassificacao = document.getElementById('info-classificacao');
 
-  // Abas
+  // Form de Edição
+  const formEditar = document.getElementById('form-editar-cao');
+  const editSubtitulo = document.getElementById('edit-subtitulo');
+  const editPreviewFoto = document.getElementById('edit-preview-foto');
+  const editFileInput = document.getElementById('edit-foto-file');
+  const editNome = document.getElementById('edit-nome');
+  const editRaca = document.getElementById('edit-raca');
+  const editNascimento = document.getElementById('edit-nascimento');
+  const editIdadeCalculada = document.getElementById('edit-idade-calculada');
+  const editObs = document.getElementById('edit-obs');
+  const editCharCount = document.getElementById('edit-char-count');
+  
+  // Botões de Sexo na Edição
+  const btnSexoMacho = document.getElementById('btn-sexo-macho');
+  const btnSexoFemea = document.getElementById('btn-sexo-femea');
+  let sexoSelecionadoEdit = 'Macho';
+
+  // Abas de Detalhes
   const tabVacinas = document.getElementById('tab-vacinas');
   const tabInformacoes = document.getElementById('tab-informacoes');
   const conteudoTabVacinas = document.getElementById('conteudo-tab-vacinas');
   const conteudoTabInformacoes = document.getElementById('conteudo-tab-informacoes');
 
-  // Modal & Toast
+  // Modal Novo Cão & Toast
   const btnNovoCachorro = document.getElementById('btn-novo-cachorro');
   const modalAdicionar = document.getElementById('modal-adicionar-cachorro');
   const modalContent = modalAdicionar ? modalAdicionar.querySelector('.transform') : null;
@@ -39,7 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const toastSucesso = document.getElementById('toast-sucesso-cao');
   let toastTimeout = null;
 
-  function mostrarToast(msg = "Cão cadastrado com sucesso!") {
+  let cardAtualEmExibicao = null;
+
+  function mostrarToast(msg = "Operação realizada com sucesso!") {
     if (!toastSucesso) return;
     const span = toastSucesso.querySelector('span');
     if (span) span.textContent = msg;
@@ -87,11 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ABRIR TELA DE DETALHES
   function abrirDetalhesDoCao(card) {
+    cardAtualEmExibicao = card;
     const fotoSrc = card.querySelector('img')?.src || '';
     const nome = card.querySelector('h3')?.textContent.trim() || 'Cão';
     const raca = card.querySelector('p')?.textContent.trim() || '';
     
-    // Captura badges de Sexo e Fase
     const spansBadges = card.querySelectorAll('.relative span');
     let sexo = 'Macho';
     let classificacao = 'Adulto';
@@ -102,12 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (txt === 'Adulto' || txt === 'Filhote') classificacao = txt;
     });
 
-    // Captura os dados no rodape do card
     const spansRodape = card.querySelectorAll('div.flex.justify-between span');
     const idade = spansRodape[0]?.textContent.trim() || '3a 2m';
     const nascimento = spansRodape[1]?.textContent.trim() || '11/05/2023';
 
-    // Preenche Painel Esquerdo
     if (detalheFoto) detalheFoto.src = fotoSrc;
     if (detalheNome) detalheNome.textContent = nome;
     if (detalheRaca) detalheRaca.textContent = raca;
@@ -122,7 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
         : 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FCE7F3] text-[#EC4899]';
     }
 
-    // Preenche Aba de Informações
     if (infoNome) infoNome.textContent = nome;
     if (infoRaca) infoRaca.textContent = raca;
     if (infoSexo) infoSexo.textContent = sexo;
@@ -130,17 +153,173 @@ document.addEventListener('DOMContentLoaded', () => {
     if (infoIdade) infoIdade.textContent = idade;
     if (infoClassificacao) infoClassificacao.textContent = classificacao;
 
-    // Reseta para a aba vacinas
     ativarAbaVacinas();
 
-    // Troca de Views de forma segura
     if (viewLista) viewLista.classList.add('hidden');
+    if (viewEditar) viewEditar.classList.add('hidden');
     if (viewDetalhes) viewDetalhes.classList.remove('hidden');
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // CONTROLE DE ABAS
+  // SELETOR DE SEXO NA EDITAR
+  function selecionarSexoEdit(sexo) {
+    sexoSelecionadoEdit = sexo;
+    if (sexo === 'Macho') {
+      btnSexoMacho.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border text-xs font-bold transition-all shadow-sm bg-[#D1FAE5] border-[#10B981] text-[#065F46]";
+      btnSexoFemea.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] text-gray-500 hover:bg-white text-xs font-medium transition-all shadow-sm";
+    } else {
+      btnSexoFemea.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border text-xs font-bold transition-all shadow-sm bg-[#FCE7F3] border-[#EC4899] text-[#9D174D]";
+      btnSexoMacho.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] text-gray-500 hover:bg-white text-xs font-medium transition-all shadow-sm";
+    }
+  }
+
+  if (btnSexoMacho) btnSexoMacho.onclick = () => selecionarSexoEdit('Macho');
+  if (btnSexoFemea) btnSexoFemea.onclick = () => selecionarSexoEdit('Fêmea');
+
+  // ABRIR TELA DE EDIÇÃO
+  function abrirTelaEditarCao() {
+    if (!cardAtualEmExibicao) return;
+
+    const nome = detalheNome?.textContent || '';
+    const raca = detalheRaca?.textContent || '';
+    const sexo = detalheBadgeSexo?.textContent || 'Macho';
+    const nascRaw = detalheNascimento?.textContent || '11/05/2023';
+    const foto = detalheFoto?.src || '';
+    const obs = detalheObs?.textContent || '';
+
+    if (editSubtitulo) editSubtitulo.textContent = `Atualize as informações de ${nome}`;
+    if (editPreviewFoto) editPreviewFoto.src = foto;
+    if (editNome) editNome.value = nome;
+    if (editRaca) editRaca.value = raca;
+    if (editObs) {
+      editObs.value = obs;
+      if (editCharCount) editCharCount.textContent = obs.length;
+    }
+
+    // Converte a data DD/MM/YYYY para YYYY-MM-DD
+    const partes = nascRaw.split('/');
+    if (partes.length === 3) {
+      editNascimento.value = `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+      
+      const dt = new Date(partes[2], parseInt(partes[1]) - 1, partes[0]);
+      const { textoIdade, textoFase } = calcularIdadeEFase(dt);
+      if (editIdadeCalculada) editIdadeCalculada.textContent = `${textoFase} · ${textoIdade}`;
+    }
+
+    selecionarSexoEdit(sexo);
+
+    if (viewDetalhes) viewDetalhes.classList.add('hidden');
+    if (viewLista) viewLista.classList.add('hidden');
+    if (viewEditar) viewEditar.classList.remove('hidden');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (btnEditarCabecalho) btnEditarCabecalho.onclick = (e) => { e.preventDefault(); abrirTelaEditarCao(); };
+
+  // PREVIEW DA FOTO AO SELECIONAR NOVO ARQUIVO
+  if (editFileInput) {
+    editFileInput.onchange = (e) => {
+      if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (editPreviewFoto) editPreviewFoto.src = event.target.result;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    };
+  }
+
+  // ATUALIZA CONTADOR DE CARACTERES
+  if (editObs) {
+    editObs.oninput = () => {
+      if (editCharCount) editCharCount.textContent = editObs.value.length;
+    };
+  }
+
+  // ATUALIZA IDADE CALCULADA AO MUDAR A DATA NA EDIÇÃO
+  if (editNascimento) {
+    editNascimento.onchange = () => {
+      if (editNascimento.value) {
+        const [ano, mes, dia] = editNascimento.value.split('-');
+        const dt = new Date(ano, mes - 1, dia);
+        const { textoIdade, textoFase } = calcularIdadeEFase(dt);
+        if (editIdadeCalculada) editIdadeCalculada.textContent = `${textoFase} · ${textoIdade}`;
+      }
+    };
+  }
+
+  // SUBMIT DO FORMULÁRIO DE EDIÇÃO
+  if (formEditar) {
+    formEditar.onsubmit = (e) => {
+      e.preventDefault();
+
+      if (!cardAtualEmExibicao) return;
+
+      const novoNome = editNome.value;
+      const novaRaca = editRaca.value;
+      const novoSexo = sexoSelecionadoEdit;
+      const novaDataRaw = editNascimento.value;
+      const novaFotoSrc = editPreviewFoto.src;
+      const novaObs = editObs.value;
+
+      const [ano, mes, dia] = novaDataRaw.split('-');
+      const dt = new Date(ano, mes - 1, dia);
+      const dataFmt = `${dia}/${mes}/${ano}`;
+      const { textoIdade, textoFase } = calcularIdadeEFase(dt);
+
+      // Atualiza o Card na Listagem
+      const cardTitle = cardAtualEmExibicao.querySelector('h3');
+      const cardRaca = cardAtualEmExibicao.querySelector('p');
+      const cardImg = cardAtualEmExibicao.querySelector('img');
+      const spansBadges = cardAtualEmExibicao.querySelectorAll('.relative span');
+      const spansRodape = cardAtualEmExibicao.querySelectorAll('div.flex.justify-between span');
+
+      if (cardTitle) cardTitle.textContent = novoNome;
+      if (cardRaca) cardRaca.textContent = novaRaca;
+      if (cardImg) cardImg.src = novaFotoSrc;
+
+      if (spansBadges.length >= 2) {
+        spansBadges[0].textContent = novoSexo;
+        spansBadges[0].className = novoSexo === 'Macho' 
+          ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-verdeokbg text-verdeok' 
+          : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100 text-pink-500';
+        
+        spansBadges[1].textContent = textoFase;
+      }
+
+      if (spansRodape.length >= 2) {
+        spansRodape[0].innerHTML = `<i class="ri-cake-2-line"></i> ${textoIdade}`;
+        spansRodape[1].innerHTML = `<i class="ri-calendar-line"></i> ${dataFmt}`;
+      }
+
+      if (detalheObs) detalheObs.textContent = novaObs || 'Sem observações cadastradas.';
+
+      // Atualiza a Tela de Detalhes
+      abrirDetalhesDoCao(cardAtualEmExibicao);
+      mostrarToast(`Informações de ${novoNome} atualizadas com sucesso!`);
+    };
+  }
+
+  // BOTÕES CANCELAR / VOLTAR DA EDIÇÃO
+  if (btnVoltarDetalhes) {
+    btnVoltarDetalhes.onclick = (e) => {
+      e.preventDefault();
+      if (viewEditar) viewEditar.classList.add('hidden');
+      if (viewDetalhes) viewDetalhes.classList.remove('hidden');
+    };
+  }
+
+  if (btnCancelarEditarCao) {
+    btnCancelarEditarCao.onclick = (e) => {
+      e.preventDefault();
+      if (viewEditar) viewEditar.classList.add('hidden');
+      if (viewDetalhes) viewDetalhes.classList.remove('hidden');
+    };
+  }
+
+  // CONTROLE DE ABAS DA TELA DE DETALHES
   function ativarAbaVacinas() {
     if (tabVacinas && tabInformacoes) {
       tabVacinas.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all";
@@ -162,16 +341,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabVacinas) tabVacinas.onclick = (e) => { e.preventDefault(); ativarAbaVacinas(); };
   if (tabInformacoes) tabInformacoes.onclick = (e) => { e.preventDefault(); ativarAbaInformacoes(); };
 
-  // BOTÃO VOLTAR PARA A LISTA
   if (btnVoltarLista) {
     btnVoltarLista.onclick = (e) => {
       e.preventDefault();
       if (viewDetalhes) viewDetalhes.classList.add('hidden');
+      if (viewEditar) viewEditar.classList.add('hidden');
       if (viewLista) viewLista.classList.remove('hidden');
     };
   }
 
-  // INICIALIZA EVENTO DE CLIQUE EM CADA CARD
   function inicializarCard(card) {
     card.onclick = () => {
       abrirDetalhesDoCao(card);
@@ -181,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cardsIniciais = document.querySelectorAll('.container-caes > div');
   cardsIniciais.forEach(card => inicializarCard(card));
 
-  // MODAL ADICIONAR
+  // MODAL NOVO CÃO
   function abrirModal() {
     if (formAdicionar) formAdicionar.reset();
     if (modalAdicionar && modalContent) {
@@ -225,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const { textoIdade, textoFase } = calcularIdadeEFase(dataNasc);
 
       const criarECadastrarCard = (fotoUrl) => {
-        const bgSexo = sexo === 'Macho' ? 'bg-[#D1FAE5] text-[#10B981]' : 'bg-[#FCE7F3] text-[#EC4899]';
+        const bgSexo = sexo === 'Macho' ? 'bg-verdeokbg text-verdeok' : 'bg-pink-100 text-pink-500';
 
         const novoCard = document.createElement('div');
         novoCard.className = 'bg-white border border-[#EFECE6] hover:border-laranja rounded-xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col justify-between';
