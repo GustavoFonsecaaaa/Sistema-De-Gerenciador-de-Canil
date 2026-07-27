@@ -241,17 +241,52 @@
           </div>
         </div>
 
-        <!-- COLUNA DIREITA: ABAS (VACINAS / INFORMAÇÕES) -->
+        <!-- COLUNA DIREITA: ABAS (CICLO REPRODUTIVO / VACINAS / INFORMAÇÕES) -->
         <div class="col-span-8 space-y-6">
           
           <!-- Navegação das Abas -->
           <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-1 flex gap-1 w-fit shadow-sm">
-            <button id="tab-vacinas" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all">
+            <button id="tab-cio" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all hidden">
+              <i class="ri-heart-pulse-line text-sm text-laranja"></i> Ciclo Reprodutivo
+            </button>
+            <button id="tab-vacinas" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all">
               <i class="ri-syringe-line text-sm text-verdeok"></i> Vacinas
             </button>
             <button id="tab-informacoes" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all">
               <i class="ri-information-line text-sm"></i> Informações
             </button>
+          </div>
+
+          <!-- ABA 0: CICLO REPRODUTIVO (Exibido apenas para Fêmeas) -->
+          <div id="conteudo-tab-cio" class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-5 hidden">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 font-serif text-lg font-bold text-[#111827]">
+                <i class="ri-heart-pulse-fill text-laranja"></i>
+                <span>Ciclo Reprodutivo</span>
+              </div>
+              <button id="btn-registrar-cio" class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors shadow-sm">
+                <i class="ri-add-line text-sm"></i> Registrar Cio
+              </button>
+            </div>
+
+            <!-- Lista dos cios registrados -->
+            <div id="lista-cios-container" class="space-y-3">
+              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs relative pl-6">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-laranja"></div>
+                <div>
+                  <h4 class="font-bold text-[#111827] text-sm mb-1">10/05/2025 — 28/05/2025</h4>
+                  <p class="text-[11px] text-[#6B7280] mb-1">18 dias de duração</p>
+                  <p class="text-[11px] text-[#111827] italic font-serif">"Cio normal, sem cruzamento"</p>
+                </div>
+                <div>
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Sem cruza</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="empty-state-cios" class="hidden text-center py-8 text-[#6B7280] text-xs">
+              Nenhum registro de cio cadastrado para esta fêmea.
+            </div>
           </div>
 
           <!-- ABA 1: VACINAS -->
@@ -522,6 +557,63 @@
           </button>
           <button type="submit" class="flex-1 bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3.5 rounded-2xl transition-all shadow-sm">
             Cadastrar
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MODAL DE REGISTRAR CIO -->
+  <!-- MODAL DE REGISTRAR NOVO CIO -->
+  <div id="modal-registrar-cio" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-8 max-w-[500px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative">
+      
+      <!-- Botão Fechar (X) -->
+      <button id="btn-fechar-modal-cio" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors">
+        <i class="ri-close-line text-xl"></i>
+      </button>
+
+      <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Registrar Novo Cio</h3>
+
+      <form id="form-registrar-cio" class="space-y-4">
+        <!-- Datas -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Início do Cio <span class="text-red-500">*</span></label>
+            <input type="date" id="cio-data-inicio" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Fim do Cio <span class="text-red-500">*</span></label>
+            <input type="date" id="cio-data-fim" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </div>
+        </div>
+
+        <!-- Observações -->
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Observações do Cio</label>
+          <textarea id="cio-obs" rows="3" placeholder="Ex: Comportamento, duração, intensidade..." class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm resize-none placeholder:text-[#1C1105]/30"></textarea>
+        </div>
+
+        <!-- Toggle Switch: Houve Cruzamento? -->
+        <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-bold text-[#1C1105]">Houve cruzamento?</div>
+            <div class="text-[11px] text-[#6B7280] mt-0.5">Marque se a cadela cruzou durante este cio</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="cio-toggle-cruzou" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-laranja"></div>
+          </label>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex items-center justify-end gap-3 pt-4">
+          <button type="button" id="btn-cancelar-modal-cio" class="bg-transparent hover:bg-black/5 text-[#1C1105] font-bold text-xs py-3 px-6 rounded-2xl transition-all">
+            Cancelar
+          </button>
+          <button type="submit" class="bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3 px-6 rounded-2xl transition-all shadow-sm">
+            Salvar Registro
           </button>
         </div>
       </form>

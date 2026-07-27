@@ -48,8 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let sexoSelecionadoEdit = 'Macho';
 
   // Abas de Detalhes
+  const tabCio = document.getElementById('tab-cio');
   const tabVacinas = document.getElementById('tab-vacinas');
   const tabInformacoes = document.getElementById('tab-informacoes');
+  const conteudoTabCio = document.getElementById('conteudo-tab-cio');
   const conteudoTabVacinas = document.getElementById('conteudo-tab-vacinas');
   const conteudoTabInformacoes = document.getElementById('conteudo-tab-informacoes');
 
@@ -62,6 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const formAdicionar = document.getElementById('form-adicionar-cachorro');
   const toastSucesso = document.getElementById('toast-sucesso-cao');
   let toastTimeout = null;
+
+  // Modal Registrar Cio
+  const btnRegistrarCio = document.getElementById('btn-registrar-cio');
+  const modalCio = document.getElementById('modal-registrar-cio');
+  const modalCioContent = modalCio ? modalCio.querySelector('.transform') : null;
+  const btnFecharModalCio = document.getElementById('btn-fechar-modal-cio');
+  const btnCancelarModalCio = document.getElementById('btn-cancelar-modal-cio');
+  const formRegistrarCio = document.getElementById('form-registrar-cio');
 
   let cardAtualEmExibicao = null;
 
@@ -198,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarContadorHeader();
   }
 
-  // ABRIR TELA DE DETALHES
+  // ABRIR TELA DE DETALHES DO CÃO
   function abrirDetalhesDoCao(card) {
     cardAtualEmExibicao = card;
     const fotoSrc = card.querySelector('img')?.src || '';
@@ -240,7 +250,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (infoIdade) infoIdade.textContent = idade;
     if (infoClassificacao) infoClassificacao.textContent = classificacao;
 
-    ativarAbaVacinas();
+    // CONTROLE CONDICIONAL DA ABA DE CIO (SOMENTE FÊMEAS)
+    if (sexo === 'Fêmea') {
+      if (tabCio) tabCio.classList.remove('hidden');
+      ativarAbaCio(); // Abre por padrão a aba de Ciclo Reprodutivo
+    } else {
+      if (tabCio) tabCio.classList.add('hidden');
+      ativarAbaVacinas(); // Para machos, abre Vacinas como padrão
+    }
 
     if (viewLista) viewLista.classList.add('hidden');
     if (viewEditar) viewEditar.classList.add('hidden');
@@ -248,6 +265,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  // CONTROLE DE ABAS DA TELA DE DETALHES
+  function resetarEstilosAbas() {
+    const abas = [tabCio, tabVacinas, tabInformacoes];
+    abas.forEach(tab => {
+      if (tab) tab.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all";
+    });
+    if (conteudoTabCio) conteudoTabCio.classList.add('hidden');
+    if (conteudoTabVacinas) conteudoTabVacinas.classList.add('hidden');
+    if (conteudoTabInformacoes) conteudoTabInformacoes.classList.add('hidden');
+  }
+
+  function ativarAbaCio() {
+    resetarEstilosAbas();
+    if (tabCio) tabCio.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all";
+    if (conteudoTabCio) conteudoTabCio.classList.remove('hidden');
+  }
+
+  function ativarAbaVacinas() {
+    resetarEstilosAbas();
+    if (tabVacinas) tabVacinas.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all";
+    if (conteudoTabVacinas) conteudoTabVacinas.classList.remove('hidden');
+  }
+
+  function ativarAbaInformacoes() {
+    resetarEstilosAbas();
+    if (tabInformacoes) tabInformacoes.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all";
+    if (conteudoTabInformacoes) conteudoTabInformacoes.classList.remove('hidden');
+  }
+
+  if (tabCio) tabCio.onclick = (e) => { e.preventDefault(); ativarAbaCio(); };
+  if (tabVacinas) tabVacinas.onclick = (e) => { e.preventDefault(); ativarAbaVacinas(); };
+  if (tabInformacoes) tabInformacoes.onclick = (e) => { e.preventDefault(); ativarAbaInformacoes(); };
 
   // SELETOR DE SEXO NA EDITAR
   function selecionarSexoEdit(sexo) {
@@ -414,28 +464,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // CONTROLE DE ABAS DA TELA DE DETALHES
-  function ativarAbaVacinas() {
-    if (tabVacinas && tabInformacoes) {
-      tabVacinas.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all";
-      tabInformacoes.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all";
-    }
-    if (conteudoTabVacinas) conteudoTabVacinas.classList.remove('hidden');
-    if (conteudoTabInformacoes) conteudoTabInformacoes.classList.add('hidden');
-  }
-
-  function ativarAbaInformacoes() {
-    if (tabVacinas && tabInformacoes) {
-      tabInformacoes.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all";
-      tabVacinas.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all";
-    }
-    if (conteudoTabInformacoes) conteudoTabInformacoes.classList.remove('hidden');
-    if (conteudoTabVacinas) conteudoTabVacinas.classList.add('hidden');
-  }
-
-  if (tabVacinas) tabVacinas.onclick = (e) => { e.preventDefault(); ativarAbaVacinas(); };
-  if (tabInformacoes) tabInformacoes.onclick = (e) => { e.preventDefault(); ativarAbaInformacoes(); };
-
   if (btnVoltarLista) {
     btnVoltarLista.onclick = (e) => {
       e.preventDefault();
@@ -528,6 +556,85 @@ document.addEventListener('DOMContentLoaded', () => {
         const fotoPadrao = 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
         criarECadastrarCard(fotoPadrao);
       }
+    };
+  }
+
+  // MODAL REGISTRAR CIO
+  function abrirModalCio() {
+    if (formRegistrarCio) formRegistrarCio.reset();
+    if (modalCio && modalCioContent) {
+      modalCio.classList.remove('hidden');
+      setTimeout(() => {
+        modalCio.classList.remove('opacity-0');
+        modalCioContent.classList.remove('scale-95');
+      }, 10);
+    }
+  }
+
+  function fecharModalCio() {
+    if (modalCio && modalCioContent) {
+      modalCio.classList.add('opacity-0');
+      modalCioContent.classList.add('scale-95');
+      setTimeout(() => {
+        modalCio.classList.add('hidden');
+      }, 200);
+    }
+  }
+
+  if (btnRegistrarCio) btnRegistrarCio.onclick = (e) => { e.preventDefault(); abrirModalCio(); };
+  if (btnFecharModalCio) btnFecharModalCio.onclick = (e) => { e.preventDefault(); fecharModalCio(); };
+  if (btnCancelarModalCio) btnCancelarModalCio.onclick = (e) => { e.preventDefault(); fecharModalCio(); };
+  if (modalCio) modalCio.onclick = (e) => { if (e.target === modalCio) fecharModalCio(); };
+
+  // SUBMIT DO FORMULÁRIO DE REGISTRAR CIO
+  if (formRegistrarCio) {
+    formRegistrarCio.onsubmit = (e) => {
+      e.preventDefault();
+
+      const dataInicioRaw = document.getElementById('cio-data-inicio').value;
+      const dataFimRaw = document.getElementById('cio-data-fim').value;
+      const obs = document.getElementById('cio-obs').value.trim() || 'Cio normal, sem complicações';
+      const houvesCruzamento = document.getElementById('cio-toggle-cruzou').checked;
+
+      const [a1, m1, d1] = dataInicioRaw.split('-');
+      const [a2, m2, d2] = dataFimRaw.split('-');
+
+      const dtInicio = new Date(a1, m1 - 1, d1);
+      const dtFim = new Date(a2, m2 - 1, d2);
+
+      const diffTime = Math.abs(dtFim - dtInicio);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      const dataFmtInicio = `${d1}/${m1}/${a1}`;
+      const dataFmtFim = `${d2}/${m2}/${a2}`;
+
+      const textoStatus = houvesCruzamento ? 'Cruzou' : 'Sem cruza';
+      const classeBadge = houvesCruzamento ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-gray-500';
+
+      const novoCioHTML = `
+        <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs relative pl-6">
+          <div class="absolute left-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-laranja"></div>
+          <div>
+            <h4 class="font-bold text-[#111827] text-sm mb-1">${dataFmtInicio} — ${dataFmtFim}</h4>
+            <p class="text-[11px] text-[#6B7280] mb-1">${diffDays} dias de duração</p>
+            <p class="text-[11px] text-[#111827] italic font-serif">"${obs}"</p>
+          </div>
+          <div>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${classeBadge}">${textoStatus}</span>
+          </div>
+        </div>
+      `;
+
+      const containerCios = document.getElementById('lista-cios-container');
+      const emptyStateCios = document.getElementById('empty-state-cios');
+
+      if (containerCios) {
+        if (emptyStateCios) emptyStateCios.classList.add('hidden');
+        containerCios.insertAdjacentHTML('afterbegin', novoCioHTML);
+      }
+
+      fecharModalCio();
+      mostrarToast(`Cio registrado com sucesso!`);
     };
   }
 
