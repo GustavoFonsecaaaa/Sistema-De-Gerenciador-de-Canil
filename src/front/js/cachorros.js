@@ -183,14 +183,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (salvos) {
       const listaCaes = JSON.parse(salvos);
       if (listaCaes.length > 0) {
-        containerCards.innerHTML = ''; // Limpa os estáticos do HTML
+        containerCards.innerHTML = '';
         listaCaes.forEach(cao => {
           const cardEl = criarElementoCard(cao);
           containerCards.appendChild(cardEl);
         });
       }
     } else {
-      // Se for a primeira vez rodando, captura os estáticos do HTML e salva no localStorage
       const cardsIniciais = document.querySelectorAll('.container-caes > div');
       cardsIniciais.forEach(card => inicializarCard(card));
       salvarEstadoCaesNoLocalStorage();
@@ -606,6 +605,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // VERIFICA SE VEIO UM CÃO SELECIONADO DO DASHBOARD
+  function verificarRedirecionamentoDoDashboard() {
+    const nomeCaoSelecionado = localStorage.getItem('cao_selecionado_para_detalhes');
+    if (nomeCaoSelecionado) {
+      const cards = document.querySelectorAll('.container-caes > div');
+      cards.forEach(card => {
+        const nomeCard = card.querySelector('h3')?.textContent.trim();
+        if (nomeCard && nomeCard.toLowerCase() === nomeCaoSelecionado.toLowerCase()) {
+          abrirDetalhesDoCao(card);
+        }
+      });
+      localStorage.removeItem('cao_selecionado_para_detalhes');
+    }
+  }
+
   // INICIALIZA A LEITURA DO LOCALSTORAGE
   carregarCaesDoLocalStorage();
+  verificarRedirecionamentoDoDashboard();
 });
