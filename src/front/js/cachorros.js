@@ -65,34 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let cardAtualEmExibicao = null;
 
-  // FUNÇÃO DE SINCRONIZAÇÃO COM O LOCALSTORAGE (Para o Dashboard)
-  function salvarEstadoCaesNoLocalStorage() {
-    const cards = document.querySelectorAll('.container-caes > div');
-    const lista = [];
-
-    cards.forEach(card => {
-      const nome = card.querySelector('h3')?.textContent.trim() || '';
-      const raca = card.querySelector('p')?.textContent.trim() || '';
-      const foto = card.querySelector('img')?.src || '';
-      
-      const spansBadges = card.querySelectorAll('.relative span');
-      let sexo = 'Macho';
-      let fase = 'Adulto';
-
-      spansBadges.forEach(s => {
-        const txt = s.textContent.trim();
-        if (txt === 'Macho' || txt === 'Fêmea') sexo = txt;
-        if (txt === 'Adulto' || txt === 'Filhote') fase = txt;
-      });
-
-      if (nome) {
-        lista.push({ nome, raca, sexo, fase, foto });
-      }
-    });
-
-    localStorage.setItem('canil_cachorros', JSON.stringify(lista));
-  }
-
   function mostrarToast(msg = "Operação realizada com sucesso!") {
     if (!toastSucesso) return;
     const span = toastSucesso.querySelector('span');
@@ -137,6 +109,94 @@ document.addEventListener('DOMContentLoaded', () => {
     if (headerSub) {
       headerSub.textContent = `${total} cães cadastrados no canil`;
     }
+  }
+
+  // SALVA O ESTADO ATUAL DOS CARDS NO LOCALSTORAGE
+  function salvarEstadoCaesNoLocalStorage() {
+    const cards = document.querySelectorAll('.container-caes > div');
+    const lista = [];
+
+    cards.forEach(card => {
+      const nome = card.querySelector('h3')?.textContent.trim() || '';
+      const raca = card.querySelector('p')?.textContent.trim() || '';
+      const foto = card.querySelector('img')?.src || '';
+      
+      const spansBadges = card.querySelectorAll('.relative span');
+      let sexo = 'Macho';
+      let fase = 'Adulto';
+
+      spansBadges.forEach(s => {
+        const txt = s.textContent.trim();
+        if (txt === 'Macho' || txt === 'Fêmea') sexo = txt;
+        if (txt === 'Adulto' || txt === 'Filhote') fase = txt;
+      });
+
+      const spansRodape = card.querySelectorAll('div.flex.justify-between span');
+      const idadeText = spansRodape[0]?.textContent.trim() || '';
+      const nascimentoText = spansRodape[1]?.textContent.trim() || '';
+
+      if (nome) {
+        lista.push({ nome, raca, sexo, fase, foto, idadeText, nascimentoText });
+      }
+    });
+
+    localStorage.setItem('canil_cachorros', JSON.stringify(lista));
+  }
+
+  // CRIA UM CARD NO DOM
+  function criarElementoCard(cao) {
+    const bgSexo = cao.sexo === 'Macho' ? 'bg-verdeokbg text-verdeok' : 'bg-pink-100 text-pink-500';
+
+    const novoCard = document.createElement('div');
+    novoCard.className = 'bg-white border border-[#EFECE6] hover:border-laranja rounded-xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col justify-between';
+
+    novoCard.innerHTML = `
+      <div class="relative h-44 bg-bege">
+        <img src="${cao.foto}" alt="${cao.nome}" class="w-full h-full object-cover">
+        <div class="absolute top-2 left-2 flex gap-1">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${bgSexo}">${cao.sexo}</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">${cao.fase}</span>
+        </div>
+      </div>
+
+      <div class="p-3.5">
+        <h3 class="font-bold text-sm text-[#111827]">${cao.nome}</h3>
+        <p class="text-[11px] text-[#6B7280] mb-2.5">${cao.raca}</p>
+
+        <div class="flex justify-between text-[10px] text-[#6B7280] border-t border-[#FAFAF9] pt-2.5">
+          <span><i class="ri-cake-2-line"></i> ${cao.idadeText || '3a 2m'}</span>
+          <span><i class="ri-calendar-line"></i> ${cao.nascimentoText || '11/05/2023'}</span>
+        </div>
+      </div>
+    `;
+
+    inicializarCard(novoCard);
+    return novoCard;
+  }
+
+  // CARREGA CÃES DO LOCALSTORAGE AO ABRIR A PÁGINA
+  function carregarCaesDoLocalStorage() {
+    const salvos = localStorage.getItem('canil_cachorros');
+    const containerCards = document.querySelector('.container-caes');
+    if (!containerCards) return;
+
+    if (salvos) {
+      const listaCaes = JSON.parse(salvos);
+      if (listaCaes.length > 0) {
+        containerCards.innerHTML = ''; // Limpa os estáticos do HTML
+        listaCaes.forEach(cao => {
+          const cardEl = criarElementoCard(cao);
+          containerCards.appendChild(cardEl);
+        });
+      }
+    } else {
+      // Se for a primeira vez rodando, captura os estáticos do HTML e salva no localStorage
+      const cardsIniciais = document.querySelectorAll('.container-caes > div');
+      cardsIniciais.forEach(card => inicializarCard(card));
+      salvarEstadoCaesNoLocalStorage();
+    }
+
+    atualizarContadorHeader();
   }
 
   // ABRIR TELA DE DETALHES
@@ -392,10 +452,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  const cardsIniciais = document.querySelectorAll('.container-caes > div');
-  cardsIniciais.forEach(card => inicializarCard(card));
-  salvarEstadoCaesNoLocalStorage(); // Salva estado inicial dos cards no localStorage
-
   // MODAL NOVO CÃO
   function abrirModal() {
     if (formAdicionar) formAdicionar.reset();
@@ -440,37 +496,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const { textoIdade, textoFase } = calcularIdadeEFase(dataNasc);
 
       const criarECadastrarCard = (fotoUrl) => {
-        const bgSexo = sexo === 'Macho' ? 'bg-verdeokbg text-verdeok' : 'bg-pink-100 text-pink-500';
+        const caoObj = {
+          nome,
+          raca,
+          sexo,
+          fase: textoFase,
+          foto: fotoUrl,
+          idadeText: textoIdade,
+          nascimentoText: dataFmt
+        };
 
-        const novoCard = document.createElement('div');
-        novoCard.className = 'bg-white border border-[#EFECE6] hover:border-laranja rounded-xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col justify-between';
-
-        novoCard.innerHTML = `
-          <div class="relative h-44 bg-bege">
-            <img src="${fotoUrl}" alt="${nome}" class="w-full h-full object-cover">
-            <div class="absolute top-2 left-2 flex gap-1">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${bgSexo}">${sexo}</span>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">${textoFase}</span>
-            </div>
-          </div>
-
-          <div class="p-3.5">
-            <h3 class="font-bold text-sm text-[#111827]">${nome}</h3>
-            <p class="text-[11px] text-[#6B7280] mb-2.5">${raca}</p>
-
-            <div class="flex justify-between text-[10px] text-[#6B7280] border-t border-[#FAFAF9] pt-2.5">
-              <span><i class="ri-cake-2-line"></i> ${textoIdade}</span>
-              <span><i class="ri-calendar-line"></i> ${dataFmt}</span>
-            </div>
-          </div>
-        `;
-
+        const novoCard = criarElementoCard(caoObj);
         const containerCards = document.querySelector('.container-caes');
         if (containerCards) {
           containerCards.appendChild(novoCard);
         }
 
-        inicializarCard(novoCard);
         atualizarContadorHeader();
         fecharModal();
         aplicarFiltrosEBusca();
@@ -564,4 +605,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  // INICIALIZA A LEITURA DO LOCALSTORAGE
+  carregarCaesDoLocalStorage();
 });
