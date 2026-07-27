@@ -73,6 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCancelarModalCio = document.getElementById('btn-cancelar-modal-cio');
   const formRegistrarCio = document.getElementById('form-registrar-cio');
 
+  // Modal Registrar Vacina
+  const btnRegistrarVacina = document.getElementById('btn-registrar-vacina');
+  const modalVacina = document.getElementById('modal-registrar-vacina');
+  const modalVacinaContent = modalVacina ? modalVacina.querySelector('.transform') : null;
+  const btnFecharModalVacina = document.getElementById('btn-fechar-modal-vacina');
+  const btnCancelarModalVacina = document.getElementById('btn-cancelar-modal-vacina');
+  const formRegistrarVacina = document.getElementById('form-registrar-vacina');
+
   let cardAtualEmExibicao = null;
 
   function mostrarToast(msg = "Operação realizada com sucesso!") {
@@ -253,10 +261,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // CONTROLE CONDICIONAL DA ABA DE CIO (SOMENTE FÊMEAS)
     if (sexo === 'Fêmea') {
       if (tabCio) tabCio.classList.remove('hidden');
-      ativarAbaCio(); // Abre por padrão a aba de Ciclo Reprodutivo
+      ativarAbaCio();
     } else {
       if (tabCio) tabCio.classList.add('hidden');
-      ativarAbaVacinas(); // Para machos, abre Vacinas como padrão
+      ativarAbaVacinas();
     }
 
     if (viewLista) viewLista.classList.add('hidden');
@@ -299,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabVacinas) tabVacinas.onclick = (e) => { e.preventDefault(); ativarAbaVacinas(); };
   if (tabInformacoes) tabInformacoes.onclick = (e) => { e.preventDefault(); ativarAbaInformacoes(); };
 
-  // SELETOR DE SEXO NA EDITAR
+  // SELETOR DE SEXO NA EDIÇÃO
   function selecionarSexoEdit(sexo) {
     sexoSelecionadoEdit = sexo;
     if (sexo === 'Macho') {
@@ -586,7 +594,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCancelarModalCio) btnCancelarModalCio.onclick = (e) => { e.preventDefault(); fecharModalCio(); };
   if (modalCio) modalCio.onclick = (e) => { if (e.target === modalCio) fecharModalCio(); };
 
-  // SUBMIT DO FORMULÁRIO DE REGISTRAR CIO
   if (formRegistrarCio) {
     formRegistrarCio.onsubmit = (e) => {
       e.preventDefault();
@@ -635,6 +642,95 @@ document.addEventListener('DOMContentLoaded', () => {
 
       fecharModalCio();
       mostrarToast(`Cio registrado com sucesso!`);
+    };
+  }
+
+  // MODAL REGISTRAR VACINA
+  function abrirModalVacina() {
+    if (formRegistrarVacina) formRegistrarVacina.reset();
+    if (modalVacina && modalVacinaContent) {
+      modalVacina.classList.remove('hidden');
+      setTimeout(() => {
+        modalVacina.classList.remove('opacity-0');
+        modalVacinaContent.classList.remove('scale-95');
+      }, 10);
+    }
+  }
+
+  function fecharModalVacina() {
+    if (modalVacina && modalVacinaContent) {
+      modalVacina.classList.add('opacity-0');
+      modalVacinaContent.classList.add('scale-95');
+      setTimeout(() => {
+        modalVacina.classList.add('hidden');
+      }, 200);
+    }
+  }
+
+  if (btnRegistrarVacina) btnRegistrarVacina.onclick = (e) => { e.preventDefault(); abrirModalVacina(); };
+  if (btnFecharModalVacina) btnFecharModalVacina.onclick = (e) => { e.preventDefault(); fecharModalVacina(); };
+  if (btnCancelarModalVacina) btnCancelarModalVacina.onclick = (e) => { e.preventDefault(); fecharModalVacina(); };
+  if (modalVacina) modalVacina.onclick = (e) => { if (e.target === modalVacina) fecharModalVacina(); };
+
+  if (formRegistrarVacina) {
+    formRegistrarVacina.onsubmit = (e) => {
+      e.preventDefault();
+
+      const nomeVacina = document.getElementById('vacina-nome').value.trim();
+      const descVacina = document.getElementById('vacina-desc').value.trim() || 'Sem descrição cadastrada';
+      const dataDoseRaw = document.getElementById('vacina-data-dose').value;
+      const dataProximaRaw = document.getElementById('vacina-data-proxima').value;
+
+      const [a1, m1, d1] = dataDoseRaw.split('-');
+      const [a2, m2, d2] = dataProximaRaw.split('-');
+
+      const dtProxima = new Date(a2, m2 - 1, d2);
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
+      const estaVencida = dtProxima < hoje;
+
+      const dataFmtDose = `${d1}/${m1}/${a1}`;
+      const dataFmtProxima = `${d2}/${m2}/${a2}`;
+
+      const textoProxima = estaVencida ? 'Vencida!' : dataFmtProxima;
+      const corTextoProxima = estaVencida ? 'text-[#B45309]' : 'text-[#10B981]';
+      const badgeTexto = estaVencida ? 'Pendente' : 'Em dia';
+      const badgeClasse = estaVencida ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#D1FAE5] text-[#10B981]';
+
+      const novaVacinaHTML = `
+        <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] text-laranja flex items-center justify-center">
+              <i class="ri-syringe-line text-base"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-[#111827]">${nomeVacina}</h4>
+              <p class="text-[11px] text-[#6B7280]">${descVacina}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-6">
+            <div class="text-right">
+              <div class="text-[10px] text-[#6B7280]">Última dose</div>
+              <div class="font-bold text-[#111827]">${dataFmtDose}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-[10px] text-[#6B7280]">Próxima dose</div>
+              <div class="font-bold ${corTextoProxima}">${textoProxima}</div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClasse}">${badgeTexto}</span>
+          </div>
+        </div>
+      `;
+
+      const containerVacinas = document.getElementById('lista-vacinas-container');
+
+      if (containerVacinas) {
+        containerVacinas.insertAdjacentHTML('afterbegin', novaVacinaHTML);
+      }
+
+      fecharModalVacina();
+      mostrarToast(`Vacina ${nomeVacina} registrada com sucesso!`);
     };
   }
 

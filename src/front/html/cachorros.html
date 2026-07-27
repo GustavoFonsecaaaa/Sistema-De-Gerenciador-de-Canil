@@ -296,12 +296,12 @@
                 <i class="ri-syringe-fill text-verdeok"></i>
                 <span>Vacinas</span>
               </div>
-              <button class="bg-verdeok hover:bg-opacity-90 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors shadow-sm">
+              <button id="btn-registrar-vacina" class="bg-verdeok hover:bg-opacity-90 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors shadow-sm">
                 <i class="ri-add-line text-sm"></i> Registrar Vacina
               </button>
             </div>
 
-            <div class="space-y-3">
+            <div id="lista-vacinas-container" class="space-y-3">
               <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs">
                 <div class="flex items-center gap-3">
                   <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] text-laranja flex items-center justify-center">
@@ -564,12 +564,9 @@
     </div>
   </div>
 
-  <!-- MODAL DE REGISTRAR CIO -->
   <!-- MODAL DE REGISTRAR NOVO CIO -->
   <div id="modal-registrar-cio" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
     <div class="bg-creme rounded-[28px] p-8 max-w-[500px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative">
-      
-      <!-- Botão Fechar (X) -->
       <button id="btn-fechar-modal-cio" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors">
         <i class="ri-close-line text-xl"></i>
       </button>
@@ -577,7 +574,6 @@
       <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Registrar Novo Cio</h3>
 
       <form id="form-registrar-cio" class="space-y-4">
-        <!-- Datas -->
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Início do Cio <span class="text-red-500">*</span></label>
@@ -589,13 +585,11 @@
           </div>
         </div>
 
-        <!-- Observações -->
         <div>
           <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Observações do Cio</label>
           <textarea id="cio-obs" rows="3" placeholder="Ex: Comportamento, duração, intensidade..." class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm resize-none placeholder:text-[#1C1105]/30"></textarea>
         </div>
 
-        <!-- Toggle Switch: Houve Cruzamento? -->
         <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between">
           <div>
             <div class="text-xs font-bold text-[#1C1105]">Houve cruzamento?</div>
@@ -607,7 +601,6 @@
           </label>
         </div>
 
-        <!-- Botões de Ação -->
         <div class="flex items-center justify-end gap-3 pt-4">
           <button type="button" id="btn-cancelar-modal-cio" class="bg-transparent hover:bg-black/5 text-[#1C1105] font-bold text-xs py-3 px-6 rounded-2xl transition-all">
             Cancelar
@@ -617,7 +610,49 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
 
+  <!-- MODAL DE REGISTRAR VACINA -->
+  <div id="modal-registrar-vacina" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-8 max-w-[500px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative">
+      <button id="btn-fechar-modal-vacina" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors">
+        <i class="ri-close-line text-xl"></i>
+      </button>
+
+      <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Registrar Vacina</h3>
+
+      <form id="form-registrar-vacina" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome da Vacina <span class="text-red-500">*</span></label>
+          <input type="text" id="vacina-nome" placeholder="Ex: V10, Antirrábica..." required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-verdeok focus:ring-1 focus:ring-verdeok transition-all shadow-sm placeholder:text-[#1C1105]/30">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Descrição / Proteção</label>
+          <input type="text" id="vacina-desc" placeholder="Ex: Protege contra cinomose, parvovirose..." class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-verdeok focus:ring-1 focus:ring-verdeok transition-all shadow-sm placeholder:text-[#1C1105]/30">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data da Última Dose <span class="text-red-500">*</span></label>
+            <input type="date" id="vacina-data-dose" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-verdeok focus:ring-1 focus:ring-verdeok transition-all shadow-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Próxima Dose / Validade <span class="text-red-500">*</span></label>
+            <input type="date" id="vacina-data-proxima" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-verdeok focus:ring-1 focus:ring-verdeok transition-all shadow-sm">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4">
+          <button type="button" id="btn-cancelar-modal-vacina" class="bg-transparent hover:bg-black/5 text-[#1C1105] font-bold text-xs py-3 px-6 rounded-2xl transition-all">
+            Cancelar
+          </button>
+          <button type="submit" class="bg-verdeok hover:bg-opacity-95 text-white font-bold text-xs py-3 px-6 rounded-2xl transition-all shadow-sm">
+            Salvar Vacina
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -626,7 +661,7 @@
     <div class="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs">
       <i class="ri-check-line"></i>
     </div>
-    <span class="text-xs font-semibold">Cão cadastrado com sucesso!</span>
+    <span class="text-xs font-semibold">Operação realizada com sucesso!</span>
   </div>
 
   <!-- Script de Cachorros -->
