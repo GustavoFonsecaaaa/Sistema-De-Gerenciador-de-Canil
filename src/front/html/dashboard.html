@@ -33,7 +33,7 @@
 </script>
 <!-- Remix Icon -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
-<!-- Fontes do Google -->
+<!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -84,9 +84,8 @@
     </div>
   </aside>
 
-  <!-- DROPDOWN POPOVER DE NOTIFICAÇÕES (POP-UP FLUTUANTE) -->
+  <!-- DROPDOWN POPOVER DE NOTIFICAÇÕES -->
   <div id="popover-notificacoes" class="fixed left-64 top-4 z-50 w-[420px] bg-creme border border-[#EFECE6] rounded-3xl shadow-2xl overflow-hidden hidden opacity-0 transition-all duration-200 -translate-y-2">
-    <!-- Cabeçalho do Popover -->
     <div class="p-5 bg-white border-b border-[#EFECE6] flex items-center justify-between">
       <div class="flex items-center gap-2">
         <h3 class="font-serif text-base font-extrabold text-[#111827]">Notificações</h3>
@@ -97,7 +96,6 @@
       </button>
     </div>
 
-    <!-- Filtros de Notificações com Scroll Horizontal -->
     <div class="p-3 bg-[#FAF8F5] border-b border-[#EFECE6] overflow-x-auto scrollbar-none flex gap-1.5 text-xs" id="container-filtros-notificacoes">
       <button data-filtro="todas" class="px-3 py-1 rounded-xl font-bold bg-laranja text-white whitespace-nowrap shadow-sm">
         Todas <span id="cnt-todas" class="text-[10px] opacity-80">0</span>
@@ -116,12 +114,8 @@
       </button>
     </div>
 
-    <!-- Lista de Notificações com Scroll Vertical -->
-    <div id="lista-notificacoes" class="max-h-[380px] overflow-y-auto divide-y divide-[#EFECE6] bg-white">
-      <!-- Gerado via JS -->
-    </div>
+    <div id="lista-notificacoes" class="max-h-[380px] overflow-y-auto divide-y divide-[#EFECE6] bg-white"></div>
 
-    <!-- Empty State Popover -->
     <div id="empty-state-notificacoes" class="p-10 text-center flex flex-col items-center justify-center hidden bg-white">
       <div class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mb-2">
         <i class="ri-notification-off-line"></i>
@@ -188,17 +182,13 @@
           <h2 class="font-serif text-lg font-bold text-[#111827]">Últimos Cios Registrados</h2>
           <a href="cachorros.html" class="text-laranja text-xs font-bold hover:underline">Ver todas as fêmeas</a>
         </div>
-        <div id="container-cios-dashboard" class="space-y-3">
-          <!-- Renderizado via JS -->
-        </div>
+        <div id="container-cios-dashboard" class="space-y-3"></div>
       </div>
 
       <div class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between min-h-[380px]">
         <div>
           <h2 class="font-serif text-lg font-bold text-[#111827] mb-4">Cães Recentes</h2>
-          <div id="container-caes-recentes" class="space-y-3">
-            <!-- Renderizado via JS -->
-          </div>
+          <div id="container-caes-recentes" class="space-y-3"></div>
         </div>
 
         <a href="cachorros.html" class="block text-center bg-[#FEF3C7] text-[#B45309] font-bold py-3 rounded-2xl hover:bg-[#FDE68A] transition-colors text-xs shadow-sm mt-4">
@@ -208,6 +198,7 @@
     </div>
   </main>
 
+  <script src="/src/front/js/notificacoes.js"></script>
   <script src="/src/front/js/dashboard.js"></script>
 </body>
 </html>
