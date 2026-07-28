@@ -77,7 +77,7 @@
       <header class="mb-6 flex justify-between items-center">
         <div>
           <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Cachorros</h1>
-          <p class="text-xs text-[#6B7280] mt-1">8 cães cadastrados no canil</p>
+          <p class="text-xs text-[#6B7280] mt-1">0 cães cadastrados no canil</p>
         </div>
         <button id="btn-novo-cachorro" class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
           <i class="ri-add-line text-base"></i> Novo Cachorro
@@ -102,10 +102,8 @@
         </div>
       </div>
 
-      <!-- GRID DE CACHORROS -->
-      <div class="grid grid-cols-4 gap-4 container-caes">
-        <!-- Cards gerados/sincronizados dinamicamente -->
-      </div>
+      <!-- GRID DE CACHORROS (Dinâmico via JS) -->
+      <div class="grid grid-cols-4 gap-4 container-caes"></div>
 
       <!-- EMPTY STATE (Nenhum cachorro encontrado) -->
       <div id="empty-state-caes" class="hidden flex flex-col items-center justify-center py-20 text-center">
@@ -113,7 +111,7 @@
           <i class="ri-emotion-sad-line"></i>
         </div>
         <h3 class="font-serif text-lg font-bold text-[#1C1105] mb-1">Nenhum cachorro encontrado</h3>
-        <p class="text-xs text-[#6B7280]">Tente ajustar os filtros ou a busca</p>
+        <p class="text-xs text-[#6B7280]">Cadastre um novo cachorro ou tente ajustar a busca</p>
       </div>
 
     </main>

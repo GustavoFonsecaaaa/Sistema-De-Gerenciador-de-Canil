@@ -180,8 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <p class="text-[11px] text-[#6B7280] mb-2.5">${cao.raca}</p>
 
         <div class="flex justify-between text-[10px] text-[#6B7280] border-t border-[#FAFAF9] pt-2.5">
-          <span><i class="ri-cake-2-line"></i> ${cao.idadeText || '3a 2m'}</span>
-          <span><i class="ri-calendar-line"></i> ${cao.nascimentoText || '11/05/2023'}</span>
+          <span><i class="ri-cake-2-line"></i> ${cao.idadeText || ''}</span>
+          <span><i class="ri-calendar-line"></i> ${cao.nascimentoText || ''}</span>
         </div>
       </div>
     `;
@@ -190,27 +190,28 @@ document.addEventListener('DOMContentLoaded', () => {
     return novoCard;
   }
 
+  // CARREGA CÃES DO LOCALSTORAGE AO ABRIR A PÁGINA (Limpo de cards estáticos)
   function carregarCaesDoLocalStorage() {
     const salvos = localStorage.getItem('canil_cachorros');
     const containerCards = document.querySelector('.container-caes');
     if (!containerCards) return;
 
+    containerCards.innerHTML = ''; // Limpa qualquer elemento estático no HTML
+
     if (salvos) {
       const listaCaes = JSON.parse(salvos);
       if (listaCaes.length > 0) {
-        containerCards.innerHTML = '';
         listaCaes.forEach(cao => {
           const cardEl = criarElementoCard(cao);
           containerCards.appendChild(cardEl);
         });
       }
     } else {
-      const cardsIniciais = document.querySelectorAll('.container-caes > div');
-      cardsIniciais.forEach(card => inicializarCard(card));
-      salvarEstadoCaesNoLocalStorage();
+      localStorage.setItem('canil_cachorros', JSON.stringify([]));
     }
 
     atualizarContadorHeader();
+    aplicarFiltrosEBusca();
   }
 
   // ABRIR TELA DE DETALHES DO CÃO
