@@ -20,6 +20,8 @@
           bege: '#EFECE6',             
           verdeok: '#10B981',
           verdeokbg: '#D1FAE5',
+          vermelho: '#EF4444',
+          vermelhobg: '#FEE2E2',
         },
         fontFamily: {
           serif: ['Playfair Display', 'Georgia', 'serif'],
@@ -36,12 +38,24 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="font-sans bg-creme text-marromescuro flex min-h-screen">
+<body class="font-sans bg-creme text-marromescuro flex min-h-screen relative">
 
   <!-- SIDEBAR -->
   <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between z-40">
     <div class="sidebar-top">
-      <div class="font-serif text-xl font-extrabold mb-1 text-white">Canil<span class="text-laranja">Manager</span></div>
+      <!-- CABEÇALHO DA SIDEBAR + SININHO DE NOTIFICAÇÕES -->
+      <div class="flex items-center justify-between mb-1 relative">
+        <div class="font-serif text-xl font-extrabold text-white">Canil<span class="text-laranja">Manager</span></div>
+        
+        <!-- BOTÃO DO SININHO -->
+        <button id="btn-notificacoes" class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
+          <i class="ri-notification-3-line text-base"></i>
+          <span id="badge-notificacoes-count" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold text-[9px] min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border-2 border-marromescuro hidden shadow-sm">
+            0
+          </span>
+        </button>
+      </div>
+
       <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
 
       <nav class="flex flex-col gap-1.5">
@@ -70,6 +84,53 @@
     </div>
   </aside>
 
+  <!-- DROPDOWN POPOVER DE NOTIFICAÇÕES (POP-UP FLUTUANTE) -->
+  <div id="popover-notificacoes" class="fixed left-64 top-4 z-50 w-[420px] bg-creme border border-[#EFECE6] rounded-3xl shadow-2xl overflow-hidden hidden opacity-0 transition-all duration-200 -translate-y-2">
+    <!-- Cabeçalho do Popover -->
+    <div class="p-5 bg-white border-b border-[#EFECE6] flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <h3 class="font-serif text-base font-extrabold text-[#111827]">Notificações</h3>
+        <span id="popover-badge-nao-lidas" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-600">0 não lidas</span>
+      </div>
+      <button id="btn-marcar-todas-lidas" class="text-[11px] font-bold text-laranja hover:underline transition-colors">
+        Marcar todas como lidas
+      </button>
+    </div>
+
+    <!-- Filtros de Notificações com Scroll Horizontal -->
+    <div class="p-3 bg-[#FAF8F5] border-b border-[#EFECE6] overflow-x-auto scrollbar-none flex gap-1.5 text-xs" id="container-filtros-notificacoes">
+      <button data-filtro="todas" class="px-3 py-1 rounded-xl font-bold bg-laranja text-white whitespace-nowrap shadow-sm">
+        Todas <span id="cnt-todas" class="text-[10px] opacity-80">0</span>
+      </button>
+      <button data-filtro="vacina-vencida" class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">
+        Vacina vencida <span id="cnt-vacina-vencida" class="text-[10px] opacity-80">0</span>
+      </button>
+      <button data-filtro="vacina-vencer" class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">
+        Vacina a vencer <span id="cnt-vacina-vencer" class="text-[10px] opacity-80">0</span>
+      </button>
+      <button data-filtro="racao-baixa" class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">
+        Ração baixa <span id="cnt-racao-baixa" class="text-[10px] opacity-80">0</span>
+      </button>
+      <button data-filtro="cio-terminando" class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">
+        Cio terminando <span id="cnt-cio-terminando" class="text-[10px] opacity-80">0</span>
+      </button>
+    </div>
+
+    <!-- Lista de Notificações com Scroll Vertical -->
+    <div id="lista-notificacoes" class="max-h-[380px] overflow-y-auto divide-y divide-[#EFECE6] bg-white">
+      <!-- Gerado via JS -->
+    </div>
+
+    <!-- Empty State Popover -->
+    <div id="empty-state-notificacoes" class="p-10 text-center flex flex-col items-center justify-center hidden bg-white">
+      <div class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mb-2">
+        <i class="ri-notification-off-line"></i>
+      </div>
+      <p class="text-xs font-bold text-[#1C1105]">Nenhuma notificação</p>
+      <p class="text-[10px] text-[#6B7280] mt-0.5">Está tudo em dia no seu canil!</p>
+    </div>
+  </div>
+
   <!-- CONTEÚDO PRINCIPAL -->
   <main class="ml-60 flex-1 p-8">
     <header class="mb-6">
@@ -79,7 +140,6 @@
 
     <!-- CARDS DE ESTATÍSTICA (KPIs) -->
     <div class="grid grid-cols-4 gap-4 mb-6">
-      <!-- Total de Cães -->
       <div class="bg-white border border-[#EFECE6] rounded-2xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Total de Cães</div>
@@ -90,7 +150,6 @@
         </div>
       </div>
 
-      <!-- Machos -->
       <div class="bg-white border border-[#EFECE6] rounded-2xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Machos</div>
@@ -101,7 +160,6 @@
         </div>
       </div>
 
-      <!-- Fêmeas -->
       <div class="bg-white border border-[#EFECE6] rounded-2xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Fêmeas</div>
@@ -112,7 +170,6 @@
         </div>
       </div>
 
-      <!-- Filhotes -->
       <div class="bg-white border border-[#EFECE6] rounded-2xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Filhotes</div>
@@ -126,80 +183,21 @@
 
     <!-- PAINÉIS DETALHADOS -->
     <div class="grid grid-cols-2 gap-6 items-start">
-      
-      <!-- ÚLTIMOS CIOS REGISTRADOS -->
       <div class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-4">
         <div class="flex justify-between items-center mb-1">
           <h2 class="font-serif text-lg font-bold text-[#111827]">Últimos Cios Registrados</h2>
-          <a href="#" class="text-laranja text-xs font-bold hover:underline">Ver todas as fêmeas</a>
+          <a href="cachorros.html" class="text-laranja text-xs font-bold hover:underline">Ver todas as fêmeas</a>
         </div>
-
-        <div class="space-y-3">
-          <!-- Item 1 -->
-          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6]">
-            <div class="flex items-center gap-3.5">
-              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
-                <i class="ri-calendar-event-line text-base"></i>
-              </div>
-              <div>
-                <div class="font-bold text-xs text-[#111827]">Nina</div>
-                <div class="text-[11px] text-[#6B7280] mt-0.5">14/09/2025 — 04/10/2025</div>
-              </div>
-            </div>
-            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Cruzou</span>
-          </div>
-
-          <!-- Item 2 -->
-          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6]">
-            <div class="flex items-center gap-3.5">
-              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
-                <i class="ri-calendar-event-line text-base"></i>
-              </div>
-              <div>
-                <div class="font-bold text-xs text-[#111827]">Luna</div>
-                <div class="text-[11px] text-[#6B7280] mt-0.5">09/05/2025 — 27/05/2025</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Item 3 -->
-          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6]">
-            <div class="flex items-center gap-3.5">
-              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
-                <i class="ri-calendar-event-line text-base"></i>
-              </div>
-              <div>
-                <div class="font-bold text-xs text-[#111827]">Kira</div>
-                <div class="text-[11px] text-[#6B7280] mt-0.5">19/04/2025 — 07/05/2025</div>
-              </div>
-            </div>
-            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Cruzou</span>
-          </div>
-
-          <!-- Item 4 -->
-          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6]">
-            <div class="flex items-center gap-3.5">
-              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
-                <i class="ri-calendar-event-line text-base"></i>
-              </div>
-              <div>
-                <div class="font-bold text-xs text-[#111827]">Nina</div>
-                <div class="text-[11px] text-[#6B7280] mt-0.5">28/02/2025 — 20/03/2025</div>
-              </div>
-            </div>
-            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Cruzou</span>
-          </div>
+        <div id="container-cios-dashboard" class="space-y-3">
+          <!-- Renderizado via JS -->
         </div>
       </div>
 
-      <!-- CÃES RECENTES (DINÂMICO) -->
       <div class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between min-h-[380px]">
         <div>
           <h2 class="font-serif text-lg font-bold text-[#111827] mb-4">Cães Recentes</h2>
-          
-          <!-- Lista de Cães Recentes -->
           <div id="container-caes-recentes" class="space-y-3">
-            <!-- Renderizado via JavaScript -->
+            <!-- Renderizado via JS -->
           </div>
         </div>
 
@@ -207,11 +205,9 @@
           Ver todos os cachorros
         </a>
       </div>
-
     </div>
   </main>
 
-  <!-- Script do Dashboard -->
   <script src="/src/front/js/dashboard.js"></script>
 </body>
 </html>
