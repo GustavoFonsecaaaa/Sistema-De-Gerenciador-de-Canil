@@ -42,7 +42,7 @@
 <body class="font-sans bg-creme text-marromescuro flex min-h-screen">
 
   <!-- SIDEBAR -->
-  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between">
+  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between z-40">
     <div class="sidebar-top">
       <div class="font-serif text-xl font-extrabold mb-1 text-white">Canil<span class="text-laranja">Manager</span></div>
       <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
@@ -72,24 +72,24 @@
     </div>
   </aside>
 
-  <!-- CONTEUDO -->
+  <!-- CONTEÚDO -->
   <main class="ml-60 flex-1 p-8">
     <header class="mb-6 flex justify-between items-center">
       <div>
         <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Vacinas</h1>
         <p class="text-xs text-[#6B7280] mt-1">Controle de vacinação dos cães</p>
       </div>
-      <button class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
+      <button id="btn-abrir-modal-vacina" class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
         <i class="ri-add-line text-base"></i> Registrar Vacina
       </button>
     </header>
 
-    <!-- CARDS DE ESTATISTICA -->
+    <!-- CARDS DE ESTATÍSTICAS (KPIs) -->
     <div class="grid grid-cols-4 gap-4 mb-6">
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Registros</div>
-          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">25</div>
+          <div id="stat-total-registros" class="text-2xl font-extrabold text-[#111827] mt-0.5">0</div>
           <div class="text-[10px] text-[#6B7280] mt-0.5">Total de aplicações</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-laranja">
@@ -100,8 +100,8 @@
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Cães Vacinados</div>
-          <div class="text-2xl font-extrabold text-[#111827] mt-0.5">8</div>
-          <div class="text-[10px] text-[#6B7280] mt-0.5">de 8 cães no canil</div>
+          <div id="stat-caes-vacinados" class="text-2xl font-extrabold text-[#111827] mt-0.5">0</div>
+          <div id="stat-sub-caes" class="text-[10px] text-[#6B7280] mt-0.5">de 0 cães no canil</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-verdeokbg flex items-center justify-center text-verdeok">
           <i class="ri-group-line text-lg"></i>
@@ -111,7 +111,7 @@
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Vencidas</div>
-          <div class="text-2xl font-extrabold text-vermelho mt-0.5">2</div>
+          <div id="stat-vencidas" class="text-2xl font-extrabold text-vermelho mt-0.5">0</div>
           <div class="text-[10px] text-[#6B7280] mt-0.5">Precisam de atenção</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-vermelhobg flex items-center justify-center text-vermelho">
@@ -122,7 +122,7 @@
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Vencem em Breve</div>
-          <div class="text-2xl font-extrabold text-[#B45309] mt-0.5">0</div>
+          <div id="stat-vencem-breve" class="text-2xl font-extrabold text-[#B45309] mt-0.5">0</div>
           <div class="text-[10px] text-[#6B7280] mt-0.5">Próximos 7 dias</div>
         </div>
         <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-[#B45309]">
@@ -137,14 +137,15 @@
         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
           <i class="ri-search-line"></i>
         </span>
-        <input type="text" placeholder="Buscar por nome ou raça..." class="w-full bg-white border border-[#EFECE6] rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-laranja transition-colors">
+        <input type="text" id="input-busca-vacinas" placeholder="Buscar por nome do cão ou raça..." class="w-full bg-white border border-[#EFECE6] rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-laranja transition-colors">
       </div>
       
-      <div class="flex bg-white border border-[#EFECE6] rounded-xl p-0.5 gap-0.5 shadow-sm">
+      <div id="container-filtros-vacinas" class="flex bg-white border border-[#EFECE6] rounded-xl p-0.5 gap-0.5 shadow-sm">
         <button class="px-3 py-1.5 rounded-lg text-xs font-bold bg-laranja text-white">Todas</button>
         <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">V10</button>
         <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Antirrábica</button>
         <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Gripe Canina</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Giardíase</button>
       </div>
     </div>
 
@@ -161,55 +162,142 @@
             <th class="text-left px-5 py-3 text-[10px] font-bold uppercase text-[#6B7280] tracking-wider">Ações</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[#FAFAF9]">
-          <tr>
-            <td class="px-5 py-3.5">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-bege overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=100" class="w-full h-full object-cover" alt="Thor">
-                </div>
-                <div>
-                  <div class="font-bold text-xs text-[#111827]">Thor</div>
-                  <div class="text-[10px] text-[#6B7280]">Golden Retriever</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-5 py-3.5 text-xs font-medium text-[#111827]">V10</td>
-            <td class="px-5 py-3.5 text-xs text-[#6B7280]">15/01/2025</td>
-            <td class="px-5 py-3.5 text-xs text-[#6B7280]">15/01/2026</td>
-            <td class="px-5 py-3.5">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-vermelhobg text-vermelho">Vencida</span>
-            </td>
-            <td class="px-5 py-3.5">
-              <button class="text-gray-400 hover:text-vermelho transition-colors text-sm"><i class="ri-delete-bin-line"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td class="px-5 py-3.5">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-bege overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=100" class="w-full h-full object-cover" alt="Luna">
-                </div>
-                <div>
-                  <div class="font-bold text-xs text-[#111827]">Luna</div>
-                  <div class="text-[10px] text-[#6B7280]">Pastor Alemão</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-5 py-3.5 text-xs font-medium text-[#111827]">Antirrábica</td>
-            <td class="px-5 py-3.5 text-xs text-[#6B7280]">18/02/2025</td>
-            <td class="px-5 py-3.5 text-xs text-[#6B7280]">18/02/2026</td>
-            <td class="px-5 py-3.5">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-vermelhobg text-vermelho">Vencida</span>
-            </td>
-            <td class="px-5 py-3.5">
-              <button class="text-gray-400 hover:text-vermelho transition-colors text-sm"><i class="ri-delete-bin-line"></i></button>
-            </td>
-          </tr>
+        <tbody id="tabela-vacinas-body" class="divide-y divide-[#FAFAF9]">
+          <!-- Conteúdo dinâmico via JS -->
         </tbody>
       </table>
+
+      <!-- EMPTY STATE -->
+      <div id="empty-state-vacinas" class="hidden flex-col items-center justify-center py-16 text-center">
+        <div class="w-12 h-12 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/40 text-xl mb-3 shadow-sm">
+          <i class="ri-syringe-line"></i>
+        </div>
+        <h3 class="font-serif text-base font-bold text-[#1C1105] mb-1">Nenhuma vacina encontrada</h3>
+        <p class="text-xs text-[#6B7280]">Não há registros correspondentes aos filtros aplicados.</p>
+      </div>
     </div>
   </main>
 
+  <!-- MODAL REGISTRAR VACINA -->
+  <div id="modal-vacinas-global" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-8 max-w-[500px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative">
+      <button id="btn-fechar-modal-vglobal" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors">
+        <i class="ri-close-line text-xl"></i>
+      </button>
+
+      <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Registrar Vacina</h3>
+
+      <form id="form-vacina-global" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Selecione o Cachorro <span class="text-red-500">*</span></label>
+          <select id="vglobal-select-cao" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome da Vacina <span class="text-red-500">*</span></label>
+          <input type="text" id="vglobal-nome" placeholder="Ex: V10, Antirrábica..." required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm placeholder:text-[#1C1105]/30">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data Aplicação <span class="text-red-500">*</span></label>
+            <input type="date" id="vglobal-data-dose" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Próxima Dose <span class="text-red-500">*</span></label>
+            <input type="date" id="vglobal-data-proxima" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4">
+          <button type="button" id="btn-cancelar-modal-vglobal" class="bg-transparent hover:bg-black/5 text-[#1C1105] font-bold text-xs py-3 px-6 rounded-2xl transition-all">
+            Cancelar
+          </button>
+          <button type="submit" class="bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3 px-6 rounded-2xl transition-all shadow-sm">
+            Salvar Vacina
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL EDITAR VACINA -->
+  <div id="modal-editar-vacina" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-8 max-w-[500px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative">
+      <button id="btn-fechar-modal-veditar" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors">
+        <i class="ri-close-line text-xl"></i>
+      </button>
+
+      <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Editar Vacina</h3>
+
+      <form id="form-editar-vacina" class="space-y-4">
+        <input type="hidden" id="veditar-id">
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Cachorro</label>
+          <input type="text" id="veditar-cao-nome" disabled class="w-full bg-[#EFECE6] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-gray-600 font-bold cursor-not-allowed">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome da Vacina <span class="text-red-500">*</span></label>
+          <input type="text" id="veditar-nome" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data Aplicação <span class="text-red-500">*</span></label>
+            <input type="date" id="veditar-data-dose" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Próxima Dose <span class="text-red-500">*</span></label>
+            <input type="date" id="veditar-data-proxima" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4">
+          <button type="button" id="btn-cancelar-modal-veditar" class="bg-transparent hover:bg-black/5 text-[#1C1105] font-bold text-xs py-3 px-6 rounded-2xl transition-all">
+            Cancelar
+          </button>
+          <button type="submit" class="bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3 px-6 rounded-2xl transition-all shadow-sm">
+            Salvar Alterações
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+  <div id="modal-confirmar-exclusao" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-7 max-w-[420px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 text-center relative">
+      <div class="w-12 h-12 rounded-full bg-vermelhobg text-vermelho flex items-center justify-center text-2xl mx-auto mb-4">
+        <i class="ri-error-warning-line"></i>
+      </div>
+
+      <h3 class="font-serif text-xl font-extrabold text-[#1C1105] mb-2">Excluir Vacina</h3>
+      <p id="texto-confirmacao-exclusao" class="text-xs text-[#6B7280] mb-6 leading-relaxed">
+        Você tem certeza que deseja excluir essa vacina?
+      </p>
+
+      <div class="flex items-center gap-3">
+        <button type="button" id="btn-cancelar-exclusao" class="flex-1 bg-[#FAF8F5] border border-[#EFECE6] hover:bg-white text-[#1C1105] font-bold text-xs py-3 rounded-2xl transition-all shadow-sm">
+          Cancelar
+        </button>
+        <button type="button" id="btn-confirmar-exclusao" class="flex-1 bg-vermelho hover:bg-opacity-90 text-white font-bold text-xs py-3 rounded-2xl transition-all shadow-sm">
+          Sim, excluir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST DE NOTIFICAÇÃO -->
+  <div id="toast-vacina" class="fixed top-6 right-8 z-50 flex items-center gap-2.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
+    <div class="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs">
+      <i class="ri-check-line"></i>
+    </div>
+    <span class="text-xs font-semibold">Vacina registrada com sucesso!</span>
+  </div>
+
+  <script src="/src/front/js/vacinas.js"></script>
 </body>
 </html>

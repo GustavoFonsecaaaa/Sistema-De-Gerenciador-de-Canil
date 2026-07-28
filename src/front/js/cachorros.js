@@ -129,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // SALVA O ESTADO ATUAL DOS CARDS NO LOCALSTORAGE
   function salvarEstadoCaesNoLocalStorage() {
     const cards = document.querySelectorAll('.container-caes > div');
     const lista = [];
@@ -161,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('canil_cachorros', JSON.stringify(lista));
   }
 
-  // CRIA UM CARD NO DOM
   function criarElementoCard(cao) {
     const bgSexo = cao.sexo === 'Macho' ? 'bg-verdeokbg text-verdeok' : 'bg-pink-100 text-pink-500';
 
@@ -192,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return novoCard;
   }
 
-  // CARREGA CÃES DO LOCALSTORAGE AO ABRIR A PÁGINA
   function carregarCaesDoLocalStorage() {
     const salvos = localStorage.getItem('canil_cachorros');
     const containerCards = document.querySelector('.container-caes');
@@ -234,8 +231,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const spansRodape = card.querySelectorAll('div.flex.justify-between span');
-    const idade = spansRodape[0]?.textContent.trim() || '3a 2m';
-    const nascimento = spansRodape[1]?.textContent.trim() || '11/05/2023';
+    const idade = spansRodape[0]?.textContent.trim() || '';
+    const nascimento = spansRodape[1]?.textContent.trim() || '';
 
     if (detalheFoto) detalheFoto.src = fotoSrc;
     if (detalheNome) detalheNome.textContent = nome;
@@ -257,6 +254,66 @@ document.addEventListener('DOMContentLoaded', () => {
     if (infoNascimento) infoNascimento.textContent = nascimento;
     if (infoIdade) infoIdade.textContent = idade;
     if (infoClassificacao) infoClassificacao.textContent = classificacao;
+
+    // CARREGA VACINAS ESPECÍFICAS DESTE CÃO
+    const containerVacinas = document.getElementById('lista-vacinas-container');
+    const emptyStateVacinas = document.getElementById('empty-state-vacinas-detalhe');
+    if (containerVacinas) {
+      containerVacinas.innerHTML = '';
+      const todasVacinas = JSON.parse(localStorage.getItem('canil_vacinas')) || [];
+      const vacinasDoCao = todasVacinas.filter(v => v.caoNome.toLowerCase() === nome.toLowerCase());
+
+      if (vacinasDoCao.length > 0) {
+        if (emptyStateVacinas) emptyStateVacinas.classList.add('hidden');
+        vacinasDoCao.forEach(v => {
+          const dtProxima = new Date(v.proximaDoseIso);
+          const hoje = new Date();
+          hoje.setHours(0, 0, 0, 0);
+          const estaVencida = dtProxima < hoje;
+
+          const textoProxima = estaVencida ? 'Vencida!' : v.proximaDose;
+          const corTextoProxima = estaVencida ? 'text-[#B45309]' : 'text-[#10B981]';
+          const badgeTexto = estaVencida ? 'Pendente' : 'Em dia';
+          const badgeClasse = estaVencida ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#D1FAE5] text-[#10B981]';
+
+          const itemHTML = `
+            <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] text-laranja flex items-center justify-center">
+                  <i class="ri-syringe-line text-base"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-[#111827]">${v.vacinaNome}</h4>
+                  <p class="text-[11px] text-[#6B7280]">Proteção preventiva</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-6">
+                <div class="text-right">
+                  <div class="text-[10px] text-[#6B7280]">Última dose</div>
+                  <div class="font-bold text-[#111827]">${v.dataAplicacao}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-[10px] text-[#6B7280]">Próxima dose</div>
+                  <div class="font-bold ${corTextoProxima}">${textoProxima}</div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClasse}">${badgeTexto}</span>
+              </div>
+            </div>
+          `;
+          containerVacinas.insertAdjacentHTML('beforeend', itemHTML);
+        });
+      } else {
+        if (emptyStateVacinas) emptyStateVacinas.classList.remove('hidden');
+      }
+    }
+
+    // LIMPA E RESETA CONTAINER DE CIOS DO CÃO
+    const containerCios = document.getElementById('lista-cios-container');
+    const emptyStateCios = document.getElementById('empty-state-cios');
+    if (containerCios) {
+      containerCios.innerHTML = '';
+      if (emptyStateCios) emptyStateCios.classList.remove('hidden');
+    }
 
     // CONTROLE CONDICIONAL DA ABA DE CIO (SOMENTE FÊMEAS)
     if (sexo === 'Fêmea') {
@@ -362,7 +419,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnEditarCabecalho) btnEditarCabecalho.onclick = (e) => { e.preventDefault(); abrirTelaEditarCao(); };
 
-  // PREVIEW DA FOTO AO SELECIONAR NOVO ARQUIVO
   if (editFileInput) {
     editFileInput.onchange = (e) => {
       if (e.target.files && e.target.files[0]) {
@@ -375,14 +431,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // ATUALIZA CONTADOR DE CARACTERES
   if (editObs) {
     editObs.oninput = () => {
       if (editCharCount) editCharCount.textContent = editObs.value.length;
     };
   }
 
-  // ATUALIZA IDADE CALCULADA AO MUDAR A DATA NA EDIÇÃO
   if (editNascimento) {
     editNascimento.onchange = () => {
       if (editNascimento.value) {
@@ -394,7 +448,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // SUBMIT DO FORMULÁRIO DE EDIÇÃO
   if (formEditar) {
     formEditar.onsubmit = (e) => {
       e.preventDefault();
@@ -455,7 +508,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // BOTÕES CANCELAR / VOLTAR DA EDIÇÃO
   if (btnVoltarDetalhes) {
     btnVoltarDetalhes.onclick = (e) => {
       e.preventDefault();
@@ -698,6 +750,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const badgeTexto = estaVencida ? 'Pendente' : 'Em dia';
       const badgeClasse = estaVencida ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#D1FAE5] text-[#10B981]';
 
+      const emptyStateVacinas = document.getElementById('empty-state-vacinas-detalhe');
+      if (emptyStateVacinas) emptyStateVacinas.classList.add('hidden');
+
       const novaVacinaHTML = `
         <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs">
           <div class="flex items-center gap-3">
@@ -724,17 +779,37 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
 
       const containerVacinas = document.getElementById('lista-vacinas-container');
-
       if (containerVacinas) {
         containerVacinas.insertAdjacentHTML('afterbegin', novaVacinaHTML);
       }
+
+      // Salva globalmente para o vacinas.html
+      const caoNome = detalheNome?.textContent?.trim() || 'Cão';
+      const caoRaca = detalheRaca?.textContent?.trim() || '';
+      const caoFoto = detalheFoto?.src || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=100';
+
+      const vacinasSalvas = JSON.parse(localStorage.getItem('canil_vacinas')) || [];
+      const novaVacinaObj = {
+        id: Date.now(),
+        caoNome,
+        caoRaca,
+        caoFoto,
+        vacinaNome: nomeVacina,
+        dataAplicacao: dataFmtDose,
+        proximaDose: dataFmtProxima,
+        dataAplicacaoIso: dataDoseRaw,
+        proximaDoseIso: dataProximaRaw
+      };
+
+      vacinasSalvas.unshift(novaVacinaObj);
+      localStorage.setItem('canil_vacinas', JSON.stringify(vacinasSalvas));
 
       fecharModalVacina();
       mostrarToast(`Vacina ${nomeVacina} registrada com sucesso!`);
     };
   }
 
-  // BUSCA E FILTROS RÁPIDOS COM EMPTY STATE
+  // BUSCA E FILTROS RÁPIDOS
   const inputBusca = document.querySelector('main input[type="text"]');
   const botoesFiltro = document.querySelectorAll('main .flex.bg-white.border button');
   const emptyState = document.getElementById('empty-state-caes');
@@ -808,7 +883,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // VERIFICA SE VEIO UM CÃO SELECIONADO DO DASHBOARD
   function verificarRedirecionamentoDoDashboard() {
     const nomeCaoSelecionado = localStorage.getItem('cao_selecionado_para_detalhes');
     if (nomeCaoSelecionado) {
@@ -823,7 +897,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // INICIALIZA A LEITURA DO LOCALSTORAGE
   carregarCaesDoLocalStorage();
   verificarRedirecionamentoDoDashboard();
 });
