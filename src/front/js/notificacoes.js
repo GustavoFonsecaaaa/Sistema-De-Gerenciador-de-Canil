@@ -17,13 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const vacinas = JSON.parse(localStorage.getItem('canil_vacinas')) || [];
     const racoes = JSON.parse(localStorage.getItem('canil_racoes')) || [];
     const lidasList = JSON.parse(localStorage.getItem('canil_notificacoes_lidas')) || [];
+    const excluidasList = JSON.parse(localStorage.getItem('canil_notificacoes_excluidas')) || [];
 
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
     const lista = [];
 
-    // Vacinas
+    // 1. Vacinas
     vacinas.forEach(v => {
       if (!v.proximaDoseIso) return;
       const partes = v.proximaDoseIso.split('-');
@@ -32,6 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       const idUnico = `vacina_${v.id}`;
+
+      // Ignora se estiver na lista de excluídas
+      if (excluidasList.includes(idUnico)) return;
+
       const isLida = lidasList.includes(idUnico);
 
       if (diffDays < 0) {
@@ -56,9 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Rações
+    // 2. Rações
     racoes.forEach((r, idx) => {
       const idUnico = `racao_${r.id || idx}`;
+
+      if (excluidasList.includes(idUnico)) return;
+
       const isLida = lidasList.includes(idUnico);
 
       if (r.quantidadeKg <= (r.limiteMinimoKg || 5)) {
@@ -124,16 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       filtradas.forEach(n => {
         const item = document.createElement('div');
-        item.className = `p-4 flex items-start justify-between gap-3 hover:bg-[#FAF8F5] transition-colors cursor-pointer ${n.isLida ? 'opacity-60' : ''}`;
+        item.className = `p-4 flex items-start justify-between gap-3 hover:bg-[#FAF8F5] transition-colors group cursor-pointer ${n.isLida ? 'opacity-60' : ''}`;
 
         let iconeClass = 'ri-syringe-line text-red-500 bg-red-50';
         if (n.tipo === 'vacina-vencer') iconeClass = 'ri-alarm-warning-line text-amber-600 bg-amber-50';
         if (n.tipo === 'racao-baixa') iconeClass = 'ri-goblet-line text-orange-600 bg-orange-50';
 
         item.innerHTML = `
-          <div class="flex items-start gap-3">
+          <div class="flex items-start gap-3 flex-1">
             <div class="w-9 h-9 rounded-2xl ${iconeClass} flex items-center justify-center flex-shrink-0 text-base"></div>
-            <div>
+            <div class="flex-1">
               <div class="flex items-center gap-1.5">
                 <h4 class="font-bold text-xs text-[#111827]">${n.titulo}</h4>
                 ${!n.isLida ? '<span class="w-2 h-2 rounded-full bg-red-500"></span>' : ''}
@@ -142,9 +150,27 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1.5">${n.tempoRelativo}</div>
             </div>
           </div>
+          
+          <button data-id="${n.id}" class="btn-excluir-notificacao p-1 text-gray-300 hover:text-red-500 transition-colors rounded-lg flex-shrink-0 opacity-0 group-hover:opacity-100" title="Excluir notificação">
+            <i class="ri-delete-bin-line text-sm"></i>
+          </button>
         `;
 
-        item.onclick = () => marcarComoLida(n.id);
+        // Clique no item marca como lida
+        item.onclick = (e) => {
+          if (e.target.closest('.btn-excluir-notificacao')) return;
+          marcarComoLida(n.id);
+        };
+
+        // Clique na lixeira exclui a notificação
+        const btnExcluir = item.querySelector('.btn-excluir-notificacao');
+        if (btnExcluir) {
+          btnExcluir.onclick = (e) => {
+            e.stopPropagation();
+            excluirNotificacao(n.id);
+          };
+        }
+
         containerListaNotif.appendChild(item);
       });
     }
@@ -155,6 +181,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!lidasList.includes(id)) {
       lidasList.push(id);
       localStorage.setItem('canil_notificacoes_lidas', JSON.stringify(lidasList));
+    }
+    gerarNotificacoes();
+  }
+
+  function excluirNotificacao(id) {
+    const excluidasList = JSON.parse(localStorage.getItem('canil_notificacoes_excluidas')) || [];
+    if (!excluidasList.includes(id)) {
+      excluidasList.push(id);
+      localStorage.setItem('canil_notificacoes_excluidas', JSON.stringify(excluidasList));
     }
     gerarNotificacoes();
   }
