@@ -20,6 +20,8 @@
           bege: '#EFECE6',             
           verdeok: '#10B981',
           verdeokbg: '#D1FAE5',
+          vermelho: '#EF4444',
+          vermelhobg: '#FEE2E2',
         },
         fontFamily: {
           serif: ['Playfair Display', 'Georgia', 'serif'],
@@ -102,7 +104,7 @@
         </div>
       </div>
 
-      <!-- GRID DE CACHORROS (Dinâmico via JS) -->
+      <!-- GRID DE CACHORROS -->
       <div class="grid grid-cols-4 gap-4 container-caes"></div>
 
       <!-- EMPTY STATE (Nenhum cachorro encontrado) -->
@@ -135,9 +137,16 @@
               <h2 id="detalhe-nome" class="font-serif text-2xl font-extrabold text-[#111827]"></h2>
               <span id="detalhe-badge-sexo" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold"></span>
             </div>
-            <button class="w-8 h-8 rounded-xl bg-[#FAFAF9] border border-[#EFECE6] flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors" title="Editar cão">
-              <i class="ri-edit-line text-sm"></i>
-            </button>
+            
+            <!-- AÇÕES DO PERFIL: EDITAR E EXCLUIR -->
+            <div class="flex items-center gap-1.5">
+              <button id="btn-editar-cao-detalhe" class="w-8 h-8 rounded-xl bg-[#FAFAF9] border border-[#EFECE6] flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors" title="Editar cão">
+                <i class="ri-edit-line text-sm"></i>
+              </button>
+              <button id="btn-excluir-cao-detalhe" class="w-8 h-8 rounded-xl bg-[#FAFAF9] border border-[#EFECE6] flex items-center justify-center text-gray-500 hover:text-vermelho hover:bg-vermelhobg transition-colors" title="Excluir cão">
+                <i class="ri-delete-bin-line text-sm"></i>
+              </button>
+            </div>
           </div>
 
           <p id="detalhe-raca" class="text-xs text-[#6B7280] font-medium"></p>
@@ -396,6 +405,29 @@
         </div>
       </form>
 
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMAR EXCLUSÃO DE CÃO -->
+  <div id="modal-confirmar-exclusao-cao" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-7 max-w-[420px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 text-center relative">
+      <div class="w-12 h-12 rounded-full bg-vermelhobg text-vermelho flex items-center justify-center text-2xl mx-auto mb-4">
+        <i class="ri-error-warning-line"></i>
+      </div>
+
+      <h3 class="font-serif text-xl font-extrabold text-[#1C1105] mb-2">Excluir Cachorro</h3>
+      <p id="texto-confirmar-exclusao-cao" class="text-xs text-[#6B7280] mb-6 leading-relaxed">
+        Tem certeza que deseja excluir este cão? Esta ação não poderá ser desfeita.
+      </p>
+
+      <div class="flex items-center gap-3">
+        <button type="button" id="btn-cancelar-exclusao-cao" class="flex-1 bg-[#FAF8F5] border border-[#EFECE6] hover:bg-white text-[#1C1105] font-bold text-xs py-3 rounded-2xl transition-all shadow-sm">
+          Cancelar
+        </button>
+        <button type="button" id="btn-confirmar-exclusao-cao" class="flex-1 bg-vermelho hover:bg-opacity-90 text-white font-bold text-xs py-3 rounded-2xl transition-all shadow-sm">
+          Sim, excluir
+        </button>
+      </div>
     </div>
   </div>
 

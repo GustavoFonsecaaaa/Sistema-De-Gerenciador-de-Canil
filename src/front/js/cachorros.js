@@ -6,11 +6,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewDetalhes = document.getElementById('view-detalhes-cao');
   const viewEditar = document.getElementById('view-editar-cao');
 
-  // Botões de Navegação entre Views
+  // Botões de Navegação e Ações entre Views
   const btnVoltarLista = document.getElementById('btn-voltar-lista');
   const btnVoltarDetalhes = document.getElementById('btn-voltar-detalhes');
   const btnCancelarEditarCao = document.getElementById('btn-cancelar-editar-cao');
-  const btnEditarCabecalho = document.querySelector('#view-detalhes-cao button[title="Editar cão"]');
+  const btnEditarCabecalho = document.getElementById('btn-editar-cao-detalhe');
+  const btnExcluirCaoDetalhe = document.getElementById('btn-excluir-cao-detalhe');
+
+  // Modal Exclusão de Cão
+  const modalExcluirCao = document.getElementById('modal-confirmar-exclusao-cao');
+  const modalExcluirCaoContent = modalExcluirCao ? modalExcluirCao.querySelector('.transform') : null;
+  const btnCancelarExclusaoCao = document.getElementById('btn-cancelar-exclusao-cao');
+  const btnConfirmarExclusaoCao = document.getElementById('btn-confirmar-exclusao-cao');
+  const textoConfirmarExclusaoCao = document.getElementById('texto-confirmar-exclusao-cao');
 
   // Elementos da Tela de Detalhes
   const detalheFoto = document.getElementById('detalhe-foto');
@@ -190,13 +198,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return novoCard;
   }
 
-  // CARREGA CÃES DO LOCALSTORAGE AO ABRIR A PÁGINA (Limpo de cards estáticos)
   function carregarCaesDoLocalStorage() {
     const salvos = localStorage.getItem('canil_cachorros');
     const containerCards = document.querySelector('.container-caes');
     if (!containerCards) return;
 
-    containerCards.innerHTML = ''; // Limpa qualquer elemento estático no HTML
+    containerCards.innerHTML = '';
 
     if (salvos) {
       const listaCaes = JSON.parse(salvos);
@@ -330,6 +337,60 @@ document.addEventListener('DOMContentLoaded', () => {
     if (viewDetalhes) viewDetalhes.classList.remove('hidden');
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // CONTROLE DE EXCLUSÃO DE CÃO
+  function abrirModalExcluirCao() {
+    const nome = detalheNome?.textContent || 'este cão';
+    if (textoConfirmarExclusaoCao) {
+      textoConfirmarExclusaoCao.textContent = `Tem certeza que deseja excluir o cão "${nome}"? Todas as vacinas vinculadas também serão removidas.`;
+    }
+
+    if (modalExcluirCao && modalExcluirCaoContent) {
+      modalExcluirCao.classList.remove('hidden');
+      setTimeout(() => {
+        modalExcluirCao.classList.remove('opacity-0');
+        modalExcluirCaoContent.classList.remove('scale-95');
+      }, 10);
+    }
+  }
+
+  function fecharModalExcluirCao() {
+    if (modalExcluirCao && modalExcluirCaoContent) {
+      modalExcluirCao.classList.add('opacity-0');
+      modalExcluirCaoContent.classList.add('scale-95');
+      setTimeout(() => {
+        modalExcluirCao.classList.add('hidden');
+      }, 200);
+    }
+  }
+
+  if (btnExcluirCaoDetalhe) btnExcluirCaoDetalhe.onclick = (e) => { e.preventDefault(); abrirModalExcluirCao(); };
+  if (btnCancelarExclusaoCao) btnCancelarExclusaoCao.onclick = fecharModalExcluirCao;
+  if (modalExcluirCao) modalExcluirCao.onclick = (e) => { if (e.target === modalExcluirCao) fecharModalExcluirCao(); };
+
+  if (btnConfirmarExclusaoCao) {
+    btnConfirmarExclusaoCao.onclick = () => {
+      const nomeParaRemover = detalheNome?.textContent?.trim();
+
+      if (nomeParaRemover) {
+        let caes = JSON.parse(localStorage.getItem('canil_cachorros')) || [];
+        caes = caes.filter(c => c.nome.toLowerCase() !== nomeParaRemover.toLowerCase());
+        localStorage.setItem('canil_cachorros', JSON.stringify(caes));
+
+        let vacinas = JSON.parse(localStorage.getItem('canil_vacinas')) || [];
+        vacinas = vacinas.filter(v => v.caoNome.toLowerCase() !== nomeParaRemover.toLowerCase());
+        localStorage.setItem('canil_vacinas', JSON.stringify(vacinas));
+
+        fecharModalExcluirCao();
+        
+        carregarCaesDoLocalStorage();
+        if (viewDetalhes) viewDetalhes.classList.add('hidden');
+        if (viewLista) viewLista.classList.remove('hidden');
+
+        mostrarToast(`Cão ${nomeParaRemover} excluído com sucesso.`);
+      }
+    };
   }
 
   // CONTROLE DE ABAS DA TELA DE DETALHES
