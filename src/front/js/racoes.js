@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("Script racoes.js carregado!");
+  console.log("Script racoes.js carregado com histórico!");
 
   const containerRacoes = document.querySelector('.container-racoes');
   const btnAdicionar = document.getElementById('btn-adicionar-racao');
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let idRacaoParaExcluir = null;
   let idRacaoParaEditar = null;
 
-  // Dados Iniciais Padrão se o LocalStorage estiver vazio
+  // Dados Iniciais Padrão com estrutura de Histórico de Aberturas
   const racoesPadrao = [
     {
       id: 1,
@@ -38,8 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
       pesoKg: 15,
       quantidadeSacos: 3,
       dataCompra: "2025-06-20",
-      dataAbertura: "2025-07-01",
-      obs: "Ração principal do canil"
+      obs: "Ração principal do canil",
+      historicoAberturas: [
+        { id: 101, data: "2025-07-01", diasDuracao: 25 },
+        { id: 102, data: "2025-07-26", diasDuracao: null } // Saco atual aberto
+      ]
     },
     {
       id: 2,
@@ -48,18 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
       pesoKg: 10,
       quantidadeSacos: 2,
       dataCompra: "2025-06-28",
-      dataAbertura: "",
-      obs: ""
-    },
-    {
-      id: 3,
-      marca: "Hill's",
-      tipo: "Adulto - Light",
-      pesoKg: 12,
-      quantidadeSacos: 1,
-      dataCompra: "2025-07-01",
-      dataAbertura: "2025-07-20",
-      obs: "Controle de peso"
+      obs: "",
+      historicoAberturas: []
     }
   ];
 
@@ -85,14 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
   }
 
-  function calcularDiasAberto(dataAberturaIso) {
-    if (!dataAberturaIso) return null;
-    const [a, m, d] = dataAberturaIso.split('-');
-    const dtAbertura = new Date(a, m - 1, d);
+  function calcularDiasDecorridos(dataIso) {
+    if (!dataIso) return 0;
+    const [a, m, d] = dataIso.split('-');
+    const dt = new Date(a, m - 1, d);
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
-    const diffTime = hoje - dtAbertura;
+    const diffTime = hoje - dt;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     return diffDays >= 0 ? diffDays : 0;
   }
@@ -130,10 +123,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Baixo</span>`
         : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-verdeokbg text-verdeok">OK</span>`;
 
-      const diasAberto = calcularDiasAberto(r.dataAbertura);
-      let textoAbertura = '-';
-      if (diasAberto !== null) {
-        textoAbertura = `${formatarDataBR(r.dataAbertura)} (${diasAberto}d abertos)`;
+      // Histórico de Aberturas
+      const historico = r.historicoAberturas || [];
+      const ultimaAbertura = historico.length > 0 ? historico[historico.length - 1] : null;
+
+      let textoUltimaAbertura = 'Nenhum saco aberto';
+      if (ultimaAbertura) {
+        const diasEmUso = calcularDiasDecorridos(ultimaAbertura.data);
+        textoUltimaAbertura = `${formatarDataBR(ultimaAbertura.data)} (${diasEmUso}d em uso)`;
       }
 
       const card = document.createElement('div');
@@ -141,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       card.innerHTML = `
         <div>
-          <div class="flex justify-between items-start mb-4">
+          <div class="flex justify-between items-start mb-3">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-lg bg-verdeokbg flex items-center justify-center text-verdeok">
                 <i class="ri-goblet-line text-lg"></i>
@@ -154,29 +151,34 @@ document.addEventListener('DOMContentLoaded', () => {
             ${statusBadge}
           </div>
 
-          <div class="grid grid-cols-2 gap-y-3 gap-x-4 border-b border-[#FAFAF9] pb-4 mb-4 text-xs">
+          <div class="grid grid-cols-2 gap-y-2 gap-x-4 border-b border-[#FAFAF9] pb-3 mb-3 text-xs">
             <div>
-              <span class="text-[11px] text-[#6B7280] block">Peso do saco</span>
+              <span class="text-[10px] text-[#6B7280] block">Peso do saco</span>
               <span class="font-bold text-[#111827]">${r.pesoKg} kg</span>
             </div>
             <div>
-              <span class="text-[11px] text-[#6B7280] block">Data compra</span>
+              <span class="text-[10px] text-[#6B7280] block">Data compra</span>
               <span class="font-bold text-[#111827]">${formatarDataBR(r.dataCompra)}</span>
             </div>
             <div>
-              <span class="text-[11px] text-[#6B7280] block">Total em estoque</span>
+              <span class="text-[10px] text-[#6B7280] block">Total estoque</span>
               <span class="font-bold text-[#111827]">${totalKg} kg</span>
             </div>
             <div>
-              <span class="text-[11px] text-[#6B7280] block">Abertura</span>
-              <span class="font-bold text-laranja">${textoAbertura}</span>
+              <span class="text-[10px] text-[#6B7280] block">Última Abertura</span>
+              <span class="font-bold text-laranja">${textoUltimaAbertura}</span>
             </div>
           </div>
+
+          <!-- Botão Abrir Novo Saco -->
+          <button class="btn-abrir-saco w-full bg-[#FAF8F5] hover:bg-laranja hover:text-white border border-[#EFECE6] text-laranja font-bold text-[11px] py-1.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 mb-2">
+            <i class="ri-box-3-line"></i> Abrir Novo Saco Hoje
+          </button>
         </div>
 
-        <div class="flex items-center justify-between text-xs mt-2 pt-3 border-t border-[#FAFAF9]">
+        <div class="flex items-center justify-between text-xs pt-2 border-t border-[#FAFAF9]">
           <div class="flex items-center gap-2">
-            <span class="text-[#6B7280]">Unidades:</span>
+            <span class="text-[#6B7280]">Sacos:</span>
             <div class="flex items-center bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5">
               <button class="btn-qtd-menos w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 font-bold">-</button>
               <span class="px-3 font-bold ${ehEstoqueBaixo ? 'text-[#B45309]' : 'text-[#111827]'}">${r.quantidadeSacos}</span>
@@ -185,8 +187,8 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           
           <div class="flex items-center gap-1 bg-[#FAFAF9] border border-[#EFECE6] rounded-lg p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <button class="btn-editar w-7 h-7 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 transition-colors" title="Editar ração">
-              <i class="ri-edit-line text-sm"></i>
+            <button class="btn-editar w-7 h-7 flex items-center justify-center hover:bg-gray-100 rounded text-gray-500 transition-colors" title="Editar / Ver Histórico">
+              <i class="ri-history-line text-sm"></i>
             </button>
             <button class="btn-excluir w-7 h-7 flex items-center justify-center hover:bg-red-50 hover:text-red-500 rounded text-gray-400 transition-colors" title="Excluir ração">
               <i class="ri-delete-bin-line text-sm"></i>
@@ -195,7 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
 
-      // Eventos dos Botões do Card
+      // Eventos
+      card.querySelector('.btn-abrir-saco').onclick = () => abrirNovoSacoHoje(r.id);
       card.querySelector('.btn-qtd-menos').onclick = () => alterarQtd(r.id, -1);
       card.querySelector('.btn-qtd-mais').onclick = () => alterarQtd(r.id, 1);
       card.querySelector('.btn-editar').onclick = () => abrirModalEditar(r);
@@ -203,6 +206,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
       containerRacoes.appendChild(card);
     });
+  }
+
+  function abrirNovoSacoHoje(id) {
+    const lista = carregarRacoes();
+    const item = lista.find(r => r.id === id);
+
+    if (item) {
+      const hojeIso = new Date().toISOString().split('T')[0];
+
+      if (!item.historicoAberturas) item.historicoAberturas = [];
+
+      // Se havia um saco aberto anterior, calcula a duração final dele
+      if (item.historicoAberturas.length > 0) {
+        const ultimo = item.historicoAberturas[item.historicoAberturas.length - 1];
+        if (!ultimo.diasDuracao) {
+          ultimo.diasDuracao = calcularDiasDecorridos(ultimo.data);
+        }
+      }
+
+      // Adiciona nova abertura
+      item.historicoAberturas.push({
+        id: Date.now(),
+        data: hojeIso,
+        diasDuracao: null
+      });
+
+      // Reduz 1 saco do estoque se houver
+      if (item.quantidadeSacos > 0) {
+        item.quantidadeSacos -= 1;
+      }
+
+      salvarRacoes(lista);
+      mostrarToast(`Saco de ${item.marca} registrado como aberto hoje!`);
+    }
   }
 
   function alterarQtd(id, delta) {
@@ -285,8 +322,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const pesoKg = parseFloat(document.getElementById('add-peso').value) || 0;
       const quantidadeSacos = parseInt(document.getElementById('add-qtd').value) || 0;
       const dataCompra = document.getElementById('add-data').value;
-      const dataAbertura = document.getElementById('add-data-abertura').value;
+      const dataAberturaInicial = document.getElementById('add-data-abertura').value;
       const obs = document.getElementById('add-obs').value.trim();
+
+      const historicoAberturas = [];
+      if (dataAberturaInicial) {
+        historicoAberturas.push({
+          id: Date.now(),
+          data: dataAberturaInicial,
+          diasDuracao: null
+        });
+      }
 
       const lista = carregarRacoes();
       const novaRacao = {
@@ -296,8 +342,8 @@ document.addEventListener('DOMContentLoaded', () => {
         pesoKg,
         quantidadeSacos,
         dataCompra,
-        dataAbertura,
-        obs
+        obs,
+        historicoAberturas
       };
 
       lista.unshift(novaRacao);
@@ -307,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // MODAL EDITAR
+  // MODAL EDITAR & VER HISTÓRICO
   function abrirModalEditar(racao) {
     idRacaoParaEditar = racao.id;
 
@@ -316,8 +362,39 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('edit-peso').value = racao.pesoKg;
     document.getElementById('edit-qtd').value = racao.quantidadeSacos;
     document.getElementById('edit-data').value = racao.dataCompra || '';
-    document.getElementById('edit-data-abertura').value = racao.dataAbertura || '';
     document.getElementById('edit-obs').value = racao.obs || '';
+
+    // Renderiza a lista de Histórico dentro do Modal de Edição
+    let containerHist = document.getElementById('container-historico-aberturas');
+    if (!containerHist) {
+      // Cria a seção se não existir
+      const divHist = document.createElement('div');
+      divHist.className = "pt-2 border-t border-[#EFECE6]";
+      divHist.innerHTML = `
+        <label class="block text-xs font-bold text-[#1C1105] mb-2"><i class="ri-history-line"></i> Histórico de Sacos Abertos</label>
+        <div id="container-historico-aberturas" class="max-h-28 overflow-y-auto space-y-1.5 pr-1"></div>
+      `;
+      formEditar.insertBefore(divHist, formEditar.querySelector('.flex.items-center.gap-3'));
+      containerHist = document.getElementById('container-historico-aberturas');
+    }
+
+    containerHist.innerHTML = '';
+    const hist = racao.historicoAberturas || [];
+
+    if (hist.length === 0) {
+      containerHist.innerHTML = `<p class="text-[11px] text-gray-400 italic">Nenhum saco aberto gravado.</p>`;
+    } else {
+      hist.slice().reverse().forEach((h, index) => {
+        const duracaoText = h.diasDuracao ? `${h.diasDuracao} dias de duração` : `${calcularDiasDecorridos(h.data)} dias em uso (atual)`;
+        const itemHtml = `
+          <div class="flex items-center justify-between bg-[#FAF8F5] border border-[#EFECE6] p-2 rounded-xl text-xs">
+            <span class="font-bold text-[#111827]">${formatarDataBR(h.data)}</span>
+            <span class="text-[10px] text-gray-500 font-medium">${duracaoText}</span>
+          </div>
+        `;
+        containerHist.insertAdjacentHTML('beforeend', itemHtml);
+      });
+    }
 
     if (modalEditar) {
       modalEditar.classList.remove('hidden');
@@ -348,7 +425,6 @@ document.addEventListener('DOMContentLoaded', () => {
         lista[index].pesoKg = parseFloat(document.getElementById('edit-peso').value) || 0;
         lista[index].quantidadeSacos = parseInt(document.getElementById('edit-qtd').value) || 0;
         lista[index].dataCompra = document.getElementById('edit-data').value;
-        lista[index].dataAbertura = document.getElementById('edit-data-abertura').value;
         lista[index].obs = document.getElementById('edit-obs').value.trim();
 
         salvarRacoes(lista);
