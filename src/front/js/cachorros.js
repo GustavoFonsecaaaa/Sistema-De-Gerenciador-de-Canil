@@ -1016,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function verificarRedirecionamentoDoDashboard() {
+  function verificarRedirecionamentoDoDashboard() { //joga os dados para o dashboard
     const nomeCaoSelecionado = localStorage.getItem('cao_selecionado_para_detalhes');
     if (nomeCaoSelecionado) {
       const cards = document.querySelectorAll('.container-caes > div');
