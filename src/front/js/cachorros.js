@@ -81,17 +81,59 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCancelarModalCio = document.getElementById('btn-cancelar-modal-cio');
   const formRegistrarCio = document.getElementById('form-registrar-cio');
 
-  // Toggle Dinâmico dos Campos de Cruzamento
+  // Toggle e Container de Múltiplas Cruzas
   const toggleCruzou = document.getElementById('cio-toggle-cruzou');
   const camposDetalhesCruzamento = document.getElementById('campos-detalhes-cruzamento');
+  const containerItensCruza = document.getElementById('container-itens-cruza');
+  const btnAddItemCruza = document.getElementById('btn-add-item-cruza');
 
-  // Variável para armazenar o ID do cio se estivemos editando
   let idCioEmEdicao = null;
+
+  function criarLinhaFormularioCruza(dados = {}) {
+    if (!containerItensCruza) return;
+
+    const divItem = document.createElement('div');
+    divItem.className = "item-cruza-linha bg-[#FAF8F5] border border-[#EFECE6] p-3 rounded-2xl space-y-2 relative group";
+
+    divItem.innerHTML = `
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[10px] font-bold text-[#6B7280] uppercase mb-1">Macho (Padreador) *</label>
+          <input type="text" class="cruza-padreador w-full bg-white border border-[#EFECE6] rounded-xl py-2 px-3 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja shadow-sm" placeholder="Ex: Max" value="${dados.macho || ''}" required>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-[#6B7280] uppercase mb-1">Data da Cruza *</label>
+          <input type="date" class="cruza-data w-full bg-white border border-[#EFECE6] rounded-xl py-2 px-3 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja shadow-sm" value="${dados.data || ''}" required>
+        </div>
+      </div>
+      <div class="flex items-center justify-between gap-2">
+        <input type="text" class="cruza-obs w-full bg-white border border-[#EFECE6] rounded-xl py-1.5 px-3 text-xs text-[#1C1105] focus:outline-none focus:border-laranja shadow-sm" placeholder="Obs (opcional, ex: 1ª molação)" value="${dados.obs || ''}">
+        <button type="button" class="btn-remover-cruza text-gray-300 hover:text-red-500 p-1.5 transition-colors" title="Remover cruza">
+          <i class="ri-delete-bin-line text-sm"></i>
+        </button>
+      </div>
+    `;
+
+    divItem.querySelector('.btn-remover-cruza').onclick = () => {
+      divItem.remove();
+    };
+
+    containerItensCruza.appendChild(divItem);
+  }
+
+  if (btnAddItemCruza) {
+    btnAddItemCruza.onclick = () => {
+      criarLinhaFormularioCruza();
+    };
+  }
 
   if (toggleCruzou && camposDetalhesCruzamento) {
     toggleCruzou.addEventListener('change', () => {
       if (toggleCruzou.checked) {
         camposDetalhesCruzamento.classList.remove('hidden');
+        if (containerItensCruza && containerItensCruza.children.length === 0) {
+          criarLinhaFormularioCruza();
+        }
       } else {
         camposDetalhesCruzamento.classList.add('hidden');
       }
@@ -151,6 +193,13 @@ document.addEventListener('DOMContentLoaded', () => {
       toastSucesso.classList.remove('opacity-100', 'translate-y-0');
       toastSucesso.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
     }, 3000);
+  }
+
+  function formatarDataBR(isoDate) {
+    if (!isoDate) return '-';
+    const partes = isoDate.split('-');
+    if (partes.length !== 3) return isoDate;
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
   }
 
   function calcularIdadeEFase(dataNascimento) {
@@ -366,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // CARREGA E PERSISTE CIOS ESPECÍFICOS DESTE CÃO (COM BOTÕES DE EDITAR E EXCLUIR)
+    // CARREGA E PERSISTE CIOS ESPECÍFICOS DESTE CÃO (COM MÚLTIPLAS CRUZAS)
     const containerCios = document.getElementById('lista-cios-container');
     const emptyStateCios = document.getElementById('empty-state-cios');
     if (containerCios) {
@@ -377,24 +426,27 @@ document.addEventListener('DOMContentLoaded', () => {
       if (ciosDoCao.length > 0) {
         if (emptyStateCios) emptyStateCios.classList.add('hidden');
         ciosDoCao.forEach(c => {
-          const textoStatus = c.houveCruzamento ? 'Cruzou' : 'Sem cruza';
+          const temCruzas = c.houveCruzamento && c.cruzas && c.cruzas.length > 0;
+          const textoStatus = temCruzas ? `${c.cruzas.length} cruza(s)` : (c.houveCruzamento ? 'Cruzou' : 'Sem cruza');
           const classeBadge = c.houveCruzamento ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-gray-500';
 
           let blocoCruzamentoHTML = '';
-          if (c.houveCruzamento) {
+          if (temCruzas) {
+            const linhasCruza = c.cruzas.map(cr => `
+              <div class="flex items-center justify-between py-1.5 px-3 bg-white border border-[#EFECE6] rounded-xl">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-[#111827]">${cr.macho}</span>
+                  ${cr.obs ? `<span class="text-[10px] text-[#6B7280]">(${cr.obs})</span>` : ''}
+                </div>
+                <span class="font-bold text-laranja">${formatarDataBR(cr.data)}</span>
+              </div>
+            `).join('');
+
             blocoCruzamentoHTML = `
-              <div class="mt-3 pt-2.5 border-t border-[#EFECE6] grid grid-cols-3 gap-2 text-[11px]">
-                <div>
-                  <span class="text-[#6B7280] block text-[9px] uppercase font-bold">Padreador (Macho)</span>
-                  <span class="font-bold text-[#111827]">${c.padreador || 'Não informado'}</span>
-                </div>
-                <div>
-                  <span class="text-[#6B7280] block text-[9px] uppercase font-bold">Qtd. Cruzas</span>
-                  <span class="font-bold text-[#111827]">${c.qtdCruzas || '1'} cruza(s)</span>
-                </div>
-                <div>
-                  <span class="text-[#6B7280] block text-[9px] uppercase font-bold">Datas das Cruzas</span>
-                  <span class="font-bold text-laranja">${c.datasCruzas || 'Não informadas'}</span>
+              <div class="mt-3 pt-2.5 border-t border-[#EFECE6]">
+                <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Cruzamentos Registrados (${c.cruzas.length})</div>
+                <div class="space-y-1.5 text-xs">
+                  ${linhasCruza}
                 </div>
               </div>
             `;
@@ -415,7 +467,6 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${classeBadge}">${textoStatus}</span>
                 
-                <!-- BOTÕES DE EDITAR E EXCLUIR CIO -->
                 <div class="flex items-center gap-1 bg-white border border-[#EFECE6] rounded-xl p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <button class="btn-editar-cio p-1 text-gray-400 hover:text-laranja transition-colors" title="Editar Cio">
                     <i class="ri-edit-line text-sm"></i>
@@ -429,15 +480,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ${blocoCruzamentoHTML}
           `;
 
-          // Evento do botão Editar Cio
-          cardCioEl.querySelector('.btn-editar-cio').onclick = () => {
-            editarCioExistente(c);
-          };
-
-          // Evento do botão Excluir Cio
-          cardCioEl.querySelector('.btn-excluir-cio').onclick = () => {
-            excluirCioExistente(c.id);
-          };
+          cardCioEl.querySelector('.btn-editar-cio').onclick = () => editarCioExistente(c);
+          cardCioEl.querySelector('.btn-excluir-cio').onclick = () => excluirCioExistente(c.id);
 
           containerCios.appendChild(cardCioEl);
         });
@@ -477,7 +521,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function editarCioExistente(cio) {
     idCioEmEdicao = cio.id;
 
-    // Converte a data do formato BR (DD/MM/AAAA) para o formato do input date (AAAA-MM-DD)
     const convData = (dataBr) => {
       if (!dataBr) return '';
       const p = dataBr.split('/');
@@ -488,13 +531,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('cio-data-fim').value = convData(cio.dataFim);
     document.getElementById('cio-obs').value = cio.obs || '';
 
+    if (containerItensCruza) containerItensCruza.innerHTML = '';
+
     if (toggleCruzou) {
       toggleCruzou.checked = cio.houveCruzamento;
       if (cio.houveCruzamento) {
         camposDetalhesCruzamento.classList.remove('hidden');
-        document.getElementById('cio-macho-padreador').value = cio.padreador || '';
-        document.getElementById('cio-qtd-cruzas').value = cio.qtdCruzas || '';
-        document.getElementById('cio-datas-cruzas').value = cio.datasCruzas || '';
+        if (cio.cruzas && cio.cruzas.length > 0) {
+          cio.cruzas.forEach(cr => criarLinhaFormularioCruza(cr));
+        } else {
+          criarLinhaFormularioCruza();
+        }
       } else {
         camposDetalhesCruzamento.classList.add('hidden');
       }
@@ -848,12 +895,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // REGISTRO E EDIÇÃO DO CIO
+  // REGISTRO E EDIÇÃO DO CIO (COM CAPTURA DAS CRUZAS)
   function abrirModalCio() {
     idCioEmEdicao = null;
     if (formRegistrarCio) formRegistrarCio.reset();
     if (toggleCruzou) toggleCruzou.checked = false;
     if (camposDetalhesCruzamento) camposDetalhesCruzamento.classList.add('hidden');
+    if (containerItensCruza) containerItensCruza.innerHTML = '';
 
     const modalTitulo = modalCio ? modalCio.querySelector('h3') : null;
     if (modalTitulo) modalTitulo.textContent = "Registrar Novo Cio";
@@ -892,14 +940,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const obs = document.getElementById('cio-obs').value.trim() || 'Cio registrado';
       const houveCruzamento = toggleCruzou ? toggleCruzou.checked : false;
 
-      let padreador = 'Não informado';
-      let qtdCruzas = '1';
-      let datasCruzas = 'Não informadas';
+      const cruzas = [];
 
-      if (houveCruzamento) {
-        padreador = document.getElementById('cio-macho-padreador').value.trim() || 'Não informado';
-        qtdCruzas = document.getElementById('cio-qtd-cruzas').value.trim() || '1';
-        datasCruzas = document.getElementById('cio-datas-cruzas').value.trim() || 'Não informadas';
+      if (houveCruzamento && containerItensCruza) {
+        const linhas = containerItensCruza.querySelectorAll('.item-cruza-linha');
+        linhas.forEach(l => {
+          const macho = l.querySelector('.cruza-padreador')?.value.trim() || 'Desconhecido';
+          const data = l.querySelector('.cruza-data')?.value || '';
+          const obsCruza = l.querySelector('.cruza-obs')?.value.trim() || '';
+
+          if (macho && data) {
+            cruzas.push({ macho, data, obs: obsCruza });
+          }
+        });
       }
 
       const [a1, m1, d1] = dataInicioRaw.split('-');
@@ -917,7 +970,6 @@ document.addEventListener('DOMContentLoaded', () => {
       let ciosSalvos = JSON.parse(localStorage.getItem('canil_cios')) || [];
 
       if (idCioEmEdicao) {
-        // EDIÇÃO
         const index = ciosSalvos.findIndex(c => c.id === idCioEmEdicao);
         if (index !== -1) {
           ciosSalvos[index] = {
@@ -927,13 +979,10 @@ document.addEventListener('DOMContentLoaded', () => {
             duracaoDias,
             obs,
             houveCruzamento,
-            padreador,
-            qtdCruzas,
-            datasCruzas
+            cruzas
           };
         }
       } else {
-        // CADASTRO NOVO
         const novoCioObj = {
           id: Date.now(),
           caoNome,
@@ -942,9 +991,7 @@ document.addEventListener('DOMContentLoaded', () => {
           duracaoDias,
           obs,
           houveCruzamento,
-          padreador,
-          qtdCruzas,
-          datasCruzas
+          cruzas
         };
         ciosSalvos.unshift(novoCioObj);
       }
