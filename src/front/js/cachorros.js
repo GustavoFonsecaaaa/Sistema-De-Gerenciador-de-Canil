@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const infoIdade = document.getElementById('info-idade');
   const infoClassificacao = document.getElementById('info-classificacao');
 
-  // Form de Edição
+  // Form de Edição de Cão
   const formEditar = document.getElementById('form-editar-cao');
   const editSubtitulo = document.getElementById('edit-subtitulo');
   const editPreviewFoto = document.getElementById('edit-preview-foto');
@@ -73,13 +73,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const toastSucesso = document.getElementById('toast-sucesso-cao');
   let toastTimeout = null;
 
-  // Modal Registrar Cio
+  // Modal Registrar/Editar Cio
   const btnRegistrarCio = document.getElementById('btn-registrar-cio');
   const modalCio = document.getElementById('modal-registrar-cio');
   const modalCioContent = modalCio ? modalCio.querySelector('.transform') : null;
   const btnFecharModalCio = document.getElementById('btn-fechar-modal-cio');
   const btnCancelarModalCio = document.getElementById('btn-cancelar-modal-cio');
   const formRegistrarCio = document.getElementById('form-registrar-cio');
+
+  // Toggle Dinâmico dos Campos de Cruzamento
+  const toggleCruzou = document.getElementById('cio-toggle-cruzou');
+  const camposDetalhesCruzamento = document.getElementById('campos-detalhes-cruzamento');
+
+  // Variável para armazenar o ID do cio se estivemos editando
+  let idCioEmEdicao = null;
+
+  if (toggleCruzou && camposDetalhesCruzamento) {
+    toggleCruzou.addEventListener('change', () => {
+      if (toggleCruzou.checked) {
+        camposDetalhesCruzamento.classList.remove('hidden');
+      } else {
+        camposDetalhesCruzamento.classList.add('hidden');
+      }
+    });
+  }
 
   // Modal Registrar Vacina
   const btnRegistrarVacina = document.getElementById('btn-registrar-vacina');
@@ -91,9 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let cardAtualEmExibicao = null;
 
-  // ==========================================
-  // FUNÇÃO AUXILIAR DE COMPRESSÃO DE IMAGENS
-  // ==========================================
+  // COMPRESSÃO DE IMAGENS
   function comprimirImagemBase64(file, maxWidth = 500, quality = 0.7) {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -299,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (infoIdade) infoIdade.textContent = idade;
     if (infoClassificacao) infoClassificacao.textContent = classificacao;
 
-    // CARREGA VACINAS ESPECÍFICAS DESTE CÃO
+    // CARREGA VACINAS
     const containerVacinas = document.getElementById('lista-vacinas-container');
     const emptyStateVacinas = document.getElementById('empty-state-vacinas-detalhe');
     if (containerVacinas) {
@@ -351,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // CARREGA E PERSISTE CIOS ESPECÍFICOS DESTE CÃO
+    // CARREGA E PERSISTE CIOS ESPECÍFICOS DESTE CÃO (COM BOTÕES DE EDITAR E EXCLUIR)
     const containerCios = document.getElementById('lista-cios-container');
     const emptyStateCios = document.getElementById('empty-state-cios');
     if (containerCios) {
@@ -365,27 +380,72 @@ document.addEventListener('DOMContentLoaded', () => {
           const textoStatus = c.houveCruzamento ? 'Cruzou' : 'Sem cruza';
           const classeBadge = c.houveCruzamento ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-gray-500';
 
-          const itemCioHTML = `
-            <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs relative pl-6">
-              <div class="absolute left-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-laranja"></div>
+          let blocoCruzamentoHTML = '';
+          if (c.houveCruzamento) {
+            blocoCruzamentoHTML = `
+              <div class="mt-3 pt-2.5 border-t border-[#EFECE6] grid grid-cols-3 gap-2 text-[11px]">
+                <div>
+                  <span class="text-[#6B7280] block text-[9px] uppercase font-bold">Padreador (Macho)</span>
+                  <span class="font-bold text-[#111827]">${c.padreador || 'Não informado'}</span>
+                </div>
+                <div>
+                  <span class="text-[#6B7280] block text-[9px] uppercase font-bold">Qtd. Cruzas</span>
+                  <span class="font-bold text-[#111827]">${c.qtdCruzas || '1'} cruza(s)</span>
+                </div>
+                <div>
+                  <span class="text-[#6B7280] block text-[9px] uppercase font-bold">Datas das Cruzas</span>
+                  <span class="font-bold text-laranja">${c.datasCruzas || 'Não informadas'}</span>
+                </div>
+              </div>
+            `;
+          }
+
+          const cardCioEl = document.createElement('div');
+          cardCioEl.className = "bg-[#FAF8F5] border border-[#EFECE6] hover:border-laranja/50 rounded-2xl p-4 text-xs relative pl-6 transition-all group";
+
+          cardCioEl.innerHTML = `
+            <div class="absolute left-3 top-5 w-2 h-2 rounded-full bg-laranja"></div>
+            <div class="flex items-start justify-between">
               <div>
-                <h4 class="font-bold text-[#111827] text-sm mb-1">${c.dataInicio} — ${c.dataFim}</h4>
+                <h4 class="font-bold text-[#111827] text-sm mb-0.5">${c.dataInicio} — ${c.dataFim}</h4>
                 <p class="text-[11px] text-[#6B7280] mb-1">${c.duracaoDias} dias de duração</p>
                 <p class="text-[11px] text-[#111827] italic font-serif">"${c.obs}"</p>
               </div>
-              <div>
+              
+              <div class="flex items-center gap-2">
                 <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${classeBadge}">${textoStatus}</span>
+                
+                <!-- BOTÕES DE EDITAR E EXCLUIR CIO -->
+                <div class="flex items-center gap-1 bg-white border border-[#EFECE6] rounded-xl p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <button class="btn-editar-cio p-1 text-gray-400 hover:text-laranja transition-colors" title="Editar Cio">
+                    <i class="ri-edit-line text-sm"></i>
+                  </button>
+                  <button class="btn-excluir-cio p-1 text-gray-400 hover:text-red-500 transition-colors" title="Excluir Cio">
+                    <i class="ri-delete-bin-line text-sm"></i>
+                  </button>
+                </div>
               </div>
             </div>
+            ${blocoCruzamentoHTML}
           `;
-          containerCios.insertAdjacentHTML('beforeend', itemCioHTML);
+
+          // Evento do botão Editar Cio
+          cardCioEl.querySelector('.btn-editar-cio').onclick = () => {
+            editarCioExistente(c);
+          };
+
+          // Evento do botão Excluir Cio
+          cardCioEl.querySelector('.btn-excluir-cio').onclick = () => {
+            excluirCioExistente(c.id);
+          };
+
+          containerCios.appendChild(cardCioEl);
         });
       } else {
         if (emptyStateCios) emptyStateCios.classList.remove('hidden');
       }
     }
 
-    // CONTROLE CONDICIONAL DA ABA DE CIO (SOMENTE FÊMEAS)
     if (sexo === 'Fêmea') {
       if (tabCio) tabCio.classList.remove('hidden');
       ativarAbaCio();
@@ -401,7 +461,58 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // CONTROLE DE EXCLUSÃO DE CÃO
+  // EXCLUIR CIO
+  function excluirCioExistente(cioId) {
+    let cios = JSON.parse(localStorage.getItem('canil_cios')) || [];
+    cios = cios.filter(c => c.id !== cioId);
+    localStorage.setItem('canil_cios', JSON.stringify(cios));
+
+    if (cardAtualEmExibicao) {
+      abrirDetalhesDoCao(cardAtualEmExibicao);
+    }
+    mostrarToast("Registro de cio removido.");
+  }
+
+  // EDITAR CIO
+  function editarCioExistente(cio) {
+    idCioEmEdicao = cio.id;
+
+    // Converte a data do formato BR (DD/MM/AAAA) para o formato do input date (AAAA-MM-DD)
+    const convData = (dataBr) => {
+      if (!dataBr) return '';
+      const p = dataBr.split('/');
+      return p.length === 3 ? `${p[2]}-${p[1].padStart(2, '0')}-${p[0].padStart(2, '0')}` : '';
+    };
+
+    document.getElementById('cio-data-inicio').value = convData(cio.dataInicio);
+    document.getElementById('cio-data-fim').value = convData(cio.dataFim);
+    document.getElementById('cio-obs').value = cio.obs || '';
+
+    if (toggleCruzou) {
+      toggleCruzou.checked = cio.houveCruzamento;
+      if (cio.houveCruzamento) {
+        camposDetalhesCruzamento.classList.remove('hidden');
+        document.getElementById('cio-macho-padreador').value = cio.padreador || '';
+        document.getElementById('cio-qtd-cruzas').value = cio.qtdCruzas || '';
+        document.getElementById('cio-datas-cruzas').value = cio.datasCruzas || '';
+      } else {
+        camposDetalhesCruzamento.classList.add('hidden');
+      }
+    }
+
+    const modalTitulo = modalCio ? modalCio.querySelector('h3') : null;
+    if (modalTitulo) modalTitulo.textContent = "Editar Registro de Cio";
+
+    if (modalCio && modalCioContent) {
+      modalCio.classList.remove('hidden');
+      setTimeout(() => {
+        modalCio.classList.remove('opacity-0');
+        modalCioContent.classList.remove('scale-95');
+      }, 10);
+    }
+  }
+
+  // EXCLUSÃO DE CÃO
   function abrirModalExcluirCao() {
     const nome = detalheNome?.textContent || 'este cão';
     if (textoConfirmarExclusaoCao) {
@@ -459,7 +570,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // CONTROLE DE ABAS DA TELA DE DETALHES
+  // ABAS DE DETALHES
   function resetarEstilosAbas() {
     const abas = [tabCio, tabVacinas, tabInformacoes];
     abas.forEach(tab => {
@@ -492,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabVacinas) tabVacinas.onclick = (e) => { e.preventDefault(); ativarAbaVacinas(); };
   if (tabInformacoes) tabInformacoes.onclick = (e) => { e.preventDefault(); ativarAbaInformacoes(); };
 
-  // SELETOR DE SEXO NA EDIÇÃO
+  // SELETOR SEXO NA EDIÇÃO
   function selecionarSexoEdit(sexo) {
     sexoSelecionadoEdit = sexo;
     if (sexo === 'Macho') {
@@ -507,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnSexoMacho) btnSexoMacho.onclick = () => selecionarSexoEdit('Macho');
   if (btnSexoFemea) btnSexoFemea.onclick = () => selecionarSexoEdit('Fêmea');
 
-  // ABRIR TELA DE EDIÇÃO
+  // ABRIR TELA EDIÇÃO DE CÃO
   function abrirTelaEditarCao() {
     if (!cardAtualEmExibicao) return;
 
@@ -737,9 +848,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // REGISTRO E PERSISTÊNCIA DO CIO
+  // REGISTRO E EDIÇÃO DO CIO
   function abrirModalCio() {
+    idCioEmEdicao = null;
     if (formRegistrarCio) formRegistrarCio.reset();
+    if (toggleCruzou) toggleCruzou.checked = false;
+    if (camposDetalhesCruzamento) camposDetalhesCruzamento.classList.add('hidden');
+
+    const modalTitulo = modalCio ? modalCio.querySelector('h3') : null;
+    if (modalTitulo) modalTitulo.textContent = "Registrar Novo Cio";
+
     if (modalCio && modalCioContent) {
       modalCio.classList.remove('hidden');
       setTimeout(() => {
@@ -771,8 +889,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const caoNome = detalheNome?.textContent?.trim() || 'Fêmea';
       const dataInicioRaw = document.getElementById('cio-data-inicio').value;
       const dataFimRaw = document.getElementById('cio-data-fim').value;
-      const obs = document.getElementById('cio-obs').value.trim() || 'Cio normal, sem complicações';
-      const houveCruzamento = document.getElementById('cio-toggle-cruzou').checked;
+      const obs = document.getElementById('cio-obs').value.trim() || 'Cio registrado';
+      const houveCruzamento = toggleCruzou ? toggleCruzou.checked : false;
+
+      let padreador = 'Não informado';
+      let qtdCruzas = '1';
+      let datasCruzas = 'Não informadas';
+
+      if (houveCruzamento) {
+        padreador = document.getElementById('cio-macho-padreador').value.trim() || 'Não informado';
+        qtdCruzas = document.getElementById('cio-qtd-cruzas').value.trim() || '1';
+        datasCruzas = document.getElementById('cio-datas-cruzas').value.trim() || 'Não informadas';
+      }
 
       const [a1, m1, d1] = dataInicioRaw.split('-');
       const [a2, m2, d2] = dataFimRaw.split('-');
@@ -786,48 +914,49 @@ document.addEventListener('DOMContentLoaded', () => {
       const dataFmtInicio = `${d1}/${m1}/${a1}`;
       const dataFmtFim = `${d2}/${m2}/${a2}`;
 
-      const novoCioObj = {
-        id: Date.now(),
-        caoNome,
-        dataInicio: dataFmtInicio,
-        dataFim: dataFmtFim,
-        duracaoDias,
-        obs,
-        houveCruzamento
-      };
+      let ciosSalvos = JSON.parse(localStorage.getItem('canil_cios')) || [];
 
-      const ciosSalvos = JSON.parse(localStorage.getItem('canil_cios')) || [];
-      ciosSalvos.unshift(novoCioObj);
-      localStorage.setItem('canil_cios', JSON.stringify(ciosSalvos));
-
-      // Atualiza na tela
-      const containerCios = document.getElementById('lista-cios-container');
-      const emptyStateCios = document.getElementById('empty-state-cios');
-      if (emptyStateCios) emptyStateCios.classList.add('hidden');
-
-      const textoStatus = houveCruzamento ? 'Cruzou' : 'Sem cruza';
-      const classeBadge = houveCruzamento ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-gray-500';
-
-      const novoCioHTML = `
-        <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs relative pl-6">
-          <div class="absolute left-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-laranja"></div>
-          <div>
-            <h4 class="font-bold text-[#111827] text-sm mb-1">${dataFmtInicio} — ${dataFmtFim}</h4>
-            <p class="text-[11px] text-[#6B7280] mb-1">${duracaoDias} dias de duração</p>
-            <p class="text-[11px] text-[#111827] italic font-serif">"${obs}"</p>
-          </div>
-          <div>
-            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${classeBadge}">${textoStatus}</span>
-          </div>
-        </div>
-      `;
-
-      if (containerCios) {
-        containerCios.insertAdjacentHTML('afterbegin', novoCioHTML);
+      if (idCioEmEdicao) {
+        // EDIÇÃO
+        const index = ciosSalvos.findIndex(c => c.id === idCioEmEdicao);
+        if (index !== -1) {
+          ciosSalvos[index] = {
+            ...ciosSalvos[index],
+            dataInicio: dataFmtInicio,
+            dataFim: dataFmtFim,
+            duracaoDias,
+            obs,
+            houveCruzamento,
+            padreador,
+            qtdCruzas,
+            datasCruzas
+          };
+        }
+      } else {
+        // CADASTRO NOVO
+        const novoCioObj = {
+          id: Date.now(),
+          caoNome,
+          dataInicio: dataFmtInicio,
+          dataFim: dataFmtFim,
+          duracaoDias,
+          obs,
+          houveCruzamento,
+          padreador,
+          qtdCruzas,
+          datasCruzas
+        };
+        ciosSalvos.unshift(novoCioObj);
       }
 
+      localStorage.setItem('canil_cios', JSON.stringify(ciosSalvos));
       fecharModalCio();
-      mostrarToast(`Cio registrado com sucesso!`);
+
+      if (cardAtualEmExibicao) {
+        abrirDetalhesDoCao(cardAtualEmExibicao);
+      }
+
+      mostrarToast(idCioEmEdicao ? "Registro de cio atualizado!" : "Cio registrado com sucesso!");
     };
   }
 
@@ -1016,7 +1145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function verificarRedirecionamentoDoDashboard() { //joga os dados para o dashboard
+  function verificarRedirecionamentoDoDashboard() {
     const nomeCaoSelecionado = localStorage.getItem('cao_selecionado_para_detalhes');
     if (nomeCaoSelecionado) {
       const cards = document.querySelectorAll('.container-caes > div');
