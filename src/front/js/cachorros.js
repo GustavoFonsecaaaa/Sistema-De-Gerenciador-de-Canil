@@ -91,6 +91,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let cardAtualEmExibicao = null;
 
+  // ==========================================
+  // FUNÇÃO AUXILIAR DE COMPRESSÃO DE IMAGENS
+  // ==========================================
+  function comprimirImagemBase64(file, maxWidth = 500, quality = 0.7) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+          resolve(compressedBase64);
+        };
+      };
+    });
+  }
+
   function mostrarToast(msg = "Operação realizada com sucesso!") {
     if (!toastSucesso) return;
     const span = toastSucesso.querySelector('span');
@@ -165,7 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    localStorage.setItem('canil_cachorros', JSON.stringify(lista));
+    try {
+      localStorage.setItem('canil_cachorros', JSON.stringify(lista));
+    } catch (e) {
+      console.error("Erro ao salvar cães no LocalStorage:", e);
+    }
   }
 
   function criarElementoCard(cao) {
@@ -315,12 +351,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // LIMPA E RESETA CONTAINER DE CIOS DO CÃO
+    // CARREGA E PERSISTE CIOS ESPECÍFICOS DESTE CÃO
     const containerCios = document.getElementById('lista-cios-container');
     const emptyStateCios = document.getElementById('empty-state-cios');
     if (containerCios) {
       containerCios.innerHTML = '';
-      if (emptyStateCios) emptyStateCios.classList.remove('hidden');
+      const todosCios = JSON.parse(localStorage.getItem('canil_cios')) || [];
+      const ciosDoCao = todosCios.filter(c => c.caoNome.toLowerCase() === nome.toLowerCase());
+
+      if (ciosDoCao.length > 0) {
+        if (emptyStateCios) emptyStateCios.classList.add('hidden');
+        ciosDoCao.forEach(c => {
+          const textoStatus = c.houveCruzamento ? 'Cruzou' : 'Sem cruza';
+          const classeBadge = c.houveCruzamento ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-gray-500';
+
+          const itemCioHTML = `
+            <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs relative pl-6">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-laranja"></div>
+              <div>
+                <h4 class="font-bold text-[#111827] text-sm mb-1">${c.dataInicio} — ${c.dataFim}</h4>
+                <p class="text-[11px] text-[#6B7280] mb-1">${c.duracaoDias} dias de duração</p>
+                <p class="text-[11px] text-[#111827] italic font-serif">"${c.obs}"</p>
+              </div>
+              <div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${classeBadge}">${textoStatus}</span>
+              </div>
+            </div>
+          `;
+          containerCios.insertAdjacentHTML('beforeend', itemCioHTML);
+        });
+      } else {
+        if (emptyStateCios) emptyStateCios.classList.remove('hidden');
+      }
     }
 
     // CONTROLE CONDICIONAL DA ABA DE CIO (SOMENTE FÊMEAS)
@@ -343,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function abrirModalExcluirCao() {
     const nome = detalheNome?.textContent || 'este cão';
     if (textoConfirmarExclusaoCao) {
-      textoConfirmarExclusaoCao.textContent = `Tem certeza que deseja excluir o cão "${nome}"? Todas as vacinas vinculadas também serão removidas.`;
+      textoConfirmarExclusaoCao.textContent = `Tem certeza que deseja excluir o cão "${nome}"? Todas as vacinas e registros vinculados também serão removidos.`;
     }
 
     if (modalExcluirCao && modalExcluirCaoContent) {
@@ -381,6 +443,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let vacinas = JSON.parse(localStorage.getItem('canil_vacinas')) || [];
         vacinas = vacinas.filter(v => v.caoNome.toLowerCase() !== nomeParaRemover.toLowerCase());
         localStorage.setItem('canil_vacinas', JSON.stringify(vacinas));
+
+        let cios = JSON.parse(localStorage.getItem('canil_cios')) || [];
+        cios = cios.filter(c => c.caoNome.toLowerCase() !== nomeParaRemover.toLowerCase());
+        localStorage.setItem('canil_cios', JSON.stringify(cios));
 
         fecharModalExcluirCao();
         
@@ -482,13 +548,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnEditarCabecalho) btnEditarCabecalho.onclick = (e) => { e.preventDefault(); abrirTelaEditarCao(); };
 
   if (editFileInput) {
-    editFileInput.onchange = (e) => {
+    editFileInput.onchange = async (e) => {
       if (e.target.files && e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          if (editPreviewFoto) editPreviewFoto.src = event.target.result;
-        };
-        reader.readAsDataURL(e.target.files[0]);
+        const compressedBase64 = await comprimirImagemBase64(e.target.files[0]);
+        if (editPreviewFoto) editPreviewFoto.src = compressedBase64;
       }
     };
   }
@@ -629,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (modalAdicionar) modalAdicionar.onclick = (e) => { if (e.target === modalAdicionar) fecharModal(); };
 
   if (formAdicionar) {
-    formAdicionar.onsubmit = (e) => {
+    formAdicionar.onsubmit = async (e) => {
       e.preventDefault();
 
       const nome = document.getElementById('add-nome-cao').value;
@@ -644,44 +707,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const { textoIdade, textoFase } = calcularIdadeEFase(dataNasc);
 
-      const criarECadastrarCard = (fotoUrl) => {
-        const caoObj = {
-          nome,
-          raca,
-          sexo,
-          fase: textoFase,
-          foto: fotoUrl,
-          idadeText: textoIdade,
-          nascimentoText: dataFmt
-        };
-
-        const novoCard = criarElementoCard(caoObj);
-        const containerCards = document.querySelector('.container-caes');
-        if (containerCards) {
-          containerCards.appendChild(novoCard);
-        }
-
-        atualizarContadorHeader();
-        fecharModal();
-        aplicarFiltrosEBusca();
-        salvarEstadoCaesNoLocalStorage();
-        mostrarToast(`Cão ${nome} cadastrado com sucesso!`);
-      };
+      let fotoUrl = 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
 
       if (fileInput && fileInput.files && fileInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          criarECadastrarCard(e.target.result);
-        };
-        reader.readAsDataURL(fileInput.files[0]);
-      } else {
-        const fotoPadrao = 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
-        criarECadastrarCard(fotoPadrao);
+        fotoUrl = await comprimirImagemBase64(fileInput.files[0]);
       }
+
+      const caoObj = {
+        nome,
+        raca,
+        sexo,
+        fase: textoFase,
+        foto: fotoUrl,
+        idadeText: textoIdade,
+        nascimentoText: dataFmt
+      };
+
+      const novoCard = criarElementoCard(caoObj);
+      const containerCards = document.querySelector('.container-caes');
+      if (containerCards) {
+        containerCards.appendChild(novoCard);
+      }
+
+      atualizarContadorHeader();
+      fecharModal();
+      aplicarFiltrosEBusca();
+      salvarEstadoCaesNoLocalStorage();
+      mostrarToast(`Cão ${nome} cadastrado com sucesso!`);
     };
   }
 
-  // MODAL REGISTRAR CIO
+  // REGISTRO E PERSISTÊNCIA DO CIO
   function abrirModalCio() {
     if (formRegistrarCio) formRegistrarCio.reset();
     if (modalCio && modalCioContent) {
@@ -712,10 +768,11 @@ document.addEventListener('DOMContentLoaded', () => {
     formRegistrarCio.onsubmit = (e) => {
       e.preventDefault();
 
+      const caoNome = detalheNome?.textContent?.trim() || 'Fêmea';
       const dataInicioRaw = document.getElementById('cio-data-inicio').value;
       const dataFimRaw = document.getElementById('cio-data-fim').value;
       const obs = document.getElementById('cio-obs').value.trim() || 'Cio normal, sem complicações';
-      const houvesCruzamento = document.getElementById('cio-toggle-cruzou').checked;
+      const houveCruzamento = document.getElementById('cio-toggle-cruzou').checked;
 
       const [a1, m1, d1] = dataInicioRaw.split('-');
       const [a2, m2, d2] = dataFimRaw.split('-');
@@ -724,20 +781,39 @@ document.addEventListener('DOMContentLoaded', () => {
       const dtFim = new Date(a2, m2 - 1, d2);
 
       const diffTime = Math.abs(dtFim - dtInicio);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const duracaoDias = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       const dataFmtInicio = `${d1}/${m1}/${a1}`;
       const dataFmtFim = `${d2}/${m2}/${a2}`;
 
-      const textoStatus = houvesCruzamento ? 'Cruzou' : 'Sem cruza';
-      const classeBadge = houvesCruzamento ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-gray-500';
+      const novoCioObj = {
+        id: Date.now(),
+        caoNome,
+        dataInicio: dataFmtInicio,
+        dataFim: dataFmtFim,
+        duracaoDias,
+        obs,
+        houveCruzamento
+      };
+
+      const ciosSalvos = JSON.parse(localStorage.getItem('canil_cios')) || [];
+      ciosSalvos.unshift(novoCioObj);
+      localStorage.setItem('canil_cios', JSON.stringify(ciosSalvos));
+
+      // Atualiza na tela
+      const containerCios = document.getElementById('lista-cios-container');
+      const emptyStateCios = document.getElementById('empty-state-cios');
+      if (emptyStateCios) emptyStateCios.classList.add('hidden');
+
+      const textoStatus = houveCruzamento ? 'Cruzou' : 'Sem cruza';
+      const classeBadge = houveCruzamento ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-gray-500';
 
       const novoCioHTML = `
         <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs relative pl-6">
           <div class="absolute left-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-laranja"></div>
           <div>
             <h4 class="font-bold text-[#111827] text-sm mb-1">${dataFmtInicio} — ${dataFmtFim}</h4>
-            <p class="text-[11px] text-[#6B7280] mb-1">${diffDays} dias de duração</p>
+            <p class="text-[11px] text-[#6B7280] mb-1">${duracaoDias} dias de duração</p>
             <p class="text-[11px] text-[#111827] italic font-serif">"${obs}"</p>
           </div>
           <div>
@@ -746,11 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
 
-      const containerCios = document.getElementById('lista-cios-container');
-      const emptyStateCios = document.getElementById('empty-state-cios');
-
       if (containerCios) {
-        if (emptyStateCios) emptyStateCios.classList.add('hidden');
         containerCios.insertAdjacentHTML('afterbegin', novoCioHTML);
       }
 
@@ -845,7 +917,6 @@ document.addEventListener('DOMContentLoaded', () => {
         containerVacinas.insertAdjacentHTML('afterbegin', novaVacinaHTML);
       }
 
-      // Salva globalmente para o vacinas.html
       const caoNome = detalheNome?.textContent?.trim() || 'Cão';
       const caoRaca = detalheRaca?.textContent?.trim() || '';
       const caoFoto = detalheFoto?.src || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=100';
