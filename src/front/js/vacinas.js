@@ -1,420 +1,331 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Script vacinas.js carregado com sucesso!");
 
+  function lerDadosSalvos(chave) {
+    try {
+      const dados = localStorage.getItem(chave);
+      return dados ? JSON.parse(dados) : [];
+    } catch (e) {
+      console.warn(`Cache corrompido na chave ${chave}. Limpando...`);
+      localStorage.setItem(chave, '[]');
+      return [];
+    }
+  }
+
   const tabelaBody = document.getElementById('tabela-vacinas-body');
   const emptyState = document.getElementById('empty-state-vacinas');
+
+  const statTotalRegistros = document.getElementById('stat-total-registros');
+  const statCaesVacinados = document.getElementById('stat-caes-vacinados');
+  const statSubCaes = document.getElementById('stat-sub-caes');
+  const statVencidas = document.getElementById('stat-vencidas');
+  const statVencemBreve = document.getElementById('stat-vencem-breve');
+
   const inputBusca = document.getElementById('input-busca-vacinas');
   const containerFiltros = document.getElementById('container-filtros-vacinas');
+  let filtroVacinaAtual = 'Todas';
 
-  // KPIs Elements
-  const elStatTotal = document.getElementById('stat-total-registros');
-  const elStatVacinados = document.getElementById('stat-caes-vacinados');
-  const elStatSubCaes = document.getElementById('stat-sub-caes');
-  const elStatVencidas = document.getElementById('stat-vencidas');
-  const elStatVencemBreve = document.getElementById('stat-vencem-breve');
-
-  // Modal Registrar Vacina
   const btnAbrirModal = document.getElementById('btn-abrir-modal-vacina');
-  const modalVGlobal = document.getElementById('modal-vacinas-global');
-  const modalContentGlobal = modalVGlobal ? modalVGlobal.querySelector('.transform') : null;
+  const modalGlobal = document.getElementById('modal-vacinas-global');
   const btnFecharModalGlobal = document.getElementById('btn-fechar-modal-vglobal');
   const btnCancelarModalGlobal = document.getElementById('btn-cancelar-modal-vglobal');
-  const formVacinaGlobal = document.getElementById('form-vacina-global');
-  const selectCao = document.getElementById('vglobal-select-cao');
+  const formGlobal = document.getElementById('form-vacina-global');
+  const selectCaoGlobal = document.getElementById('vglobal-select-cao');
 
-  // Modal Editar Vacina
-  const modalVEditar = document.getElementById('modal-editar-vacina');
-  const modalContentEditar = modalVEditar ? modalVEditar.querySelector('.transform') : null;
+  const modalEditar = document.getElementById('modal-editar-vacina');
   const btnFecharModalEditar = document.getElementById('btn-fechar-modal-veditar');
   const btnCancelarModalEditar = document.getElementById('btn-cancelar-modal-veditar');
-  const formEditarVacina = document.getElementById('form-editar-vacina');
+  const formEditar = document.getElementById('form-editar-vacina');
 
-  // Modal Exclusão
-  const modalExclusao = document.getElementById('modal-confirmar-exclusao');
-  const modalContentExclusao = modalExclusao ? modalExclusao.querySelector('.transform') : null;
-  const btnCancelarExclusao = document.getElementById('btn-cancelar-exclusao');
-  const btnConfirmarExclusao = document.getElementById('btn-confirmar-exclusao');
+  const modalExcluir = document.getElementById('modal-confirmar-exclusao');
+  const btnCancelarExcluir = document.getElementById('btn-cancelar-exclusao');
+  const btnConfirmarExcluir = document.getElementById('btn-confirmar-exclusao');
   const textoConfirmacaoExclusao = document.getElementById('texto-confirmacao-exclusao');
-  let idVacinaParaExcluir = null;
 
-  // Toast
   const toastVacina = document.getElementById('toast-vacina');
-  let toastTimeout = null;
-  let filtroVacinaAtual = 'todas';
+  let idVacinaExcluir = null;
 
   function mostrarToast(msg = "Operação realizada com sucesso!") {
     if (!toastVacina) return;
     const span = toastVacina.querySelector('span');
     if (span) span.textContent = msg;
 
-    if (toastTimeout) clearTimeout(toastTimeout);
     toastVacina.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
     toastVacina.classList.add('opacity-100', 'translate-y-0');
 
-    toastTimeout = setTimeout(() => {
+    setTimeout(() => {
       toastVacina.classList.remove('opacity-100', 'translate-y-0');
       toastVacina.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
     }, 3000);
   }
 
-  function obterVacinas() {
-    const salvos = localStorage.getItem('canil_vacinas');
-    if (salvos) {
-      return JSON.parse(salvos);
-    }
-
-    const vacinasIniciais = [
-      { id: 1, caoNome: 'Thor', caoRaca: 'Golden Retriever', caoFoto: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400', vacinaNome: 'V10', dataAplicacao: '15/01/2025', proximaDose: '15/01/2026', proximaDoseIso: '2026-01-15' },
-      { id: 2, caoNome: 'Thor', caoRaca: 'Golden Retriever', caoFoto: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400', vacinaNome: 'Antirrábica', dataAplicacao: '20/02/2025', proximaDose: '20/02/2026', proximaDoseIso: '2026-02-20' },
-      { id: 3, caoNome: 'Thor', caoRaca: 'Golden Retriever', caoFoto: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400', vacinaNome: 'Gripe Canina', dataAplicacao: '10/03/2025', proximaDose: '10/03/2026', proximaDoseIso: '2026-03-10' },
-      { id: 4, caoNome: 'Thor', caoRaca: 'Golden Retriever', caoFoto: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400', vacinaNome: 'Giardíase', dataAplicacao: '05/04/2025', proximaDose: '05/04/2026', proximaDoseIso: '2026-04-05' },
-      { id: 5, caoNome: 'Luna', caoRaca: 'Pastor Alemão', caoFoto: 'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=400', vacinaNome: 'Antirrábica', dataAplicacao: '18/02/2025', proximaDose: '18/02/2026', proximaDoseIso: '2026-02-18' }
-    ];
-
-    localStorage.setItem('canil_vacinas', JSON.stringify(vacinasIniciais));
-    return vacinasIniciais;
+  function salvarVacinas(lista) {
+    localStorage.setItem('canil_vacinas', JSON.stringify(lista));
+    renderizarTabela();
   }
 
-  function calcularStatus(proximaDoseIso) {
-    if (!proximaDoseIso) return { statusText: 'Em dia', isVencida: false, isEmBreve: false };
+  function popularSelectCaes() {
+    if (!selectCaoGlobal) return;
+    const caes = lerDadosSalvos('canil_cachorros');
+    selectCaoGlobal.innerHTML = '<option value="">Selecione o cachorro...</option>';
 
-    const partes = proximaDoseIso.split('-');
-    const dtProxima = new Date(partes[0], partes[1] - 1, partes[2]);
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-
-    const diffTime = dtProxima - hoje;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) {
-      return { statusText: 'Vencida', isVencida: true, isEmBreve: false };
-    } else if (diffDays <= 7) {
-      return { statusText: 'Vence em breve', isVencida: false, isEmBreve: true };
-    } else {
-      return { statusText: 'Em dia', isVencida: false, isEmBreve: false };
+    if (caes.length === 0) {
+      selectCaoGlobal.innerHTML = '<option value="">Nenhum cão cadastrado no sistema</option>';
+      return;
     }
+
+    caes.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = JSON.stringify({ nome: c.nome, raca: c.raca }); // OTIMIZAÇÃO: Não carrega foto no select
+      opt.textContent = `${c.nome} (${c.raca})`;
+      selectCaoGlobal.appendChild(opt);
+    });
   }
 
-  function renderizarDashboardEVacinas() {
-    const vacinas = obterVacinas();
-    const caesSalvos = JSON.parse(localStorage.getItem('canil_cachorros')) || [];
-    const totalCaesNoCanil = caesSalvos.length > 0 ? caesSalvos.length : 8;
+  function formatarDataBR(iso) {
+    if (!iso) return '-';
+    const p = iso.split('-');
+    return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
+  }
 
-    let contVencidas = 0;
-    let contEmBreve = 0;
-    const caesComVacinaSet = new Set();
+  function renderizarTabela() {
+    const vacinas = lerDadosSalvos('canil_vacinas');
+    const caes = lerDadosSalvos('canil_cachorros');
+    const busca = inputBusca ? inputBusca.value.trim().toLowerCase() : '';
+
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    const seteDias = new Date(hoje); seteDias.setDate(hoje.getDate() + 7);
+
+    let totalVencidas = 0;
+    let totalVencemBreve = 0;
+    const caesVacinadosSet = new Set();
 
     vacinas.forEach(v => {
-      caesComVacinaSet.add(v.caoNome.toLowerCase());
-      const { isVencida, isEmBreve } = calcularStatus(v.proximaDoseIso);
-      if (isVencida) contVencidas++;
-      if (isEmBreve) contEmBreve++;
+      const dtProxima = new Date(v.proximaDoseIso);
+      if (dtProxima < hoje) {
+        totalVencidas++;
+      } else {
+        caesVacinadosSet.add((v.caoNome || '').toLowerCase());
+        if (dtProxima <= seteDias) totalVencemBreve++;
+      }
     });
 
-    if (elStatTotal) elStatTotal.textContent = vacinas.length;
-    if (elStatVacinados) elStatVacinados.textContent = caesComVacinaSet.size;
-    if (elStatSubCaes) elStatSubCaes.textContent = `de ${totalCaesNoCanil} cães no canil`;
-    if (elStatVencidas) elStatVencidas.textContent = contVencidas;
-    if (elStatVencemBreve) elStatVencemBreve.textContent = contEmBreve;
+    if (statTotalRegistros) statTotalRegistros.textContent = vacinas.length;
+    if (statCaesVacinados) statCaesVacinados.textContent = caesVacinadosSet.size;
+    if (statSubCaes) statSubCaes.textContent = `de ${caes.length} cães no canil`;
+    if (statVencidas) statVencidas.textContent = totalVencidas;
+    if (statVencemBreve) statVencemBreve.textContent = totalVencemBreve;
 
-    const termoBusca = inputBusca ? inputBusca.value.trim().toLowerCase() : '';
-    const vacinasFiltradas = vacinas.filter(v => {
-      const passaBusca = v.caoNome.toLowerCase().includes(termoBusca) || v.caoRaca.toLowerCase().includes(termoBusca);
-      let passaFiltro = true;
+    const filtradas = vacinas.filter(v => {
+      const nomeCao = (v.caoNome || '').toLowerCase();
+      const racaCao = (v.caoRaca || '').toLowerCase();
+      const nomeVacina = (v.vacinaNome || '').toLowerCase();
 
-      if (filtroVacinaAtual !== 'todas') {
-        passaFiltro = v.vacinaNome.toLowerCase() === filtroVacinaAtual.toLowerCase();
-      }
+      let passaFiltro = filtroVacinaAtual === 'Todas' || nomeVacina.includes(filtroVacinaAtual.toLowerCase());
+      let passaBusca = busca === '' || nomeCao.includes(busca) || racaCao.includes(busca) || nomeVacina.includes(busca);
 
-      return passaBusca && passaFiltro;
+      return passaFiltro && passaBusca;
     });
 
     if (!tabelaBody) return;
     tabelaBody.innerHTML = '';
 
-    if (vacinasFiltradas.length === 0) {
-      if (emptyState) {
-        emptyState.classList.remove('hidden');
-        emptyState.classList.add('flex');
-      }
-    } else {
-      if (emptyState) {
-        emptyState.classList.add('hidden');
-        emptyState.classList.remove('flex');
-      }
+    if (filtradas.length === 0) {
+      if (emptyState) emptyState.classList.remove('hidden');
+      return;
+    }
+    if (emptyState) emptyState.classList.add('hidden');
 
-      vacinasFiltradas.forEach(v => {
-        const { statusText, isVencida, isEmBreve } = calcularStatus(v.proximaDoseIso);
+    filtradas.forEach(v => {
+      const dtProxima = new Date(v.proximaDoseIso);
+      const estaVencida = dtProxima < hoje;
 
-        let badgeClass = 'bg-verdeokbg text-verdeok';
-        if (isVencida) badgeClass = 'bg-vermelhobg text-vermelho';
-        if (isEmBreve) badgeClass = 'bg-[#FEF3C7] text-[#B45309]';
+      const textoProxima = estaVencida ? 'Vencida!' : v.proximaDose;
+      const corTextoProxima = estaVencida ? 'text-[#B45309]' : 'text-[#10B981]';
+      const badgeTexto = estaVencida ? 'Pendente' : 'Em dia';
+      const badgeClasse = estaVencida ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#D1FAE5] text-[#10B981]';
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="px-5 py-3.5">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full bg-bege overflow-hidden flex-shrink-0">
-                <img src="${v.caoFoto}" class="w-full h-full object-cover" alt="${v.caoNome}">
-              </div>
-              <div>
-                <div class="font-bold text-xs text-[#111827]">${v.caoNome}</div>
-                <div class="text-[10px] text-[#6B7280]">${v.caoRaca}</div>
-              </div>
+      // BUSCA IMAGEM E RAÇA DIRETAMENTE DA LISTA DE CÃES
+      const caoRef = caes.find(c => c.nome === v.caoNome) || {};
+      const fotoExibicao = caoRef.foto || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=100';
+      const racaExibicao = caoRef.raca || v.caoRaca || '';
+
+      const tr = document.createElement('tr');
+      tr.className = "hover:bg-[#FAF8F5] transition-colors text-xs border-b border-[#FAFAF9]";
+
+      tr.innerHTML = `
+        <td class="py-3.5 px-5">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full overflow-hidden bg-bege flex-shrink-0 border border-[#EFECE6]">
+              <img src="${fotoExibicao}" alt="${v.caoNome}" class="w-full h-full object-cover">
             </div>
-          </td>
-          <td class="px-5 py-3.5 text-xs font-medium text-[#111827]">${v.vacinaNome}</td>
-          <td class="px-5 py-3.5 text-xs text-[#6B7280]">${v.dataAplicacao}</td>
-          <td class="px-5 py-3.5 text-xs text-[#6B7280]">${v.proximaDose}</td>
-          <td class="px-5 py-3.5">
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeClass}">${statusText}</span>
-          </td>
-          <td class="px-5 py-3.5">
-            <div class="flex items-center gap-2">
-              <button data-id="${v.id}" class="btn-editar-vacina text-gray-400 hover:text-laranja transition-colors text-sm" title="Editar vacina">
-                <i class="ri-edit-line"></i>
-              </button>
-              <button data-id="${v.id}" class="btn-deletar-vacina text-gray-400 hover:text-vermelho transition-colors text-sm" title="Excluir vacina">
-                <i class="ri-delete-bin-line"></i>
-              </button>
-            </div>
-          </td>
-        `;
+            <div><div class="font-bold text-[#111827]">${v.caoNome}</div><div class="text-[10px] text-[#6B7280]">${racaExibicao}</div></div>
+          </div>
+        </td>
+        <td class="py-3.5 px-5 font-bold text-[#111827]">${v.vacinaNome}</td>
+        <td class="py-3.5 px-5 text-[#6B7280]">${v.dataAplicacao}</td>
+        <td class="py-3.5 px-5 font-bold ${corTextoProxima}">${textoProxima}</td>
+        <td class="py-3.5 px-5"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClasse}">${badgeTexto}</span></td>
+        <td class="py-3.5 px-5 text-right">
+          <div class="flex items-center justify-end gap-1">
+            <button class="btn-editar-v p-1.5 rounded-lg text-gray-400 hover:text-laranja hover:bg-orange-50 transition-all"><i class="ri-edit-line text-sm"></i></button>
+            <button class="btn-excluir-v p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"><i class="ri-delete-bin-line text-sm"></i></button>
+          </div>
+        </td>
+      `;
 
-        const btnEditar = tr.querySelector('.btn-editar-vacina');
-        if (btnEditar) {
-          btnEditar.onclick = () => abrirModalEditar(v);
-        }
+      tr.querySelector('.btn-editar-v').onclick = () => abrirModalEditar(v);
+      tr.querySelector('.btn-excluir-v').onclick = () => abrirModalExcluir(v);
+      tabelaBody.appendChild(tr);
+    });
+  }
 
-        const btnDeletar = tr.querySelector('.btn-deletar-vacina');
-        if (btnDeletar) {
-          btnDeletar.onclick = () => solicitarExclusaoVacina(v.id, v.vacinaNome, v.caoNome);
-        }
-
-        tabelaBody.appendChild(tr);
-      });
+  function abrirModalCadastrar() {
+    if (formGlobal) formGlobal.reset();
+    popularSelectCaes();
+    if (modalGlobal) {
+      modalGlobal.classList.remove('hidden');
+      setTimeout(() => { modalGlobal.classList.remove('opacity-0'); const t = modalGlobal.querySelector('.transform'); if (t) t.classList.remove('scale-95'); }, 10);
     }
   }
 
-  // MODAL EXCLUSÃO
-  function solicitarExclusaoVacina(id, nomeVacina, nomeCao) {
-    idVacinaParaExcluir = id;
-    if (textoConfirmacaoExclusao) {
-      textoConfirmacaoExclusao.textContent = `Você tem certeza que deseja excluir a vacina ${nomeVacina} de ${nomeCao}?`;
-    }
-    if (modalExclusao && modalContentExclusao) {
-      modalExclusao.classList.remove('hidden');
-      setTimeout(() => {
-        modalExclusao.classList.remove('opacity-0');
-        modalContentExclusao.classList.remove('scale-95');
-      }, 10);
+  function fecharModalCadastrar() {
+    if (modalGlobal) {
+      modalGlobal.classList.add('opacity-0');
+      const t = modalGlobal.querySelector('.transform'); if (t) t.classList.add('scale-95');
+      setTimeout(() => modalGlobal.classList.add('hidden'), 200);
     }
   }
 
-  function fecharModalExclusao() {
-    if (modalExclusao && modalContentExclusao) {
-      modalExclusao.classList.add('opacity-0');
-      modalContentExclusao.classList.add('scale-95');
-      setTimeout(() => {
-        modalExclusao.classList.add('hidden');
-        idVacinaParaExcluir = null;
-      }, 200);
-    }
-  }
+  if (btnAbrirModal) btnAbrirModal.onclick = (e) => { e.preventDefault(); abrirModalCadastrar(); };
+  if (btnFecharModalGlobal) btnFecharModalGlobal.onclick = fecharModalCadastrar;
+  if (btnCancelarModalGlobal) btnCancelarModalGlobal.onclick = fecharModalCadastrar;
 
-  if (btnCancelarExclusao) btnCancelarExclusao.onclick = fecharModalExclusao;
-  if (modalExclusao) modalExclusao.onclick = (e) => { if (e.target === modalExclusao) fecharModalExclusao(); };
+  if (formGlobal) {
+    formGlobal.onsubmit = (e) => {
+      e.preventDefault();
+      if (!selectCaoGlobal || !selectCaoGlobal.value) { alert("Por favor, selecione um cachorro."); return; }
 
-  if (btnConfirmarExclusao) {
-    btnConfirmarExclusao.onclick = () => {
-      if (idVacinaParaExcluir !== null) {
-        let vacinas = obterVacinas();
-        vacinas = vacinas.filter(v => v.id !== idVacinaParaExcluir);
-        localStorage.setItem('canil_vacinas', JSON.stringify(vacinas));
-        fecharModalExclusao();
-        renderizarDashboardEVacinas();
-        mostrarToast("Vacina excluída com sucesso!");
+      try {
+        const caoObj = JSON.parse(selectCaoGlobal.value);
+        const dtDoseRaw = document.getElementById('vglobal-data-dose').value;
+        const dtProximaRaw = document.getElementById('vglobal-data-proxima').value;
+
+        const vacinas = lerDadosSalvos('canil_vacinas');
+        
+        // OTIMIZAÇÃO CRUCIAL: Removemos o salvamento duplicado da foto base64
+        vacinas.unshift({
+          id: Date.now(),
+          caoNome: caoObj.nome, 
+          caoRaca: caoObj.raca,
+          vacinaNome: document.getElementById('vglobal-nome').value.trim(),
+          dataAplicacao: formatarDataBR(dtDoseRaw), 
+          proximaDose: formatarDataBR(dtProximaRaw),
+          dataAplicacaoIso: dtDoseRaw, 
+          proximaDoseIso: dtProximaRaw
+        });
+
+        salvarVacinas(vacinas);
+        fecharModalCadastrar();
+        mostrarToast(`Vacina registrada para ${caoObj.nome}!`);
+      } catch (err) {
+        console.error(err);
       }
     };
   }
 
-  // MODAL EDITAR VACINA
   function abrirModalEditar(vacina) {
     document.getElementById('veditar-id').value = vacina.id;
-    document.getElementById('veditar-cao-nome').value = `${vacina.caoNome} (${vacina.caoRaca})`;
+    document.getElementById('veditar-cao-nome').value = `${vacina.caoNome} (${vacina.caoRaca || ''})`;
     document.getElementById('veditar-nome').value = vacina.vacinaNome;
     document.getElementById('veditar-data-dose').value = vacina.dataAplicacaoIso || '';
     document.getElementById('veditar-data-proxima').value = vacina.proximaDoseIso || '';
 
-    if (modalVEditar && modalContentEditar) {
-      modalVEditar.classList.remove('hidden');
-      setTimeout(() => {
-        modalVEditar.classList.remove('opacity-0');
-        modalContentEditar.classList.remove('scale-95');
-      }, 10);
+    if (modalEditar) {
+      modalEditar.classList.remove('hidden');
+      setTimeout(() => { modalEditar.classList.remove('opacity-0'); const t = modalEditar.querySelector('.transform'); if (t) t.classList.remove('scale-95'); }, 10);
     }
   }
 
   function fecharModalEditar() {
-    if (modalVEditar && modalContentEditar) {
-      modalVEditar.classList.add('opacity-0');
-      modalContentEditar.classList.add('scale-95');
-      setTimeout(() => {
-        modalVEditar.classList.add('hidden');
-      }, 200);
+    if (modalEditar) {
+      modalEditar.classList.add('opacity-0');
+      const t = modalEditar.querySelector('.transform'); if (t) t.classList.add('scale-95');
+      setTimeout(() => modalEditar.classList.add('hidden'), 200);
     }
   }
 
   if (btnFecharModalEditar) btnFecharModalEditar.onclick = fecharModalEditar;
   if (btnCancelarModalEditar) btnCancelarModalEditar.onclick = fecharModalEditar;
-  if (modalVEditar) modalVEditar.onclick = (e) => { if (e.target === modalVEditar) fecharModalEditar(); };
 
-  if (formEditarVacina) {
-    formEditarVacina.onsubmit = (e) => {
+  if (formEditar) {
+    formEditar.onsubmit = (e) => {
       e.preventDefault();
+      const id = parseInt(document.getElementById('veditar-id').value);
+      const dtDoseRaw = document.getElementById('veditar-data-dose').value;
+      const dtProximaRaw = document.getElementById('veditar-data-proxima').value;
 
-      const id = Number(document.getElementById('veditar-id').value);
-      const novoNome = document.getElementById('veditar-nome').value.trim();
-      const dataDoseRaw = document.getElementById('veditar-data-dose').value;
-      const dataProximaRaw = document.getElementById('veditar-data-proxima').value;
+      const vacinas = lerDadosSalvos('canil_vacinas');
+      const idx = vacinas.findIndex(v => v.id === id);
 
-      const [a1, m1, d1] = dataDoseRaw.split('-');
-      const [a2, m2, d2] = dataProximaRaw.split('-');
+      if (idx !== -1) {
+        vacinas[idx].vacinaNome = document.getElementById('veditar-nome').value.trim();
+        vacinas[idx].dataAplicacaoIso = dtDoseRaw;
+        vacinas[idx].proximaDoseIso = dtProximaRaw;
+        vacinas[idx].dataAplicacao = formatarDataBR(dtDoseRaw);
+        vacinas[idx].proximaDose = formatarDataBR(dtProximaRaw);
 
-      const dataFmtDose = `${d1}/${m1}/${a1}`;
-      const dataFmtProxima = `${d2}/${m2}/${a2}`;
-
-      let vacinas = obterVacinas();
-      vacinas = vacinas.map(v => {
-        if (v.id === id) {
-          return {
-            ...v,
-            vacinaNome: novoNome,
-            dataAplicacao: dataFmtDose,
-            proximaDose: dataFmtProxima,
-            dataAplicacaoIso: dataDoseRaw,
-            proximaDoseIso: dataProximaRaw
-          };
-        }
-        return v;
-      });
-
-      localStorage.setItem('canil_vacinas', JSON.stringify(vacinas));
-      fecharModalEditar();
-      renderizarDashboardEVacinas();
-      mostrarToast("Vacina atualizada com sucesso!");
+        salvarVacinas(vacinas);
+        fecharModalEditar();
+        mostrarToast("Vacina atualizada com sucesso!");
+      }
     };
   }
 
-  // MODAL CADASTRAR VACINA
-  function carregarOpcoesCaesModal() {
-    if (!selectCao) return;
-    const caesSalvos = JSON.parse(localStorage.getItem('canil_cachorros')) || [];
-
-    selectCao.innerHTML = '';
-    if (caesSalvos.length === 0) {
-      selectCao.innerHTML = '<option value="">Nenhum cão cadastrado</option>';
-      return;
-    }
-
-    caesSalvos.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.nome;
-      opt.dataset.raca = c.raca;
-      opt.dataset.foto = c.foto;
-      opt.textContent = `${c.nome} (${c.raca})`;
-      selectCao.appendChild(opt);
-    });
-  }
-
-  function abrirModalGlobal() {
-    carregarOpcoesCaesModal();
-    if (formVacinaGlobal) formVacinaGlobal.reset();
-    if (modalVGlobal && modalContentGlobal) {
-      modalVGlobal.classList.remove('hidden');
-      setTimeout(() => {
-        modalVGlobal.classList.remove('opacity-0');
-        modalContentGlobal.classList.remove('scale-95');
-      }, 10);
+  function abrirModalExcluir(vacina) {
+    idVacinaExcluir = vacina.id;
+    if (textoConfirmacaoExclusao) textoConfirmacaoExclusao.textContent = `Tem certeza que deseja excluir a vacina ${vacina.vacinaNome} de ${vacina.caoNome}?`;
+    if (modalExcluir) {
+      modalExcluir.classList.remove('hidden');
+      setTimeout(() => { modalExcluir.classList.remove('opacity-0'); const t = modalExcluir.querySelector('.transform'); if (t) t.classList.remove('scale-95'); }, 10);
     }
   }
 
-  function fecharModalGlobal() {
-    if (modalVGlobal && modalContentGlobal) {
-      modalVGlobal.classList.add('opacity-0');
-      modalContentGlobal.classList.add('scale-95');
-      setTimeout(() => {
-        modalVGlobal.classList.add('hidden');
-      }, 200);
+  function fecharModalExcluir() {
+    if (modalExcluir) {
+      modalExcluir.classList.add('opacity-0');
+      const t = modalExcluir.querySelector('.transform'); if (t) t.classList.add('scale-95');
+      setTimeout(() => modalExcluir.classList.add('hidden'), 200);
     }
   }
 
-  if (btnAbrirModal) btnAbrirModal.onclick = (e) => { e.preventDefault(); abrirModalGlobal(); };
-  if (btnFecharModalGlobal) btnFecharModalGlobal.onclick = fecharModalGlobal;
-  if (btnCancelarModalGlobal) btnCancelarModalGlobal.onclick = fecharModalGlobal;
-  if (modalVGlobal) modalVGlobal.onclick = (e) => { if (e.target === modalVGlobal) fecharModalGlobal(); };
+  if (btnCancelarExcluir) btnCancelarExcluir.onclick = fecharModalExcluir;
 
-  if (formVacinaGlobal) {
-    formVacinaGlobal.onsubmit = (e) => {
-      e.preventDefault();
-
-      const selectedOption = selectCao.options[selectCao.selectedIndex];
-      const caoNome = selectCao.value;
-      const caoRaca = selectedOption?.dataset?.raca || 'Cão';
-      const caoFoto = selectedOption?.dataset?.foto || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
-
-      const vacinaNome = document.getElementById('vglobal-nome').value.trim();
-      const dataDoseRaw = document.getElementById('vglobal-data-dose').value;
-      const dataProximaRaw = document.getElementById('vglobal-data-proxima').value;
-
-      const [a1, m1, d1] = dataDoseRaw.split('-');
-      const [a2, m2, d2] = dataProximaRaw.split('-');
-
-      const dataFmtDose = `${d1}/${m1}/${a1}`;
-      const dataFmtProxima = `${d2}/${m2}/${a2}`;
-
-      const vacinas = obterVacinas();
-      const novaVacina = {
-        id: Date.now(),
-        caoNome,
-        caoRaca,
-        caoFoto,
-        vacinaNome,
-        dataAplicacao: dataFmtDose,
-        proximaDose: dataFmtProxima,
-        dataAplicacaoIso: dataDoseRaw,
-        proximaDoseIso: dataProximaRaw
-      };
-
-      vacinas.unshift(novaVacina);
-      localStorage.setItem('canil_vacinas', JSON.stringify(vacinas));
-
-      fecharModalGlobal();
-      renderizarDashboardEVacinas();
-      mostrarToast(`Vacina ${vacinaNome} cadastrada com sucesso!`);
+  if (btnConfirmarExcluir) {
+    btnConfirmarExcluir.onclick = () => {
+      if (idVacinaExcluir) {
+        let vacinas = lerDadosSalvos('canil_vacinas').filter(v => v.id !== idVacinaExcluir);
+        salvarVacinas(vacinas);
+        fecharModalExcluir();
+        mostrarToast("Vacina excluída do sistema.");
+      }
     };
   }
 
-  // BUSCA E FILTROS
-  if (inputBusca) {
-    inputBusca.addEventListener('input', renderizarDashboardEVacinas);
-  }
+  if (inputBusca) inputBusca.addEventListener('input', renderizarTabela);
 
   if (containerFiltros) {
-    const botoes = containerFiltros.querySelectorAll('button');
-    botoes.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    const btns = containerFiltros.querySelectorAll('button');
+    btns.forEach(btn => {
+      btn.onclick = (e) => {
         e.preventDefault();
-        botoes.forEach(b => {
-          b.className = "px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors";
-        });
+        btns.forEach(b => b.className = "px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors");
         btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-laranja text-white";
-
-        filtroVacinaAtual = btn.textContent.trim().toLowerCase();
-        renderizarDashboardEVacinas();
-      });
+        filtroVacinaAtual = btn.textContent.trim();
+        renderizarTabela();
+      };
     });
   }
 
-  renderizarDashboardEVacinas();
+  renderizarTabela();
 });
