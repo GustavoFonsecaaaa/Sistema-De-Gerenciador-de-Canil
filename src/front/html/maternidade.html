@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanilManager - Maternidade</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          marromescuro: '#1C1105',     
+          marromescuro2: '#3C240B',    
+          laranja: '#D97706',          
+          laranjaclaro: '#FEF3C7',     
+          creme: '#F8F5F0',            
+          bege: '#EFECE6',             
+          verdeok: '#10B981',
+          verdeokbg: '#D1FAE5',
+          vermelho: '#EF4444',
+          vermelhobg: '#FEE2E2',
+        },
+        fontFamily: {
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+          sans: ['Plus Jakarta Sans', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<!-- Remix Icon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans bg-creme text-marromescuro flex min-h-screen relative">
+
+  <!-- SIDEBAR -->
+  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between z-40">
+    <div class="sidebar-top">
+      <!-- CABEÇALHO DA SIDEBAR -->
+      <div class="flex items-center justify-between mb-1 relative">
+        <div class="font-serif text-xl font-extrabold text-white">Canil<span class="text-laranja">Manager</span></div>
+        <button id="btn-notificacoes" class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
+          <i class="ri-notification-3-line text-base"></i>
+          <span id="badge-notificacoes-count" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold text-[9px] min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border-2 border-marromescuro hidden shadow-sm">0</span>
+        </button>
+      </div>
+
+      <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
+
+      <nav class="flex flex-col gap-1.5">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-layout-grid-line text-base"></i> Dashboard
+        </a>
+        <a href="cachorros.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-baidu-line text-base"></i> Cachorros
+        </a>
+        <a href="maternidade.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-marromescuro2 border border-laranja/20 text-laranja font-semibold text-xs">
+          <i class="ri-heart-pulse-fill text-base"></i> Maternidade
+        </a>
+        <a href="vacinas.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-syringe-line text-base"></i> Vacinas
+        </a>
+        <a href="racoes.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-goblet-line text-base"></i> Rações
+        </a>
+      </nav>
+    </div>
+
+    <div class="flex items-center gap-2.5 pt-4 border-t border-white/10">
+      <div class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs">C</div>
+      <div>
+        <div class="text-[11px] font-bold text-[#f0e6da]">Criador</div>
+        <div class="text-[9px] text-[#a8998a]">admin@canil.com</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="ml-60 flex-1 p-8">
+    <header class="mb-6 flex justify-between items-center">
+      <div>
+        <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Maternidade</h1>
+        <p class="text-xs text-[#6B7280] mt-1">Acompanhe todas as ninhadas do canil</p>
+      </div>
+      <button id="btn-nova-ninhada" class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
+        <i class="ri-add-line text-base"></i> Registrar Ninhada
+      </button>
+    </header>
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="w-12 h-12 rounded-xl bg-[#D1FAE5] flex items-center justify-center text-[#10B981] text-xl">
+          <i class="ri-hand-heart-line"></i>
+        </div>
+        <div>
+          <div id="kpi-ninhadas" class="text-2xl font-extrabold text-[#111827] leading-none mb-1">0</div>
+          <div class="text-[11px] text-[#6B7280]">Total de Ninhadas</div>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="w-12 h-12 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja text-xl">
+          <i class="ri-group-line"></i>
+        </div>
+        <div>
+          <div id="kpi-filhotes" class="text-2xl font-extrabold text-[#111827] leading-none mb-1">0</div>
+          <div class="text-[11px] text-[#6B7280]">Total de Filhotes</div>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="w-12 h-12 rounded-xl bg-[#FCE7F3] flex items-center justify-center text-[#EC4899] text-xl">
+          <i class="ri-drop-line"></i>
+        </div>
+        <div>
+          <div id="kpi-amamentando" class="text-2xl font-extrabold text-[#111827] leading-none mb-1">0</div>
+          <div class="text-[11px] text-[#6B7280]">Amamentando</div>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#EFECE6] rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="w-12 h-12 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-[#D97706] text-xl">
+          <i class="ri-women-line"></i>
+        </div>
+        <div>
+          <div id="kpi-matrizes" class="text-2xl font-extrabold text-[#111827] leading-none mb-1">0</div>
+          <div class="text-[11px] text-[#6B7280]">Matrizes no Canil</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTROS E ORDENAÇÃO -->
+    <div class="flex gap-6 items-center mb-6 border-b border-[#EFECE6] pb-4">
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] font-bold text-[#6B7280]">Filtrar por mãe:</span>
+        <select id="filtro-mae" class="bg-white border border-[#EFECE6] rounded-lg py-1.5 px-3 text-xs text-[#111827] font-medium focus:outline-none focus:border-laranja shadow-sm">
+          <option value="todas">Todas as mães</option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] font-bold text-[#6B7280]">Ordenar por:</span>
+        <div class="flex bg-white border border-[#EFECE6] rounded-lg p-0.5 shadow-sm">
+          <button id="btn-ordem-data" class="px-3 py-1 rounded-md text-[11px] font-bold bg-[#FAF8F5] text-[#111827] border border-[#EFECE6]">Data</button>
+          <button id="btn-ordem-filhotes" class="px-3 py-1 rounded-md text-[11px] font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Filhotes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRID DE NINHADAS -->
+    <div id="grid-ninhadas" class="grid grid-cols-3 gap-5">
+      <!-- Cards renderizados via JS -->
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="empty-state-maternidade" class="hidden flex-col items-center justify-center py-20 text-center">
+      <div class="w-14 h-14 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/40 text-2xl mb-4 shadow-sm">
+        <i class="ri-heart-pulse-line"></i>
+      </div>
+      <h3 class="font-serif text-lg font-bold text-[#1C1105] mb-1">Nenhuma ninhada registrada</h3>
+      <p class="text-xs text-[#6B7280]">Registre uma nova ninhada para acompanhar os filhotes.</p>
+    </div>
+  </main>
+
+  <!-- MODAL REGISTRAR NINHADA -->
+  <div id="modal-ninhada" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-8 max-w-[500px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative">
+      <button id="btn-fechar-modal" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors">
+        <i class="ri-close-line text-xl"></i>
+      </button>
+
+      <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Registrar Ninhada</h3>
+
+      <form id="form-ninhada" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Mãe (Matriz) <span class="text-red-500">*</span></label>
+            <select id="ninhada-mae" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Pai (Padreador) <span class="text-red-500">*</span></label>
+            <input type="text" id="ninhada-pai" placeholder="Ex: Thor" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm placeholder:text-[#1C1105]/30">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data do Parto <span class="text-red-500">*</span></label>
+            <input type="date" id="ninhada-data" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Tipo de Parto <span class="text-red-500">*</span></label>
+            <select id="ninhada-tipo" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+              <option value="Natural">Natural</option>
+              <option value="Cesárea">Cesárea</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 p-4 bg-white border border-[#EFECE6] rounded-2xl">
+          <div>
+            <label class="block text-[10px] font-bold text-[#6B7280] uppercase mb-1">Machos</label>
+            <input type="number" id="ninhada-machos" min="0" value="0" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-xl py-2 px-3 text-sm text-center font-bold focus:outline-none focus:border-laranja transition-all">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-[#6B7280] uppercase mb-1">Fêmeas</label>
+            <input type="number" id="ninhada-femeas" min="0" value="0" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-xl py-2 px-3 text-sm text-center font-bold focus:outline-none focus:border-laranja transition-all">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-[#6B7280] uppercase mb-1">Peso Médio</label>
+            <div class="relative">
+              <input type="number" id="ninhada-peso" min="0" placeholder="0" class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-xl py-2 pl-3 pr-7 text-sm font-bold focus:outline-none focus:border-laranja transition-all">
+              <span class="absolute right-3 top-2 text-xs text-gray-400 font-bold">g</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-bold text-[#1C1105]">Ninhada Amamentando?</div>
+            <div class="text-[11px] text-[#6B7280] mt-0.5">Ative se os filhotes ainda estão com a mãe</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="ninhada-amamentando" class="sr-only peer" checked>
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-verdeok"></div>
+          </label>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" id="btn-cancelar" class="bg-transparent hover:bg-black/5 text-[#1C1105] font-bold text-xs py-3 px-6 rounded-2xl transition-all">
+            Cancelar
+          </button>
+          <button type="submit" class="bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3 px-6 rounded-2xl transition-all shadow-sm">
+            Salvar Ninhada
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST DE NOTIFICAÇÃO -->
+  <div id="toast-notificacao" class="fixed top-6 right-8 z-50 flex items-center gap-2.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
+    <div class="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs">
+      <i class="ri-check-line"></i>
+    </div>
+    <span class="text-xs font-semibold">Operação realizada com sucesso!</span>
+  </div>
+
+  <script src="/src/front/js/maternidade.js"></script>
+</body>
+</html>
