@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Script cachorros.js carregado com sucesso!");
 
-  // FUNÇÃO SALVA-VIDAS: Evita que o sistema quebre se o cache estiver corrompido
+  // FUNÇÃO SALVA-VIDAS
   function lerDadosSalvos(chave) {
     try {
       const dados = localStorage.getItem(chave);
@@ -61,9 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let sexoSelecionadoEdit = 'Macho';
 
   const tabCio = document.getElementById('tab-cio');
+  const tabNinhadas = document.getElementById('tab-ninhadas'); // NOVO
   const tabVacinas = document.getElementById('tab-vacinas');
   const tabInformacoes = document.getElementById('tab-informacoes');
+  
   const conteudoTabCio = document.getElementById('conteudo-tab-cio');
+  const conteudoTabNinhadas = document.getElementById('conteudo-tab-ninhadas'); // NOVO
   const conteudoTabVacinas = document.getElementById('conteudo-tab-vacinas');
   const conteudoTabInformacoes = document.getElementById('conteudo-tab-informacoes');
 
@@ -89,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnAddItemCruza = document.getElementById('btn-add-item-cruza');
 
   let idCioEmEdicao = null;
-  let idVacinaEmEdicao = null; // Controle de edição de vacina
+  let idVacinaEmEdicao = null;
   let cardAtualEmExibicao = null;
 
   const btnRegistrarVacina = document.getElementById('btn-registrar-vacina');
@@ -268,12 +271,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     carregarVacinasDaFicha(nome);
     carregarCiosDaFicha(nome);
+    carregarNinhadasDaFicha(nome); // Chama a nova função
 
     if (sexo === 'Fêmea') {
       if (tabCio) tabCio.classList.remove('hidden');
+      if (tabNinhadas) tabNinhadas.classList.remove('hidden'); // MOSTRA A ABA
       ativarAbaCio();
     } else {
       if (tabCio) tabCio.classList.add('hidden');
+      if (tabNinhadas) tabNinhadas.classList.add('hidden'); // ESCONDE A ABA
       ativarAbaVacinas();
     }
 
@@ -281,6 +287,67 @@ document.addEventListener('DOMContentLoaded', () => {
     if (viewEditar) viewEditar.classList.add('hidden');
     if (viewDetalhes) viewDetalhes.classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // --- NOVA FUNÇÃO: CARREGAR NINHADAS (MATERNIDADE) DA FICHA ---
+  function carregarNinhadasDaFicha(nomeCao) {
+    const containerNinhadas = document.getElementById('lista-ninhadas-container');
+    const emptyStateNinhadas = document.getElementById('empty-state-ninhadas');
+    if (!containerNinhadas) return;
+
+    containerNinhadas.innerHTML = '';
+    const ninhadas = lerDadosSalvos('canil_ninhadas');
+    const ninhadasDaFicha = ninhadas.filter(n => (n.maeNome || '').toLowerCase() === nomeCao.toLowerCase());
+
+    // Ordenar as ninhadas pela mais recente
+    ninhadasDaFicha.sort((a, b) => new Date(b.dataIso) - new Date(a.dataIso));
+
+    if (ninhadasDaFicha.length > 0) {
+      if (emptyStateNinhadas) emptyStateNinhadas.classList.add('hidden');
+      
+      ninhadasDaFicha.forEach(n => {
+        const badgeParto = n.tipoParto === 'Natural' ? 'bg-[#D1FAE5] text-[#10B981]' : 'bg-[#FEF3C7] text-[#D97706]';
+        const badgeAmamentando = n.amamentando ? `<span class="bg-[#D1FAE5] text-[#10B981] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-wide">Amamentando</span>` : '';
+        const totalFilhotes = n.machos + n.femeas;
+
+        const itemHTML = `
+          <div class="bg-[#FAF8F5] border border-[#EFECE6] hover:border-pink-300 rounded-2xl p-5 text-xs transition-all shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h4 class="font-bold text-[#111827] text-sm mb-0.5">Parto em ${n.dataBr}</h4>
+                <p class="text-[11px] text-[#6B7280]">Padreador (Pai): ${n.paiNome}</p>
+              </div>
+              <div class="flex items-center gap-2">
+                ${badgeAmamentando}
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeParto}">${n.tipoParto}</span>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-4 gap-3 text-center bg-white border border-[#EFECE6] rounded-xl p-3 shadow-sm">
+              <div>
+                <div class="font-extrabold text-[#111827] text-base">${totalFilhotes}</div>
+                <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Total</div>
+              </div>
+              <div>
+                <div class="font-extrabold text-[#111827] text-base">${n.machos}</div>
+                <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Machos</div>
+              </div>
+              <div>
+                <div class="font-extrabold text-[#111827] text-base">${n.femeas}</div>
+                <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Fêmeas</div>
+              </div>
+              <div>
+                <div class="font-extrabold text-[#111827] text-base">${n.pesoMedio}g</div>
+                <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Peso Médio</div>
+              </div>
+            </div>
+          </div>
+        `;
+        containerNinhadas.insertAdjacentHTML('beforeend', itemHTML);
+      });
+    } else {
+      if (emptyStateNinhadas) emptyStateNinhadas.classList.remove('hidden');
+    }
   }
 
   // --- LÓGICA DE HISTÓRICO DE VACINAS (AGRUPAMENTO) ---
@@ -305,7 +372,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       Object.values(vacinasAgrupadas).forEach(grupo => {
-        // Ordena para que a dose mais recente fique na posição 0
         grupo.doses.sort((a, b) => new Date(b.dataAplicacaoIso) - new Date(a.dataAplicacaoIso));
         const ultimaDose = grupo.doses[0];
 
@@ -755,19 +821,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function resetarEstilosAbas() {
-    [tabCio, tabVacinas, tabInformacoes].forEach(tab => {
+    [tabCio, tabNinhadas, tabVacinas, tabInformacoes].forEach(tab => {
       if (tab) tab.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all";
     });
     if (conteudoTabCio) conteudoTabCio.classList.add('hidden');
+    if (conteudoTabNinhadas) conteudoTabNinhadas.classList.add('hidden');
     if (conteudoTabVacinas) conteudoTabVacinas.classList.add('hidden');
     if (conteudoTabInformacoes) conteudoTabInformacoes.classList.add('hidden');
   }
 
   function ativarAbaCio() { resetarEstilosAbas(); if (tabCio) tabCio.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all"; if (conteudoTabCio) conteudoTabCio.classList.remove('hidden'); }
+  function ativarAbaNinhadas() { resetarEstilosAbas(); if (tabNinhadas) tabNinhadas.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all"; if (conteudoTabNinhadas) conteudoTabNinhadas.classList.remove('hidden'); }
   function ativarAbaVacinas() { resetarEstilosAbas(); if (tabVacinas) tabVacinas.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all"; if (conteudoTabVacinas) conteudoTabVacinas.classList.remove('hidden'); }
   function ativarAbaInformacoes() { resetarEstilosAbas(); if (tabInformacoes) tabInformacoes.className = "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all"; if (conteudoTabInformacoes) conteudoTabInformacoes.classList.remove('hidden'); }
 
   if (tabCio) tabCio.onclick = (e) => { e.preventDefault(); ativarAbaCio(); };
+  if (tabNinhadas) tabNinhadas.onclick = (e) => { e.preventDefault(); ativarAbaNinhadas(); };
   if (tabVacinas) tabVacinas.onclick = (e) => { e.preventDefault(); ativarAbaVacinas(); };
   if (tabInformacoes) tabInformacoes.onclick = (e) => { e.preventDefault(); ativarAbaInformacoes(); };
 
