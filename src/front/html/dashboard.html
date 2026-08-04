@@ -40,30 +40,29 @@
 </head>
 <body class="font-sans bg-creme text-marromescuro flex min-h-screen relative">
 
-  <!-- SIDEBAR -->
+
+ <!-- SIDEBAR -->
   <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between z-40">
     <div class="sidebar-top">
-      <!-- CABEÇALHO DA SIDEBAR + SININHO DE NOTIFICAÇÕES -->
       <div class="flex items-center justify-between mb-1 relative">
         <div class="font-serif text-xl font-extrabold text-white">Canil<span class="text-laranja">Manager</span></div>
-        
-        <!-- BOTÃO DO SININHO -->
         <button id="btn-notificacoes" class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
           <i class="ri-notification-3-line text-base"></i>
-          <span id="badge-notificacoes-count" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold text-[9px] min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border-2 border-marromescuro hidden shadow-sm">
-            0
-          </span>
+          <span id="badge-notificacoes-count" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold text-[9px] min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border-2 border-marromescuro hidden shadow-sm">0</span>
         </button>
       </div>
 
       <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
 
       <nav class="flex flex-col gap-1.5">
-        <a href="dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-marromescuro2 text-laranja font-semibold text-xs">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-marromescuro2 border border-laranja/20 text-laranja font-semibold text-xs transition-all">
           <i class="ri-layout-grid-fill text-base"></i> Dashboard
         </a>
         <a href="cachorros.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-baidu-line text-base"></i> Cachorros
+        </a>
+        <a href="maternidade.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-heart-pulse-line text-base"></i> Maternidade
         </a>
         <a href="vacinas.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-syringe-line text-base"></i> Vacinas
@@ -74,7 +73,6 @@
       </nav>
     </div>
 
-    <!-- Perfil do Usuário -->
     <div class="flex items-center gap-2.5 pt-4 border-t border-white/10">
       <div class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs">C</div>
       <div>
