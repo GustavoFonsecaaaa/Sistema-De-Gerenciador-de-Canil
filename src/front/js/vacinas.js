@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     caes.forEach(c => {
       const opt = document.createElement('option');
-      opt.value = JSON.stringify({ nome: c.nome, raca: c.raca }); // OTIMIZAÇÃO: Não carrega foto no select
+      opt.value = JSON.stringify({ nome: c.nome, raca: c.raca }); // Sem carregar a foto!
       opt.textContent = `${c.nome} (${c.raca})`;
       selectCaoGlobal.appendChild(opt);
     });
@@ -89,18 +89,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderizarTabela() {
-    const vacinas = lerDadosSalvos('canil_vacinas');
+    const todasVacinas = lerDadosSalvos('canil_vacinas');
     const caes = lerDadosSalvos('canil_cachorros');
     const busca = inputBusca ? inputBusca.value.trim().toLowerCase() : '';
 
     const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
     const seteDias = new Date(hoje); seteDias.setDate(hoje.getDate() + 7);
 
+    // Dita a lógica: A tabela global só exibe a dose MAIS RECENTE de cada vacina por cachorro!
+    const activeVacinasMap = {};
+    todasVacinas.forEach(v => {
+        const key = `${(v.caoNome||'').trim().toLowerCase()}_${(v.vacinaNome||'').trim().toLowerCase()}`;
+        if (!activeVacinasMap[key]) {
+            activeVacinasMap[key] = v;
+        } else {
+            if (new Date(v.dataAplicacaoIso) > new Date(activeVacinasMap[key].dataAplicacaoIso)) {
+                activeVacinasMap[key] = v;
+            }
+        }
+    });
+
+    const activeVacinas = Object.values(activeVacinasMap);
+
     let totalVencidas = 0;
     let totalVencemBreve = 0;
     const caesVacinadosSet = new Set();
 
-    vacinas.forEach(v => {
+    activeVacinas.forEach(v => {
       const dtProxima = new Date(v.proximaDoseIso);
       if (dtProxima < hoje) {
         totalVencidas++;
@@ -110,13 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    if (statTotalRegistros) statTotalRegistros.textContent = vacinas.length;
+    if (statTotalRegistros) statTotalRegistros.textContent = todasVacinas.length; // O KPI mostra TODAS as aplicações históricas
     if (statCaesVacinados) statCaesVacinados.textContent = caesVacinadosSet.size;
     if (statSubCaes) statSubCaes.textContent = `de ${caes.length} cães no canil`;
     if (statVencidas) statVencidas.textContent = totalVencidas;
     if (statVencemBreve) statVencemBreve.textContent = totalVencemBreve;
 
-    const filtradas = vacinas.filter(v => {
+    const filtradas = activeVacinas.filter(v => {
       const nomeCao = (v.caoNome || '').toLowerCase();
       const racaCao = (v.caoRaca || '').toLowerCase();
       const nomeVacina = (v.vacinaNome || '').toLowerCase();
@@ -145,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const badgeTexto = estaVencida ? 'Pendente' : 'Em dia';
       const badgeClasse = estaVencida ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#D1FAE5] text-[#10B981]';
 
-      // BUSCA IMAGEM E RAÇA DIRETAMENTE DA LISTA DE CÃES
       const caoRef = caes.find(c => c.nome === v.caoNome) || {};
       const fotoExibicao = caoRef.foto || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=100';
       const racaExibicao = caoRef.raca || v.caoRaca || '';
@@ -168,8 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <td class="py-3.5 px-5"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClasse}">${badgeTexto}</span></td>
         <td class="py-3.5 px-5 text-right">
           <div class="flex items-center justify-end gap-1">
-            <button class="btn-editar-v p-1.5 rounded-lg text-gray-400 hover:text-laranja hover:bg-orange-50 transition-all"><i class="ri-edit-line text-sm"></i></button>
-            <button class="btn-excluir-v p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"><i class="ri-delete-bin-line text-sm"></i></button>
+            <button class="btn-editar-v p-1.5 rounded-lg text-gray-400 hover:text-laranja hover:bg-orange-50 transition-all" title="Editar vacina"><i class="ri-edit-line text-sm"></i></button>
+            <button class="btn-excluir-v p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all" title="Excluir vacina"><i class="ri-delete-bin-line text-sm"></i></button>
           </div>
         </td>
       `;
@@ -206,31 +220,27 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       if (!selectCaoGlobal || !selectCaoGlobal.value) { alert("Por favor, selecione um cachorro."); return; }
 
-      try {
-        const caoObj = JSON.parse(selectCaoGlobal.value);
-        const dtDoseRaw = document.getElementById('vglobal-data-dose').value;
-        const dtProximaRaw = document.getElementById('vglobal-data-proxima').value;
+      const caoObj = JSON.parse(selectCaoGlobal.value);
+      const dtDoseRaw = document.getElementById('vglobal-data-dose').value;
+      const dtProximaRaw = document.getElementById('vglobal-data-proxima').value;
 
-        const vacinas = lerDadosSalvos('canil_vacinas');
-        
-        // OTIMIZAÇÃO CRUCIAL: Removemos o salvamento duplicado da foto base64
-        vacinas.unshift({
-          id: Date.now(),
-          caoNome: caoObj.nome, 
-          caoRaca: caoObj.raca,
-          vacinaNome: document.getElementById('vglobal-nome').value.trim(),
-          dataAplicacao: formatarDataBR(dtDoseRaw), 
-          proximaDose: formatarDataBR(dtProximaRaw),
-          dataAplicacaoIso: dtDoseRaw, 
-          proximaDoseIso: dtProximaRaw
-        });
+      const vacinas = lerDadosSalvos('canil_vacinas');
+      
+      vacinas.unshift({
+        id: Date.now(),
+        caoNome: caoObj.nome, 
+        caoRaca: caoObj.raca,
+        vacinaNome: document.getElementById('vglobal-nome').value.trim(),
+        descVacina: 'Proteção preventiva',
+        dataAplicacao: formatarDataBR(dtDoseRaw), 
+        proximaDose: formatarDataBR(dtProximaRaw),
+        dataAplicacaoIso: dtDoseRaw, 
+        proximaDoseIso: dtProximaRaw
+      });
 
-        salvarVacinas(vacinas);
-        fecharModalCadastrar();
-        mostrarToast(`Vacina registrada para ${caoObj.nome}!`);
-      } catch (err) {
-        console.error(err);
-      }
+      salvarVacinas(vacinas);
+      fecharModalCadastrar();
+      mostrarToast(`Vacina registrada para ${caoObj.nome}!`);
     };
   }
 

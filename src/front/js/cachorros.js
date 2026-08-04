@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Script cachorros.js carregado com sucesso!");
 
+  // FUNÇÃO SALVA-VIDAS: Evita que o sistema quebre se o cache estiver corrompido
   function lerDadosSalvos(chave) {
     try {
       const dados = localStorage.getItem(chave);
@@ -88,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnAddItemCruza = document.getElementById('btn-add-item-cruza');
 
   let idCioEmEdicao = null;
+  let idVacinaEmEdicao = null; // Controle de edição de vacina
   let cardAtualEmExibicao = null;
 
   const btnRegistrarVacina = document.getElementById('btn-registrar-vacina');
@@ -281,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  // --- LÓGICA DE HISTÓRICO DE VACINAS (AGRUPAMENTO) ---
   function carregarVacinasDaFicha(nomeCao) {
     const containerVacinas = document.getElementById('lista-vacinas-container');
     const emptyStateVacinas = document.getElementById('empty-state-vacinas-detalhe');
@@ -292,32 +295,103 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (vacinasDoCao.length > 0) {
       if (emptyStateVacinas) emptyStateVacinas.classList.add('hidden');
+
+      // Agrupar as vacinas pelo nome (ex: "V10")
+      const vacinasAgrupadas = {};
       vacinasDoCao.forEach(v => {
-        const dtProxima = new Date(v.proximaDoseIso);
-        const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0);
+        const nomeKey = v.vacinaNome.trim().toLowerCase();
+        if (!vacinasAgrupadas[nomeKey]) vacinasAgrupadas[nomeKey] = { nomeExibicao: v.vacinaNome, desc: v.descVacina, doses: [] };
+        vacinasAgrupadas[nomeKey].doses.push(v);
+      });
+
+      Object.values(vacinasAgrupadas).forEach(grupo => {
+        // Ordena para que a dose mais recente fique na posição 0
+        grupo.doses.sort((a, b) => new Date(b.dataAplicacaoIso) - new Date(a.dataAplicacaoIso));
+        const ultimaDose = grupo.doses[0];
+
+        const dtProxima = new Date(ultimaDose.proximaDoseIso);
+        const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
         const estaVencida = dtProxima < hoje;
 
-        const textoProxima = estaVencida ? 'Vencida!' : v.proximaDose;
+        const textoProxima = estaVencida ? 'Vencida!' : ultimaDose.proximaDose;
         const corTextoProxima = estaVencida ? 'text-[#B45309]' : 'text-[#10B981]';
         const badgeTexto = estaVencida ? 'Pendente' : 'Em dia';
         const badgeClasse = estaVencida ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#D1FAE5] text-[#10B981]';
 
-        const itemHTML = `
-          <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4 flex items-center justify-between text-xs">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] text-laranja flex items-center justify-center"><i class="ri-syringe-line text-base"></i></div>
-              <div><h4 class="font-bold text-[#111827]">${v.vacinaNome}</h4><p class="text-[11px] text-[#6B7280]">${v.descVacina || 'Proteção preventiva'}</p></div>
+        let historicoHTML = '';
+        if (grupo.doses.length > 1) {
+          const linhasHist = grupo.doses.slice(1).map(d => `
+            <div class="flex items-center justify-between py-2 px-3 bg-white border border-[#EFECE6] rounded-xl group/linha">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-[#111827]">${d.dataAplicacao}</span>
+                <span class="text-[10px] text-[#6B7280] font-medium">(Próx: ${d.proximaDose})</span>
+              </div>
+              <div class="flex gap-1 opacity-0 group-hover/linha:opacity-100 transition-opacity">
+                  <button type="button" class="btn-editar-hist-vacina text-gray-400 hover:text-laranja p-1 transition-colors" data-id="${d.id}"><i class="ri-edit-line text-sm"></i></button>
+                  <button type="button" class="btn-excluir-hist-vacina text-gray-400 hover:text-red-500 p-1 transition-colors" data-id="${d.id}"><i class="ri-delete-bin-line text-sm"></i></button>
+              </div>
             </div>
-            <div class="flex items-center gap-6">
-              <div class="text-right"><div class="text-[10px] text-[#6B7280]">Última dose</div><div class="font-bold text-[#111827]">${v.dataAplicacao}</div></div>
-              <div class="text-right"><div class="text-[10px] text-[#6B7280]">Próxima dose</div><div class="font-bold ${corTextoProxima}">${textoProxima}</div></div>
-              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClasse}">${badgeTexto}</span>
+          `).join('');
+
+          historicoHTML = `
+            <div class="mt-3 pt-2.5 border-t border-[#EFECE6]">
+              <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Histórico de Doses Anteriores (${grupo.doses.length - 1})</div>
+              <div class="space-y-1.5 text-xs">
+                ${linhasHist}
+              </div>
+            </div>
+          `;
+        }
+
+        const cardHTML = document.createElement('div');
+        cardHTML.className = "bg-[#FAF8F5] border border-[#EFECE6] hover:border-laranja/50 rounded-2xl p-4 text-xs transition-all group";
+        cardHTML.innerHTML = `
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] text-laranja flex items-center justify-center"><i class="ri-syringe-line text-lg"></i></div>
+              <div>
+                <h4 class="font-bold text-[#111827] text-sm">${grupo.nomeExibicao}</h4>
+                <p class="text-[11px] text-[#6B7280]">${grupo.desc || 'Proteção preventiva'}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClasse}">${badgeTexto}</span>
+                <div class="flex items-center gap-1 bg-white border border-[#EFECE6] rounded-xl p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <button class="btn-nova-dose p-1 text-laranja hover:bg-orange-50 transition-colors rounded" title="Registrar Nova Dose"><i class="ri-add-line text-sm"></i></button>
+                  <button class="btn-editar-ultima p-1 text-gray-400 hover:text-laranja transition-colors" title="Editar Última Dose"><i class="ri-edit-line text-sm"></i></button>
+                  <button class="btn-excluir-ultima p-1 text-gray-400 hover:text-red-500 transition-colors" title="Excluir Última Dose"><i class="ri-delete-bin-line text-sm"></i></button>
+                </div>
             </div>
           </div>
+          
+          <div class="grid grid-cols-2 gap-4 bg-white border border-[#EFECE6] rounded-xl p-3 shadow-sm">
+            <div><div class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider mb-0.5">Última aplicação</div><div class="font-bold text-[#111827] text-sm">${ultimaDose.dataAplicacao}</div></div>
+            <div class="text-right"><div class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider mb-0.5">Próxima dose</div><div class="font-bold ${corTextoProxima} text-sm">${textoProxima}</div></div>
+          </div>
+          ${historicoHTML}
         `;
-        containerVacinas.insertAdjacentHTML('beforeend', itemHTML);
+
+        cardHTML.querySelector('.btn-nova-dose').onclick = () => {
+          abrirModalVacina("Registrar Nova Dose");
+          document.getElementById('vacina-nome').value = grupo.nomeExibicao;
+          document.getElementById('vacina-desc').value = grupo.desc;
+        };
+        cardHTML.querySelector('.btn-editar-ultima').onclick = () => editarVacinaExistente(ultimaDose);
+        cardHTML.querySelector('.btn-excluir-ultima').onclick = () => excluirVacinaExistente(ultimaDose.id);
+
+        cardHTML.querySelectorAll('.btn-editar-hist-vacina').forEach(btn => {
+            btn.onclick = () => {
+                const dose = grupo.doses.find(d => d.id === parseInt(btn.dataset.id));
+                if(dose) editarVacinaExistente(dose);
+            }
+        });
+        cardHTML.querySelectorAll('.btn-excluir-hist-vacina').forEach(btn => {
+            btn.onclick = () => excluirVacinaExistente(parseInt(btn.dataset.id));
+        });
+
+        containerVacinas.appendChild(cardHTML);
       });
+
     } else {
       if (emptyStateVacinas) emptyStateVacinas.classList.remove('hidden');
     }
@@ -376,8 +450,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function abrirModalVacina() {
+  // --- GERENCIAMENTO DE VACINAS (MODAL) ---
+  function abrirModalVacina(titulo = "Registrar Vacina") {
+    idVacinaEmEdicao = null;
     if (formRegistrarVacina) formRegistrarVacina.reset();
+    
+    const modalTitulo = modalVacina ? modalVacina.querySelector('h3') : null;
+    if (modalTitulo) modalTitulo.textContent = titulo;
+
     if (modalVacina) {
       modalVacina.classList.remove('hidden');
       setTimeout(() => {
@@ -385,6 +465,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const transformEl = modalVacina.querySelector('.transform');
         if (transformEl) transformEl.classList.remove('scale-95');
       }, 10);
+    }
+  }
+
+  function editarVacinaExistente(vacina) {
+    idVacinaEmEdicao = vacina.id;
+    document.getElementById('vacina-nome').value = vacina.vacinaNome;
+    document.getElementById('vacina-desc').value = vacina.descVacina || '';
+    document.getElementById('vacina-data-dose').value = vacina.dataAplicacaoIso;
+    document.getElementById('vacina-data-proxima').value = vacina.proximaDoseIso;
+
+    const modalTitulo = modalVacina ? modalVacina.querySelector('h3') : null;
+    if (modalTitulo) modalTitulo.textContent = "Editar Dose de Vacina";
+
+    if (modalVacina) {
+      modalVacina.classList.remove('hidden');
+      setTimeout(() => {
+        modalVacina.classList.remove('opacity-0');
+        const transformEl = modalVacina.querySelector('.transform');
+        if (transformEl) transformEl.classList.remove('scale-95');
+      }, 10);
+    }
+  }
+
+  function excluirVacinaExistente(id) {
+    if(confirm("Tem certeza que deseja remover este registro de dose?")) {
+        let vacinas = lerDadosSalvos('canil_vacinas');
+        vacinas = vacinas.filter(v => v.id !== id);
+        localStorage.setItem('canil_vacinas', JSON.stringify(vacinas));
+        if (cardAtualEmExibicao) abrirDetalhesDoCao(cardAtualEmExibicao);
+        mostrarToast("Dose removida!");
     }
   }
 
@@ -421,9 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const vacinasSalvas = lerDadosSalvos('canil_vacinas');
       
-      // Otimização crucial: Removemos a cópia duplicada da foto em Base64 para não estourar a memória!
-      vacinasSalvas.unshift({
-        id: Date.now(),
+      const objVacina = {
         caoNome: caoNome, 
         caoRaca: caoRaca, 
         vacinaNome: nomeVacina, 
@@ -432,15 +540,25 @@ document.addEventListener('DOMContentLoaded', () => {
         proximaDose: dataFmtProxima,
         dataAplicacaoIso: dataDoseRaw, 
         proximaDoseIso: dataProximaRaw
-      });
+      };
+
+      if (idVacinaEmEdicao) {
+          const index = vacinasSalvas.findIndex(v => v.id === idVacinaEmEdicao);
+          if (index !== -1) {
+              vacinasSalvas[index] = { ...vacinasSalvas[index], ...objVacina };
+          }
+      } else {
+          vacinasSalvas.unshift({ id: Date.now(), ...objVacina });
+      }
 
       localStorage.setItem('canil_vacinas', JSON.stringify(vacinasSalvas));
       fecharModalVacina();
       if (cardAtualEmExibicao) abrirDetalhesDoCao(cardAtualEmExibicao);
-      mostrarToast(`Vacina salva para ${caoNome}!`);
+      mostrarToast(idVacinaEmEdicao ? "Vacina atualizada!" : `Nova dose salva para ${caoNome}!`);
     };
   }
 
+  // --- GERENCIAMENTO DE CIOS ---
   function criarLinhaFormularioCruza(dados = {}) {
     if (!containerItensCruza) return;
     const divItem = document.createElement('div');
