@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanilManager - Meu Perfil</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          marromescuro: '#1C1105',     
+          marromescuro2: '#3C240B',    
+          laranja: '#D97706',          
+          laranjaclaro: '#FEF3C7',     
+          creme: '#F8F5F0',            
+          bege: '#EFECE6',             
+          verdeok: '#10B981',
+          verdeokbg: '#D1FAE5',
+          vermelho: '#EF4444',
+          vermelhobg: '#FEE2E2',
+        },
+        fontFamily: {
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+          sans: ['Plus Jakarta Sans', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<!-- Remix Icon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans bg-creme text-marromescuro flex min-h-screen relative">
+
+  <!-- SIDEBAR -->
+  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between z-40">
+    <div class="sidebar-top">
+      <div class="flex items-center justify-between mb-1 relative">
+        <div class="font-serif text-xl font-extrabold text-white">Canil<span class="text-laranja">Manager</span></div>
+        <button class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
+          <i class="ri-notification-3-line text-base"></i>
+        </button>
+      </div>
+
+      <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
+
+      <nav class="flex flex-col gap-1.5">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-layout-grid-line text-base"></i> Dashboard
+        </a>
+        <a href="cachorros.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-baidu-line text-base"></i> Cachorros
+        </a>
+        <a href="maternidade.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-heart-pulse-line text-base"></i> Maternidade
+        </a>
+        <a href="vacinas.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-syringe-line text-base"></i> Vacinas
+        </a>
+        <a href="racoes.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+          <i class="ri-goblet-line text-base"></i> Rações
+        </a>
+      </nav>
+    </div>
+
+    <!-- RODAPÉ DA SIDEBAR (PERFIL ATIVO) -->
+    <a href="perfil.html" class="flex items-center gap-2.5 pt-3 pb-3 px-3 -mx-3 border-t border-white/10 bg-marromescuro2 rounded-xl transition-colors cursor-pointer shadow-sm">
+      <div id="sidebar-avatar-inicial" class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs">C</div>
+      <div>
+        <div id="sidebar-nome" class="text-[11px] font-bold text-laranja">Criador</div>
+        <div id="sidebar-email" class="text-[9px] text-[#a8998a]">admin@canil.com</div>
+      </div>
+    </a>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="ml-60 flex-1 p-8">
+    
+    <header class="mb-8">
+      <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Meu Perfil</h1>
+      <p class="text-xs text-[#6B7280] mt-1">Gerencie suas informações pessoais e do canil</p>
+    </header>
+
+    <div class="grid grid-cols-12 gap-6 items-start">
+      
+      <!-- COLUNA ESQUERDA (CARDS MENORES) -->
+      <div class="col-span-4 space-y-4">
+        
+        <!-- CARD FOTO E RESUMO -->
+        <div class="bg-white border border-[#EFECE6] rounded-[24px] p-8 flex flex-col items-center text-center shadow-sm">
+          <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-[#FAF8F5] shadow-sm mb-4 bg-bege flex items-center justify-center text-3xl text-gray-400 font-serif">
+            <!-- Caso não tenha foto, exibe a inicial -->
+            <span id="perfil-avatar-letra">C</span>
+          </div>
+          
+          <h2 id="perfil-nome-card" class="font-serif text-xl font-bold text-[#111827] mb-1">Carlos Oliveira</h2>
+          <p id="perfil-email-card" class="text-xs text-[#6B7280] mb-4">admin@canil.com</p>
+          
+          <div class="text-[10px] text-[#6B7280] font-medium bg-[#FAF8F5] px-3 py-1.5 rounded-full border border-[#EFECE6]">
+            Membro desde 14/03/2024
+          </div>
+        </div>
+
+        <!-- CARD SAIR DA CONTA -->
+        <div class="bg-white border border-[#EFECE6] rounded-2xl p-2 shadow-sm">
+          <button id="btn-sair-conta" class="w-full flex items-center justify-center gap-2 text-vermelho font-bold text-xs py-3.5 hover:bg-vermelhobg rounded-xl transition-colors">
+            <i class="ri-logout-box-r-line text-sm"></i> Sair da conta
+          </button>
+        </div>
+
+      </div>
+
+      <!-- COLUNA DIREITA (INFORMAÇÕES E ABAS) -->
+      <div class="col-span-8 bg-white border border-[#EFECE6] rounded-[24px] p-8 shadow-sm">
+        
+        <!-- CABEÇALHO DAS ABAS -->
+        <div class="flex items-center justify-between border-b border-[#EFECE6] mb-8">
+          <div class="flex gap-8">
+            <button class="flex items-center gap-2 text-xs font-bold text-laranja border-b-2 border-laranja pb-4">
+              <i class="ri-user-line text-sm"></i> Dados Pessoais
+            </button>
+            <button class="flex items-center gap-2 text-xs font-medium text-[#6B7280] hover:text-[#111827] pb-4 transition-colors">
+              <i class="ri-home-4-line text-sm"></i> Canil
+            </button>
+          </div>
+          <button class="bg-laranja hover:bg-opacity-90 text-white font-bold text-[11px] px-4 py-2 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm -mt-3">
+            <i class="ri-pencil-fill"></i> Editar
+          </button>
+        </div>
+
+        <!-- CONTEÚDO DADOS PESSOAIS -->
+        <div class="grid grid-cols-2 gap-8">
+          <div>
+            <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Nome Completo</div>
+            <div id="perfil-nome-detalhe" class="text-sm font-bold text-[#111827]">Carlos Oliveira</div>
+          </div>
+
+          <div>
+            <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Email</div>
+            <div id="perfil-email-detalhe" class="text-sm font-bold text-[#111827]">admin@canil.com</div>
+            <div class="text-[10px] text-[#6B7280] mt-0.5">O email não pode ser alterado</div>
+          </div>
+
+          <div>
+            <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Telefone</div>
+            <div class="text-sm font-bold text-[#111827]">(11) 98765-4321</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Puxar dados do localStorage
+      const nomeSalvo = localStorage.getItem('canil_usuario_nome') || 'Carlos Oliveira';
+      const emailSalvo = localStorage.getItem('canil_usuario_cadastrado_email') || 'admin@canil.com';
+      const inicial = nomeSalvo.charAt(0).toUpperCase();
+
+      // 2. Preencher a tela com os dados
+      document.getElementById('perfil-nome-card').textContent = nomeSalvo;
+      document.getElementById('perfil-email-card').textContent = emailSalvo;
+      document.getElementById('perfil-nome-detalhe').textContent = nomeSalvo;
+      document.getElementById('perfil-email-detalhe').textContent = emailSalvo;
+      document.getElementById('perfil-avatar-letra').textContent = inicial;
+
+      // Preencher o menu lateral
+      document.getElementById('sidebar-nome').textContent = nomeSalvo;
+      document.getElementById('sidebar-email').textContent = emailSalvo;
+      document.getElementById('sidebar-avatar-inicial').textContent = inicial;
+
+      // 3. Lógica do botão "Sair da conta"
+      const btnSair = document.getElementById('btn-sair-conta');
+      btnSair.addEventListener('click', () => {
+        if(confirm("Tem certeza que deseja sair da conta?")) {
+          // Remove a flag de login, mas mantém os dados cadastrados
+          localStorage.removeItem('canil_logado');
+          window.location.href = 'login.html';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
