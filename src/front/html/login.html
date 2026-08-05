@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanilManager - Login</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          marromescuro: '#1C1105',     
+          laranja: '#D97706',          
+          creme: '#F8F5F0',            
+          bege: '#EFECE6',             
+          verdeok: '#10B981',
+          vermelho: '#EF4444',
+        },
+        fontFamily: {
+          serif: ['Playfair Display', 'Georgia', 'serif'],
+          sans: ['Plus Jakarta Sans', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<!-- Remix Icon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans bg-creme text-marromescuro flex flex-col items-center justify-center min-h-screen p-6">
+
+  <!-- CONTAINER CENTRAL -->
+  <div class="w-full max-w-[420px] flex flex-col items-center">
+    
+    <!-- LOGO E SUBTÍTULO -->
+    <div class="text-center mb-8">
+      <div class="font-serif text-3xl font-extrabold text-[#111827] tracking-tight mb-1">
+        Canil<span class="text-laranja">Manager</span>
+      </div>
+      <p class="text-xs text-[#6B7280]">Entre na sua conta para gerenciar seu canil</p>
+    </div>
+
+    <!-- CAIXA DO FORMULÁRIO -->
+    <div class="w-full bg-white border border-[#EFECE6] rounded-[28px] p-8 shadow-sm">
+      <form id="form-login" class="space-y-4">
+        
+        <div>
+          <label class="block text-xs font-bold text-[#111827] mb-1.5">Email</label>
+          <input type="email" id="login-email" placeholder="seu@email.com" required 
+            class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#111827] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all placeholder:text-gray-400">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#111827] mb-1.5">Senha</label>
+          <div class="relative">
+            <input type="password" id="login-senha" placeholder="Sua senha" required 
+              class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 pl-4 pr-10 text-xs text-[#111827] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all placeholder:text-gray-400">
+            <button type="button" id="btn-toggle-senha" class="absolute right-3.5 top-3 text-gray-400 hover:text-gray-600 transition-colors">
+              <i id="icone-olho" class="ri-eye-line text-base"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3.5 rounded-2xl transition-all shadow-sm mt-2">
+          Entrar
+        </button>
+
+        <div class="text-center pt-2">
+          <p class="text-xs text-[#6B7280]">
+            Não tem uma conta? <a href="cadastro.html" class="text-laranja font-bold hover:underline">Cadastre-se</a>
+          </p>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- DICA DE ACESSO RÁPIDO -->
+    <div class="text-center mt-6">
+      <p class="text-[11px] text-[#6B7280]">
+        Use <span class="font-bold text-[#111827]">admin@canil.com</span> / <span class="font-bold text-[#111827]">123456</span> para testar
+      </p>
+    </div>
+
+  </div>
+
+  <!-- TOAST DE ERRO / SUCESSO -->
+  <div id="toast-login" class="fixed top-6 right-8 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
+    <span id="toast-msg" class="text-xs font-semibold"></span>
+  </div>
+
+  <!-- SCRIPT DE COMPORTAMENTO -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const formLogin = document.getElementById('form-login');
+      const inputEmail = document.getElementById('login-email');
+      const inputSenha = document.getElementById('login-senha');
+      const btnToggleSenha = document.getElementById('btn-toggle-senha');
+      const iconeOlho = document.getElementById('icone-olho');
+      const toast = document.getElementById('toast-login');
+
+      btnToggleSenha.onclick = () => {
+        if (inputSenha.type === 'password') {
+          inputSenha.type = 'text';
+          iconeOlho.className = 'ri-eye-off-line text-base';
+        } else {
+          inputSenha.type = 'password';
+          iconeOlho.className = 'ri-eye-line text-base';
+        }
+      };
+
+      function mostrarToast(msg, tipo = 'sucesso') {
+        toast.querySelector('span').textContent = msg;
+        if (tipo === 'sucesso') {
+          toast.className = "fixed top-6 right-8 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg transition-all duration-300 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] opacity-100 translate-y-0";
+        } else {
+          toast.className = "fixed top-6 right-8 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg transition-all duration-300 bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B] opacity-100 translate-y-0";
+        }
+        setTimeout(() => {
+          toast.classList.remove('opacity-100', 'translate-y-0');
+          toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+        }, 3000);
+      }
+
+      formLogin.onsubmit = (e) => {
+        e.preventDefault();
+        const email = inputEmail.value.trim();
+        const senha = inputSenha.value.trim();
+
+        const emailCadastrado = localStorage.getItem('canil_usuario_cadastrado_email');
+        const senhaCadastrada = localStorage.getItem('canil_usuario_cadastrado_senha');
+
+        const ehAdmin = (email === 'admin@canil.com' && senha === '123456');
+        const ehUsuarioNovo = (email === emailCadastrado && senha === senhaCadastrada);
+
+        if (ehAdmin || ehUsuarioNovo) {
+          mostrarToast("Login realizado com sucesso! Redirecionando...", "sucesso");
+          localStorage.setItem('canil_logado', 'true');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1000);
+        } else {
+          mostrarToast("E-mail ou senha incorretos!", "erro");
+        }
+      };
+    });
+  </script>
+</body>
+</html>
