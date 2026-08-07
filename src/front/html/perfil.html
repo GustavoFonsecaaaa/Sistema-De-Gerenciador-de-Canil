@@ -131,16 +131,25 @@
               <i class="ri-home-4-line text-sm"></i> Canil
             </button>
           </div>
-          <button class="bg-laranja hover:bg-opacity-90 text-white font-bold text-[11px] px-4 py-2 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm -mt-3">
-            <i class="ri-pencil-fill"></i> Editar
-          </button>
+          <div class="flex items-center gap-3 -mt-3">
+            <button id="btn-cancelar-edicao" class="hidden text-xs font-bold text-[#6B7280] hover:text-[#111827] px-4 py-2 transition-colors">
+              Cancelar
+            </button>
+            <button id="btn-salvar-edicao" class="hidden bg-laranja hover:bg-opacity-95 text-white font-bold text-[11px] px-4 py-2 rounded-lg transition-all shadow-sm">
+              Salvar
+            </button>
+            <button id="btn-editar-perfil" class="bg-laranja hover:bg-opacity-90 text-white font-bold text-[11px] px-4 py-2 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
+              <i class="ri-pencil-fill"></i> Editar
+            </button>
+          </div>
         </div>
 
         <!-- CONTEÚDO DADOS PESSOAIS -->
         <div id="conteudo-dados" class="grid grid-cols-2 gap-8">
           <div>
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Nome Completo</div>
-            <div id="perfil-nome-detalhe" class="text-sm font-bold text-[#111827]">Carlos Oliveira</div>
+            <div id="perfil-nome-detalhe" class="perfil-visualizacao text-sm font-bold text-[#111827]">Carlos Oliveira</div>
+            <input type="text" id="input-perfil-nome" class="perfil-edicao hidden w-full max-w-sm bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
           </div>
 
           <div>
@@ -151,7 +160,8 @@
 
           <div>
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Telefone</div>
-            <div class="text-sm font-bold text-[#111827]">(31) 98765-4321</div>
+            <div id="perfil-telefone-detalhe" class="perfil-visualizacao text-sm font-bold text-[#111827]">(31) 98765-4321</div>
+            <input type="text" id="input-perfil-telefone" class="perfil-edicao hidden w-full max-w-sm bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
           </div>
         </div>
 
@@ -159,22 +169,26 @@
         <div id="conteudo-canil" class="grid grid-cols-2 gap-8 hidden">
           <div class="col-span-2">
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Nome do Canil</div>
-            <div class="text-sm font-bold text-[#111827]">Canil Villa Dog</div>
+            <div id="perfil-canil-nome" class="perfil-visualizacao text-sm font-bold text-[#111827]">Canil Villa Dog</div>
+            <input type="text" id="input-canil-nome" class="perfil-edicao hidden w-full max-w-md bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
           </div>
 
           <div class="col-span-2">
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Endereço</div>
-            <div class="text-sm font-bold text-[#111827]">Rua dos Pinheiros, 450</div>
+            <div id="perfil-canil-endereco" class="perfil-visualizacao text-sm font-bold text-[#111827]">Rua dos Pinheiros, 450</div>
+            <input type="text" id="input-canil-endereco" class="perfil-edicao hidden w-full max-w-md bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
           </div>
 
           <div>
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Cidade</div>
-            <div class="text-sm font-bold text-[#111827]">Igarapé</div>
+            <div id="perfil-canil-cidade" class="perfil-visualizacao text-sm font-bold text-[#111827]">Igarapé</div>
+            <input type="text" id="input-canil-cidade" class="perfil-edicao hidden w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
           </div>
 
           <div>
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Estado</div>
-            <div class="text-sm font-bold text-[#111827]">MG</div>
+            <div id="perfil-canil-estado" class="perfil-visualizacao text-sm font-bold text-[#111827]">MG</div>
+            <input type="text" id="input-canil-estado" maxlength="2" class="perfil-edicao hidden w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm uppercase">
           </div>
         </div>
 
@@ -184,35 +198,180 @@
 
   </main>
 
+  <!-- TOAST DE NOTIFICAÇÃO -->
+  <div id="toast-sucesso" class="fixed top-6 right-8 z-50 flex items-center gap-2.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
+    <div class="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs">
+      <i class="ri-check-line"></i>
+    </div>
+    <span class="text-xs font-semibold">Perfil atualizado com sucesso!</span>
+  </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Puxar dados do localStorage
-      const nomeSalvo = localStorage.getItem('canil_usuario_nome') || 'Carlos Oliveira';
-      const emailSalvo = localStorage.getItem('canil_usuario_cadastrado_email') || 'admin@canil.com';
-      const inicial = nomeSalvo.charAt(0).toUpperCase();
-      
+      // Elements
+      const elNomeCard = document.getElementById('perfil-nome-card');
+      const elEmailCard = document.getElementById('perfil-email-card');
+      const elNomeDetalhe = document.getElementById('perfil-nome-detalhe');
+      const elEmailDetalhe = document.getElementById('perfil-email-detalhe');
+      const elTelefoneDetalhe = document.getElementById('perfil-telefone-detalhe');
+      const elAvatarLetra = document.getElementById('perfil-avatar-letra');
 
-      // 2. Preencher a tela com os dados
-      document.getElementById('perfil-nome-card').textContent = nomeSalvo;
-      document.getElementById('perfil-email-card').textContent = emailSalvo;
-      document.getElementById('perfil-nome-detalhe').textContent = nomeSalvo;
-      document.getElementById('perfil-email-detalhe').textContent = emailSalvo;
-      document.getElementById('perfil-avatar-letra').textContent = inicial;
+      const elSidebarNome = document.getElementById('sidebar-nome');
+      const elSidebarEmail = document.getElementById('sidebar-email');
+      const elSidebarAvatarInicial = document.getElementById('sidebar-avatar-inicial');
 
-      // Preencher o menu lateral
-      document.getElementById('sidebar-nome').textContent = nomeSalvo;
-      document.getElementById('sidebar-email').textContent = emailSalvo;
-      document.getElementById('sidebar-avatar-inicial').textContent = inicial;
+      const elCanilNome = document.getElementById('perfil-canil-nome');
+      const elCanilEndereco = document.getElementById('perfil-canil-endereco');
+      const elCanilCidade = document.getElementById('perfil-canil-cidade');
+      const elCanilEstado = document.getElementById('perfil-canil-estado');
+
+      // Toast
+      const toast = document.getElementById('toast-sucesso');
+
+      // Action Buttons
+      const btnEditar = document.getElementById('btn-editar-perfil');
+      const btnCancelar = document.getElementById('btn-cancelar-edicao');
+      const btnSalvar = document.getElementById('btn-salvar-edicao');
+
+      // Form inputs
+      const inputEditNome = document.getElementById('input-perfil-nome');
+      const inputEditTelefone = document.getElementById('input-perfil-telefone');
+      const inputEditCanilNome = document.getElementById('input-canil-nome');
+      const inputEditCanilEndereco = document.getElementById('input-canil-endereco');
+      const inputEditCanilCidade = document.getElementById('input-canil-cidade');
+      const inputEditCanilEstado = document.getElementById('input-canil-estado');
+
+      let emModoEdicao = false;
+
+      // 1. Função para carregar dados do localStorage e renderizar
+      function carregarPerfil() {
+        const nomeSalvo = localStorage.getItem('canil_usuario_nome') || 'Carlos Oliveira';
+        const emailSalvo = localStorage.getItem('canil_usuario_cadastrado_email') || 'admin@canil.com';
+        const telefoneSalvo = localStorage.getItem('canil_usuario_telefone') || '(31) 98765-4321';
+        const canilNomeSalvo = localStorage.getItem('canil_nome') || 'Canil Villa Dog';
+        const canilEnderecoSalvo = localStorage.getItem('canil_endereco') || 'Rua dos Pinheiros, 450';
+        const canilCidadeSalvo = localStorage.getItem('canil_cidade') || 'Igarapé';
+        const canilEstadoSalvo = localStorage.getItem('canil_estado') || 'MG';
+
+        const inicial = nomeSalvo.charAt(0).toUpperCase();
+
+        // Preencher Dados Pessoais
+        if (elNomeCard) elNomeCard.textContent = nomeSalvo;
+        if (elEmailCard) elEmailCard.textContent = emailSalvo;
+        if (elNomeDetalhe) elNomeDetalhe.textContent = nomeSalvo;
+        if (elEmailDetalhe) elEmailDetalhe.textContent = emailSalvo;
+        if (elTelefoneDetalhe) elTelefoneDetalhe.textContent = telefoneSalvo;
+        if (elAvatarLetra) elAvatarLetra.textContent = inicial;
+
+        // Preencher Menu Lateral
+        if (elSidebarNome) elSidebarNome.textContent = nomeSalvo;
+        if (elSidebarEmail) elSidebarEmail.textContent = emailSalvo;
+        if (elSidebarAvatarInicial) elSidebarAvatarInicial.textContent = inicial;
+
+        // Preencher Canil
+        if (elCanilNome) elCanilNome.textContent = canilNomeSalvo;
+        if (elCanilEndereco) elCanilEndereco.textContent = canilEnderecoSalvo;
+        if (elCanilCidade) elCanilCidade.textContent = canilCidadeSalvo;
+        if (elCanilEstado) elCanilEstado.textContent = canilEstadoSalvo;
+      }
+
+      // Inicializa a tela com os dados
+      carregarPerfil();
+
+      // Toast feedback
+      function mostrarToast(msg = "Operação realizada com sucesso!") {
+        if (!toast) return;
+        const span = toast.querySelector('span');
+        if (span) span.textContent = msg;
+
+        toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+        toast.classList.add('opacity-100', 'translate-y-0');
+
+        setTimeout(() => {
+          toast.classList.remove('opacity-100', 'translate-y-0');
+          toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+        }, 3000);
+      }
+
+      // Alternar modo de edição
+      function alternarModoEdicao(ativo) {
+        emModoEdicao = ativo;
+
+        if (emModoEdicao) {
+          // Esconde Editar, mostra Cancelar/Salvar
+          if (btnEditar) btnEditar.classList.add('hidden');
+          if (btnCancelar) btnCancelar.classList.remove('hidden');
+          if (btnSalvar) btnSalvar.classList.remove('hidden');
+
+          // Alterna campos da aba ativa
+          document.querySelectorAll('.perfil-visualizacao').forEach(el => el.classList.add('hidden'));
+          document.querySelectorAll('.perfil-edicao').forEach(el => el.classList.remove('hidden'));
+
+          // Preenche os inputs com os valores atuais
+          if (inputEditNome) inputEditNome.value = localStorage.getItem('canil_usuario_nome') || 'Carlos Oliveira';
+          if (inputEditTelefone) inputEditTelefone.value = localStorage.getItem('canil_usuario_telefone') || '(31) 98765-4321';
+          if (inputEditCanilNome) inputEditCanilNome.value = localStorage.getItem('canil_nome') || 'Canil Villa Dog';
+          if (inputEditCanilEndereco) inputEditCanilEndereco.value = localStorage.getItem('canil_endereco') || 'Rua dos Pinheiros, 450';
+          if (inputEditCanilCidade) inputEditCanilCidade.value = localStorage.getItem('canil_cidade') || 'Igarapé';
+          if (inputEditCanilEstado) inputEditCanilEstado.value = localStorage.getItem('canil_estado') || 'MG';
+        } else {
+          // Mostra Editar, esconde Cancelar/Salvar
+          if (btnEditar) btnEditar.classList.remove('hidden');
+          if (btnCancelar) btnCancelar.classList.add('hidden');
+          if (btnSalvar) btnSalvar.classList.add('hidden');
+
+          // Alterna campos de volta para visualização
+          document.querySelectorAll('.perfil-visualizacao').forEach(el => el.classList.remove('hidden'));
+          document.querySelectorAll('.perfil-edicao').forEach(el => el.classList.add('hidden'));
+        }
+      }
+
+      if (btnEditar) {
+        btnEditar.onclick = () => alternarModoEdicao(true);
+      }
+      if (btnCancelar) {
+        btnCancelar.onclick = () => alternarModoEdicao(false);
+      }
+
+      // Salvar alterações inline
+      if (btnSalvar) {
+        btnSalvar.onclick = () => {
+          const nomeVal = inputEditNome ? inputEditNome.value.trim() : '';
+          const telefoneVal = inputEditTelefone ? inputEditTelefone.value.trim() : '';
+          const canilNomeVal = inputEditCanilNome ? inputEditCanilNome.value.trim() : '';
+          const canilEnderecoVal = inputEditCanilEndereco ? inputEditCanilEndereco.value.trim() : '';
+          const canilCidadeVal = inputEditCanilCidade ? inputEditCanilCidade.value.trim() : '';
+          const canilEstadoVal = inputEditCanilEstado ? inputEditCanilEstado.value.trim().toUpperCase() : '';
+
+          if (!nomeVal || !telefoneVal || !canilNomeVal || !canilEnderecoVal || !canilCidadeVal || !canilEstadoVal) {
+            alert("Por favor, preencha todos os campos obrigatórios.");
+            return;
+          }
+
+          localStorage.setItem('canil_usuario_nome', nomeVal);
+          localStorage.setItem('canil_usuario_telefone', telefoneVal);
+          localStorage.setItem('canil_nome', canilNomeVal);
+          localStorage.setItem('canil_endereco', canilEnderecoVal);
+          localStorage.setItem('canil_cidade', canilCidadeVal);
+          localStorage.setItem('canil_estado', canilEstadoVal);
+
+          carregarPerfil();
+          alternarModoEdicao(false);
+          mostrarToast("Perfil atualizado com sucesso!");
+        };
+      }
 
       // 3. Lógica do botão "Sair da conta"
       const btnSair = document.getElementById('btn-sair-conta');
-      btnSair.addEventListener('click', () => {
-        if(confirm("Tem certeza que deseja sair da conta?")) {
-          // Remove a flag de login, mas mantém os dados cadastrados
-          localStorage.removeItem('canil_logado');
-          window.location.href = 'login.html';
-        }
-      });
+      if (btnSair) {
+        btnSair.addEventListener('click', () => {
+          if(confirm("Tem certeza que deseja sair da conta?")) {
+            // Remove a flag de login, mas mantém os dados cadastrados
+            localStorage.removeItem('canil_logado');
+            window.location.href = 'login.html';
+          }
+        });
+      }
 
       // 4. Lógica das Abas (Dados Pessoais vs Canil)
       const abaDados = document.getElementById('aba-dados');
@@ -224,33 +383,35 @@
       const classesAbaAtiva = ['text-laranja', 'border-laranja', 'font-bold'];
       const classesAbaInativa = ['text-[#6B7280]', 'font-medium', 'border-transparent'];
 
-      abaDados.addEventListener('click', () => {
-        // Mostra/Esconde conteúdo
-        conteudoDados.classList.remove('hidden');
-        conteudoCanil.classList.add('hidden');
-        
-        // Estiliza aba Dados (Ativa)
-        abaDados.classList.remove(...classesAbaInativa);
-        abaDados.classList.add(...classesAbaAtiva);
-        
-        // Estiliza aba Canil (Inativa)
-        abaCanil.classList.remove(...classesAbaAtiva);
-        abaCanil.classList.add(...classesAbaInativa);
-      });
+      if (abaDados && abaCanil && conteudoDados && conteudoCanil) {
+        abaDados.addEventListener('click', () => {
+          // Mostra/Esconde conteúdo
+          conteudoDados.classList.remove('hidden');
+          conteudoCanil.classList.add('hidden');
+          
+          // Estiliza aba Dados (Ativa)
+          abaDados.classList.remove(...classesAbaInativa);
+          abaDados.classList.add(...classesAbaAtiva);
+          
+          // Estiliza aba Canil (Inativa)
+          abaCanil.classList.remove(...classesAbaAtiva);
+          abaCanil.classList.add(...classesAbaInativa);
+        });
 
-      abaCanil.addEventListener('click', () => {
-        // Mostra/Esconde conteúdo
-        conteudoCanil.classList.remove('hidden');
-        conteudoDados.classList.add('hidden');
-        
-        // Estiliza aba Canil (Ativa)
-        abaCanil.classList.remove(...classesAbaInativa);
-        abaCanil.classList.add(...classesAbaAtiva);
-        
-        // Estiliza aba Dados (Inativa)
-        abaDados.classList.remove(...classesAbaAtiva);
-        abaDados.classList.add(...classesAbaInativa);
-      });
+        abaCanil.addEventListener('click', () => {
+          // Mostra/Esconde conteúdo
+          conteudoCanil.classList.remove('hidden');
+          conteudoDados.classList.add('hidden');
+          
+          // Estiliza aba Canil (Ativa)
+          abaCanil.classList.remove(...classesAbaInativa);
+          abaCanil.classList.add(...classesAbaAtiva);
+          
+          // Estiliza aba Dados (Inativa)
+          abaDados.classList.remove(...classesAbaAtiva);
+          abaDados.classList.add(...classesAbaInativa);
+        });
+      }
 
     });
   </script>
