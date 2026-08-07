@@ -1,6 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Script notificacoes.js carregado!");
 
+  // Sincronizar Rodapé da Sidebar com localStorage
+  function atualizarSidebarUsuario() {
+    const nomeSalvo = localStorage.getItem('canil_usuario_nome') || 'Criador';
+    const emailSalvo = localStorage.getItem('canil_usuario_cadastrado_email') || 'admin@canil.com';
+    const fotoSalva = localStorage.getItem('canil_usuario_foto');
+
+    const elSidebarNome = document.getElementById('sidebar-nome');
+    const elSidebarEmail = document.getElementById('sidebar-email');
+    const elSidebarAvatarImg = document.getElementById('sidebar-avatar-img');
+    const elSidebarAvatarInicial = document.getElementById('sidebar-avatar-inicial');
+
+    if (elSidebarNome) elSidebarNome.textContent = nomeSalvo;
+    if (elSidebarEmail) elSidebarEmail.textContent = emailSalvo;
+
+    const inicial = nomeSalvo.charAt(0).toUpperCase();
+
+    if (fotoSalva) {
+      if (elSidebarAvatarImg) {
+        elSidebarAvatarImg.src = fotoSalva;
+        elSidebarAvatarImg.classList.remove('hidden');
+      }
+      if (elSidebarAvatarInicial) {
+        elSidebarAvatarInicial.classList.add('hidden');
+      }
+    } else {
+      if (elSidebarAvatarImg) {
+        elSidebarAvatarImg.classList.add('hidden');
+      }
+      if (elSidebarAvatarInicial) {
+        elSidebarAvatarInicial.textContent = inicial;
+        elSidebarAvatarInicial.classList.remove('hidden');
+      }
+    }
+  }
+
+  atualizarSidebarUsuario();
+
   const btnSino = document.getElementById('btn-notificacoes');
   const badgeSino = document.getElementById('badge-notificacoes-count');
   const popoverNotificacoes = document.getElementById('popover-notificacoes');
