@@ -73,7 +73,10 @@
 
     <!-- RODAPÉ DA SIDEBAR (PERFIL ATIVO) -->
     <a href="perfil.html" class="flex items-center gap-2.5 pt-3 pb-3 px-3 -mx-3 border-t border-white/10 bg-marromescuro2 rounded-xl transition-colors cursor-pointer shadow-sm">
-      <div id="sidebar-avatar-inicial" class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs">C</div>
+      <div id="sidebar-avatar-container" class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs overflow-hidden">
+        <img id="sidebar-avatar-img" class="w-full h-full object-cover hidden" src="" alt="Avatar">
+        <span id="sidebar-avatar-inicial">C</span>
+      </div>
       <div>
         <div id="sidebar-nome" class="text-[11px] font-bold text-laranja">Criador</div>
         <div id="sidebar-email" class="text-[9px] text-[#a8998a]">admin@canil.com</div>
@@ -96,9 +99,16 @@
         
         <!-- CARD FOTO E RESUMO -->
         <div class="bg-white border border-[#EFECE6] rounded-[24px] p-8 flex flex-col items-center text-center shadow-sm">
-          <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-[#FAF8F5] shadow-sm mb-4 bg-bege flex items-center justify-center text-3xl text-gray-400 font-serif">
-            <!-- Caso não tenha foto, exibe a inicial -->
-            <span id="perfil-avatar-letra">C</span>
+          <div class="relative group mb-4">
+            <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-[#FAF8F5] shadow-sm bg-bege flex items-center justify-center text-3xl text-gray-400 font-serif relative">
+              <img id="perfil-avatar-img" class="w-full h-full object-cover hidden" src="" alt="Foto de perfil">
+              <span id="perfil-avatar-letra">C</span>
+            </div>
+            <!-- Botão para carregar foto -->
+            <label for="input-avatar" class="absolute bottom-0 right-0 w-7 h-7 bg-laranja hover:bg-opacity-90 text-white rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow-md transition-all">
+              <i class="ri-camera-fill text-xs"></i>
+            </label>
+            <input type="file" id="input-avatar" accept="image/*" class="hidden">
           </div>
           
           <h2 id="perfil-nome-card" class="font-serif text-xl font-bold text-[#111827] mb-1">Carlos Oliveira</h2>
@@ -214,10 +224,14 @@
       const elNomeDetalhe = document.getElementById('perfil-nome-detalhe');
       const elEmailDetalhe = document.getElementById('perfil-email-detalhe');
       const elTelefoneDetalhe = document.getElementById('perfil-telefone-detalhe');
+
+      const elAvatarImg = document.getElementById('perfil-avatar-img');
       const elAvatarLetra = document.getElementById('perfil-avatar-letra');
+      const inputAvatar = document.getElementById('input-avatar');
 
       const elSidebarNome = document.getElementById('sidebar-nome');
       const elSidebarEmail = document.getElementById('sidebar-email');
+      const elSidebarAvatarImg = document.getElementById('sidebar-avatar-img');
       const elSidebarAvatarInicial = document.getElementById('sidebar-avatar-inicial');
 
       const elCanilNome = document.getElementById('perfil-canil-nome');
@@ -252,6 +266,7 @@
         const canilEnderecoSalvo = localStorage.getItem('canil_endereco') || 'Rua dos Pinheiros, 450';
         const canilCidadeSalvo = localStorage.getItem('canil_cidade') || 'Igarapé';
         const canilEstadoSalvo = localStorage.getItem('canil_estado') || 'MG';
+        const fotoSalva = localStorage.getItem('canil_usuario_foto');
 
         const inicial = nomeSalvo.charAt(0).toUpperCase();
 
@@ -261,12 +276,48 @@
         if (elNomeDetalhe) elNomeDetalhe.textContent = nomeSalvo;
         if (elEmailDetalhe) elEmailDetalhe.textContent = emailSalvo;
         if (elTelefoneDetalhe) elTelefoneDetalhe.textContent = telefoneSalvo;
-        if (elAvatarLetra) elAvatarLetra.textContent = inicial;
+
+        // Atualizar foto do perfil principal
+        if (fotoSalva) {
+          if (elAvatarImg) {
+            elAvatarImg.src = fotoSalva;
+            elAvatarImg.classList.remove('hidden');
+          }
+          if (elAvatarLetra) {
+            elAvatarLetra.classList.add('hidden');
+          }
+        } else {
+          if (elAvatarImg) {
+            elAvatarImg.classList.add('hidden');
+          }
+          if (elAvatarLetra) {
+            elAvatarLetra.textContent = inicial;
+            elAvatarLetra.classList.remove('hidden');
+          }
+        }
 
         // Preencher Menu Lateral
         if (elSidebarNome) elSidebarNome.textContent = nomeSalvo;
         if (elSidebarEmail) elSidebarEmail.textContent = emailSalvo;
-        if (elSidebarAvatarInicial) elSidebarAvatarInicial.textContent = inicial;
+
+        // Atualizar foto do menu lateral (sidebar)
+        if (fotoSalva) {
+          if (elSidebarAvatarImg) {
+            elSidebarAvatarImg.src = fotoSalva;
+            elSidebarAvatarImg.classList.remove('hidden');
+          }
+          if (elSidebarAvatarInicial) {
+            elSidebarAvatarInicial.classList.add('hidden');
+          }
+        } else {
+          if (elSidebarAvatarImg) {
+            elSidebarAvatarImg.classList.add('hidden');
+          }
+          if (elSidebarAvatarInicial) {
+            elSidebarAvatarInicial.textContent = inicial;
+            elSidebarAvatarInicial.classList.remove('hidden');
+          }
+        }
 
         // Preencher Canil
         if (elCanilNome) elCanilNome.textContent = canilNomeSalvo;
@@ -277,6 +328,28 @@
 
       // Inicializa a tela com os dados
       carregarPerfil();
+
+      // Evento de alteração de foto de perfil
+      if (inputAvatar) {
+        inputAvatar.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            // Validar tamanho (max 1.5MB)
+            if (file.size > 1.5 * 1024 * 1024) {
+              alert("Por favor, selecione uma imagem menor que 1.5MB.");
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+              const base64Image = evt.target.result;
+              localStorage.setItem('canil_usuario_foto', base64Image);
+              carregarPerfil();
+              mostrarToast("Foto de perfil atualizada com sucesso!");
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
 
       // Toast feedback
       function mostrarToast(msg = "Operação realizada com sucesso!") {
