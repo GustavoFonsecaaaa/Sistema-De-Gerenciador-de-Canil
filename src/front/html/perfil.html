@@ -118,16 +118,16 @@
 
       </div>
 
-      <!-- COLUNA DIREITA (INFORMAÇÕES E ABAS) -->
+     <!-- COLUNA DIREITA (INFORMAÇÕES E ABAS) -->
       <div class="col-span-8 bg-white border border-[#EFECE6] rounded-[24px] p-8 shadow-sm">
         
         <!-- CABEÇALHO DAS ABAS -->
         <div class="flex items-center justify-between border-b border-[#EFECE6] mb-8">
           <div class="flex gap-8">
-            <button class="flex items-center gap-2 text-xs font-bold text-laranja border-b-2 border-laranja pb-4">
+            <button id="aba-dados" class="flex items-center gap-2 text-xs font-bold text-laranja border-b-2 border-laranja pb-4 transition-colors">
               <i class="ri-user-line text-sm"></i> Dados Pessoais
             </button>
-            <button class="flex items-center gap-2 text-xs font-medium text-[#6B7280] hover:text-[#111827] pb-4 transition-colors">
+            <button id="aba-canil" class="flex items-center gap-2 text-xs font-medium text-[#6B7280] hover:text-[#111827] border-b-2 border-transparent pb-4 transition-colors">
               <i class="ri-home-4-line text-sm"></i> Canil
             </button>
           </div>
@@ -137,7 +137,7 @@
         </div>
 
         <!-- CONTEÚDO DADOS PESSOAIS -->
-        <div class="grid grid-cols-2 gap-8">
+        <div id="conteudo-dados" class="grid grid-cols-2 gap-8">
           <div>
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Nome Completo</div>
             <div id="perfil-nome-detalhe" class="text-sm font-bold text-[#111827]">Carlos Oliveira</div>
@@ -151,7 +151,30 @@
 
           <div>
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Telefone</div>
-            <div class="text-sm font-bold text-[#111827]">(11) 98765-4321</div>
+            <div class="text-sm font-bold text-[#111827]">(31) 98765-4321</div>
+          </div>
+        </div>
+
+        <!-- CONTEÚDO CANIL (Oculto por padrão) -->
+        <div id="conteudo-canil" class="grid grid-cols-2 gap-8 hidden">
+          <div class="col-span-2">
+            <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Nome do Canil</div>
+            <div class="text-sm font-bold text-[#111827]">Canil Villa Dog</div>
+          </div>
+
+          <div class="col-span-2">
+            <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Endereço</div>
+            <div class="text-sm font-bold text-[#111827]">Rua dos Pinheiros, 450</div>
+          </div>
+
+          <div>
+            <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Cidade</div>
+            <div class="text-sm font-bold text-[#111827]">Igarapé</div>
+          </div>
+
+          <div>
+            <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Estado</div>
+            <div class="text-sm font-bold text-[#111827]">MG</div>
           </div>
         </div>
 
@@ -167,6 +190,7 @@
       const nomeSalvo = localStorage.getItem('canil_usuario_nome') || 'Carlos Oliveira';
       const emailSalvo = localStorage.getItem('canil_usuario_cadastrado_email') || 'admin@canil.com';
       const inicial = nomeSalvo.charAt(0).toUpperCase();
+      
 
       // 2. Preencher a tela com os dados
       document.getElementById('perfil-nome-card').textContent = nomeSalvo;
@@ -189,6 +213,45 @@
           window.location.href = 'login.html';
         }
       });
+
+      // 4. Lógica das Abas (Dados Pessoais vs Canil)
+      const abaDados = document.getElementById('aba-dados');
+      const abaCanil = document.getElementById('aba-canil');
+      const conteudoDados = document.getElementById('conteudo-dados');
+      const conteudoCanil = document.getElementById('conteudo-canil');
+
+      // Classes ativas
+      const classesAbaAtiva = ['text-laranja', 'border-laranja', 'font-bold'];
+      const classesAbaInativa = ['text-[#6B7280]', 'font-medium', 'border-transparent'];
+
+      abaDados.addEventListener('click', () => {
+        // Mostra/Esconde conteúdo
+        conteudoDados.classList.remove('hidden');
+        conteudoCanil.classList.add('hidden');
+        
+        // Estiliza aba Dados (Ativa)
+        abaDados.classList.remove(...classesAbaInativa);
+        abaDados.classList.add(...classesAbaAtiva);
+        
+        // Estiliza aba Canil (Inativa)
+        abaCanil.classList.remove(...classesAbaAtiva);
+        abaCanil.classList.add(...classesAbaInativa);
+      });
+
+      abaCanil.addEventListener('click', () => {
+        // Mostra/Esconde conteúdo
+        conteudoCanil.classList.remove('hidden');
+        conteudoDados.classList.add('hidden');
+        
+        // Estiliza aba Canil (Ativa)
+        abaCanil.classList.remove(...classesAbaInativa);
+        abaCanil.classList.add(...classesAbaAtiva);
+        
+        // Estiliza aba Dados (Inativa)
+        abaDados.classList.remove(...classesAbaAtiva);
+        abaDados.classList.add(...classesAbaInativa);
+      });
+
     });
   </script>
 </body>
