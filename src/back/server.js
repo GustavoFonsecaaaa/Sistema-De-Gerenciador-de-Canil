@@ -5,6 +5,9 @@ require('dotenv').config();
 
 const { testarConexao } = require('./config/db');
 
+// Rotas
+const usuarioRoutes = require('./routes/usuarioRoutes');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -12,6 +15,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Registro das rotas da API
+app.use('/api/usuarios', usuarioRoutes);
 
 // Serve os arquivos estaticos (css, js, img e os proprios .html)
 app.use(express.static(path.join(__dirname, '../front')));
