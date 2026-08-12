@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const usuarioRoutes = require('./routes/usuarioRoutes');
+const cachorroRoutes = require('./routes/cachorroRoutes');
 const { testarConexao } = require('./config/db');
 
 const app = express();
@@ -12,6 +13,9 @@ app.use(express.json());
 
 // Rota principal de usuários
 app.use('/api/usuarios', usuarioRoutes);
+
+// Rota de cachorros (protegida por JWT)
+app.use('/api/cachorros', cachorroRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
