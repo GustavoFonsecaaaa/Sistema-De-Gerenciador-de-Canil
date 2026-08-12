@@ -26,8 +26,10 @@ const cadastrarCachorro = async (req, res) => {
             return res.status(400).json({ mensagem: 'Nome, raça, sexo e data de nascimento são obrigatórios.' });
         }
 
-        const sql = 'INSERT INTO Cachorro (nome, raca, sexo, data_nascimento, usuario_id) VALUES (?, ?, ?, ?, ?)';
-        const [resultado] = await pool.execute(sql, [nome, raca, sexo, data_nascimento, usuario_id]);
+        const fotoUrl = req.file ? '/uploads/' + req.file.filename : null;
+
+        const sql = 'INSERT INTO Cachorro (nome, raca, sexo, data_nascimento, usuario_id, foto) VALUES (?, ?, ?, ?, ?, ?)';
+        const [resultado] = await pool.execute(sql, [nome, raca, sexo, data_nascimento, usuario_id, fotoUrl]);
 
         res.status(201).json({
             mensagem: 'Cachorro cadastrado com sucesso!',

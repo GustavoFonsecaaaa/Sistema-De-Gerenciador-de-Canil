@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const usuarioRoutes = require('./routes/usuarioRoutes');
@@ -10,6 +11,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Serve os arquivos de upload (fotos de cachorros)
+app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 
 // Rota principal de usuários
 app.use('/api/usuarios', usuarioRoutes);

@@ -250,7 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
           textoFase = fase;
           textoIdade = idade;
         }
-        const fotoUrl = cao.foto || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
+        const fotoUrl = cao.foto
+          ? 'http://localhost:3000' + cao.foto
+          : 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
         const nascimentoText = cao.data_nascimento ? formatarDataBR(cao.data_nascimento.split('T')[0]) : '';
         containerCards.appendChild(criarElementoCard({
           nome: cao.nome,
@@ -990,22 +992,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const nome          = document.getElementById('add-nome-cao').value.trim();
       const raca          = document.getElementById('add-raca-cao').value.trim();
-      const sexo          = document.getElementById('add-sexo-cao').value;
+      let   sexo          = document.getElementById('add-sexo-cao').value;
       const data_nascimento = document.getElementById('add-nascimento-cao').value;
+      const fileInput     = document.getElementById('add-foto-file-cao');
+
+      // Garante o acento correto de 'Fêmea' independente de encoding do HTML
+      if (sexo === 'Femea' || sexo === 'femea') sexo = 'Fêmea';
 
       if (!nome || !raca || !sexo || !data_nascimento) {
         mostrarToast('Preencha todos os campos obrigatórios.');
         return;
       }
 
+      // Monta o FormData manualmente para garantir campos e arquivo corretos
+      const formData = new FormData();
+      formData.append('nome', nome);
+      formData.append('raca', raca);
+      formData.append('sexo', sexo);
+      formData.append('data_nascimento', data_nascimento);
+      if (fileInput && fileInput.files && fileInput.files[0]) {
+        formData.append('foto', fileInput.files[0]);
+      }
+
       try {
         const resposta = await fetch('http://localhost:3000/api/cachorros', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            // SEM Content-Type: o navegador define o boundary do multipart/form-data
             'Authorization': 'Bearer ' + token
           },
-          body: JSON.stringify({ nome, raca, sexo, data_nascimento })
+          body: formData
         });
 
         const dados = await resposta.json();
