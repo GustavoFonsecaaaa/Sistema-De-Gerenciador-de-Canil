@@ -1,44 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CanilManager - Criar Conta</title>
 
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          marromescuro: '#1C1105',     
-          laranja: '#D97706',          
-          creme: '#F8F5F0',            
-          bege: '#EFECE6',             
-          verdeok: '#10B981',
-          vermelho: '#EF4444',
-        },
-        fontFamily: {
-          serif: ['Playfair Display', 'Georgia', 'serif'],
-          sans: ['Plus Jakarta Sans', 'sans-serif'],
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CanilManager - Criar Conta</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            marromescuro: '#1C1105',
+            laranja: '#D97706',
+            creme: '#F8F5F0',
+            bege: '#EFECE6',
+            verdeok: '#10B981',
+            vermelho: '#EF4444',
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          }
         }
       }
     }
-  }
-</script>
-<!-- Remix Icon -->
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </script>
+  <!-- Remix Icon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
 </head>
+
 <body class="font-sans bg-creme text-marromescuro flex flex-col items-center justify-center min-h-screen p-6">
 
   <!-- CONTAINER CENTRAL -->
   <div class="w-full max-w-[420px] flex flex-col items-center">
-    
+
     <!-- LOGO E SUBTÍTULO -->
     <div class="text-center mb-8">
       <div class="font-serif text-3xl font-extrabold text-[#111827] tracking-tight mb-1">
@@ -49,26 +53,27 @@
 
     <!-- CAIXA DO FORMULÁRIO -->
     <div class="w-full bg-white border border-[#EFECE6] rounded-[28px] p-8 shadow-sm">
-      <form id="form-cadastro" class="space-y-4">
-        
+      <form id="form-cadastro" class="space-y-4" novalidate>
+
         <div>
           <label class="block text-xs font-bold text-[#111827] mb-1.5">Nome completo</label>
-          <input type="text" id="cad-nome" placeholder="Seu nome" required 
+          <input type="text" id="cad-nome" placeholder="Seu nome" required
             class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#111827] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all placeholder:text-gray-400">
         </div>
 
         <div>
           <label class="block text-xs font-bold text-[#111827] mb-1.5">Email</label>
-          <input type="email" id="cad-email" placeholder="seu@email.com" required 
+          <input type="email" id="cad-email" placeholder="seu@email.com" required
             class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#111827] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all placeholder:text-gray-400">
         </div>
 
         <div>
           <label class="block text-xs font-bold text-[#111827] mb-1.5">Senha</label>
           <div class="relative">
-            <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" minlength="6" required 
+            <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" minlength="6" required
               class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 pl-4 pr-10 text-xs text-[#111827] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all placeholder:text-gray-400">
-            <button type="button" id="btn-toggle-senha" class="absolute right-3.5 top-3 text-gray-400 hover:text-gray-600 transition-colors">
+            <button type="button" id="btn-toggle-senha"
+              class="absolute right-3.5 top-3 text-gray-400 hover:text-gray-600 transition-colors">
               <i id="icone-olho-1" class="ri-eye-line text-base"></i>
             </button>
           </div>
@@ -77,15 +82,17 @@
         <div>
           <label class="block text-xs font-bold text-[#111827] mb-1.5">Confirmar senha</label>
           <div class="relative">
-            <input type="password" id="cad-confirma" placeholder="Repita a senha" minlength="6" required 
+            <input type="password" id="cad-confirma" placeholder="Repita a senha" minlength="6" required
               class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 pl-4 pr-10 text-xs text-[#111827] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all placeholder:text-gray-400">
-            <button type="button" id="btn-toggle-confirma" class="absolute right-3.5 top-3 text-gray-400 hover:text-gray-600 transition-colors">
+            <button type="button" id="btn-toggle-confirma"
+              class="absolute right-3.5 top-3 text-gray-400 hover:text-gray-600 transition-colors">
               <i id="icone-olho-2" class="ri-eye-line text-base"></i>
             </button>
           </div>
         </div>
 
-        <button type="submit" class="w-full bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3.5 rounded-2xl transition-all shadow-sm mt-2">
+        <button type="submit"
+          class="w-full bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3.5 rounded-2xl transition-all shadow-sm mt-2">
           Criar conta
         </button>
 
@@ -101,12 +108,14 @@
   </div>
 
   <!-- TOAST DE NOTIFICAÇÃO -->
-  <div id="toast-cadastro" class="fixed top-6 right-8 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
+  <div id="toast-cadastro"
+    class="fixed top-6 right-8 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
     <span id="toast-msg" class="text-xs font-semibold"></span>
   </div>
 
   <!-- SCRIPT DE COMPORTAMENTO -->
   <script>
+    console.log('O script de cadastro foi carregado com sucesso!');
     document.addEventListener('DOMContentLoaded', () => {
       const formCadastro = document.getElementById('form-cadastro');
       const inputSenha = document.getElementById('cad-senha');
@@ -150,28 +159,46 @@
         }, 3000);
       }
 
-      formCadastro.onsubmit = (e) => {
+      formCadastro.onsubmit = async (e) => {
         e.preventDefault();
+        console.log('O botão de criar conta foi clicado!');
         const nome = document.getElementById('cad-nome').value.trim();
         const email = document.getElementById('cad-email').value.trim();
         const senha = inputSenha.value;
         const confirma = inputConfirma.value;
 
         if (senha !== confirma) {
+          console.log('🛑 Erro: As senhas digitadas não coincidem.');
           mostrarToast("As senhas não coincidem!", "erro");
           return;
         }
 
-        localStorage.setItem('canil_usuario_cadastrado_email', email);
-        localStorage.setItem('canil_usuario_cadastrado_senha', senha);
-        localStorage.setItem('canil_usuario_nome', nome);
-        
-        mostrarToast("Conta criada com sucesso! Redirecionando para o login...", "sucesso");
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 1200);
+        try {
+          const resposta = await fetch('http://localhost:3000/api/usuarios/cadastro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, email, senha }),
+          });
+
+          const dados = await resposta.json();
+          console.log('📡 Status da API:', resposta.status);
+          console.log('📦 Resposta da API:', dados);
+
+          if (resposta.ok) {
+            mostrarToast("Conta criada com sucesso! Redirecionando para o login...", "sucesso");
+            setTimeout(() => {
+              window.location.href = 'login.html';
+            }, 1200);
+          } else {
+            mostrarToast(dados.mensagem || "Erro ao criar conta.", "erro");
+          }
+        } catch (erro) {
+          console.error('🔥 Erro no fetch:', erro);
+          mostrarToast("Não foi possível conectar ao servidor. Tente novamente.", "erro");
+        }
       };
     });
   </script>
 </body>
+
 </html>
