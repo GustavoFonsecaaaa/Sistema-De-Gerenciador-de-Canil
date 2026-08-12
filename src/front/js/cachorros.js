@@ -507,56 +507,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function carregarCiosDaFicha(nomeCao) {
+  async function carregarCiosDaFicha(nomeCao) {
     const containerCios = document.getElementById('lista-cios-container');
     const emptyStateCios = document.getElementById('empty-state-cios');
     if (!containerCios) return;
-    
+
     containerCios.innerHTML = '';
-    const todosCios = lerDadosSalvos('canil_cios');
-    const ciosDoCao = todosCios.filter(c => (c.caoNome || '').toLowerCase() === nomeCao.toLowerCase());
 
-    if (ciosDoCao.length > 0) {
-      if (emptyStateCios) emptyStateCios.classList.add('hidden');
-      ciosDoCao.forEach(c => {
-        const temCruzas = c.houveCruzamento && c.cruzas && c.cruzas.length > 0;
-        const textoStatus = temCruzas ? `${c.cruzas.length} cruza(s)` : (c.houveCruzamento ? 'Cruzou' : 'Sem cruza');
-        const classeBadge = c.houveCruzamento ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-gray-500';
+    const token = localStorage.getItem('token');
+    const cachorroId = cardAtualEmExibicao?.dataset?.cachorroId;
+    if (!token || !cachorroId) return;
 
-        let blocoCruzamentoHTML = '';
-        if (temCruzas) {
-          const linhasCruza = c.cruzas.map(cr => `
-            <div class="flex items-center justify-between py-1.5 px-3 bg-white border border-[#EFECE6] rounded-xl">
-              <div class="flex items-center gap-2"><span class="font-bold text-[#111827]">${cr.macho}</span>${cr.obs ? `<span class="text-[10px] text-[#6B7280]">(${cr.obs})</span>` : ''}</div>
-              <span class="font-bold text-laranja">${formatarDataBR(cr.data)}</span>
-            </div>
-          `).join('');
+    try {
+      const resposta = await fetch('http://localhost:3000/api/cios', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (!resposta.ok) return;
 
-          blocoCruzamentoHTML = `<div class="mt-3 pt-2.5 border-t border-[#EFECE6]"><div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Cruzamentos (${c.cruzas.length})</div><div class="space-y-1.5 text-xs">${linhasCruza}</div></div>`;
-        }
+      const todosCios = await resposta.json();
+      // Filtra pelo cachorro_id do card aberto
+      const ciosDoCao = todosCios.filter(c => String(c.cachorro_id) === String(cachorroId));
 
-        const cardCioEl = document.createElement('div');
-        cardCioEl.className = "bg-[#FAF8F5] border border-[#EFECE6] hover:border-laranja/50 rounded-2xl p-4 text-xs relative pl-6 transition-all group";
-        cardCioEl.innerHTML = `
-          <div class="absolute left-3 top-5 w-2 h-2 rounded-full bg-laranja"></div>
-          <div class="flex items-start justify-between">
-            <div><h4 class="font-bold text-[#111827] text-sm mb-0.5">${c.dataInicio} — ${c.dataFim}</h4><p class="text-[11px] text-[#6B7280] mb-1">${c.duracaoDias} dias de duração</p><p class="text-[11px] text-[#111827] italic font-serif">"${c.obs}"</p></div>
-            <div class="flex items-center gap-2">
-              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${classeBadge}">${textoStatus}</span>
-              <div class="flex items-center gap-1 bg-white border border-[#EFECE6] rounded-xl p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                <button class="btn-editar-cio p-1 text-gray-400 hover:text-laranja transition-colors"><i class="ri-edit-line text-sm"></i></button>
-                <button class="btn-excluir-cio p-1 text-gray-400 hover:text-red-500 transition-colors"><i class="ri-delete-bin-line text-sm"></i></button>
+      if (ciosDoCao.length > 0) {
+        if (emptyStateCios) emptyStateCios.classList.add('hidden');
+        ciosDoCao.forEach(c => {
+          const dataInicio = c.data_inicio ? formatarDataBR(c.data_inicio.split('T')[0]) : '-';
+          const dataFim    = c.data_fim    ? formatarDataBR(c.data_fim.split('T')[0])    : '-';
+          const textoStatus = c.cruzou ? 'Cruzou' : 'Sem cruza';
+          const classeBadge = c.cruzou ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-gray-500';
+
+          const cardCioEl = document.createElement('div');
+          cardCioEl.className = "bg-[#FAF8F5] border border-[#EFECE6] hover:border-laranja/50 rounded-2xl p-4 text-xs relative pl-6 transition-all group";
+          cardCioEl.innerHTML = `
+            <div class="absolute left-3 top-5 w-2 h-2 rounded-full bg-laranja"></div>
+            <div class="flex items-start justify-between">
+              <div>
+                <h4 class="font-bold text-[#111827] text-sm mb-0.5">${dataInicio} — ${dataFim}</h4>
+                <p class="text-[11px] text-[#111827] italic font-serif">"${c.observacoes || 'Sem observações'}"</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${classeBadge}">${textoStatus}</span>
+                <div class="flex items-center gap-1 bg-white border border-[#EFECE6] rounded-xl p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <button class="btn-excluir-cio p-1 text-gray-400 hover:text-red-500 transition-colors"><i class="ri-delete-bin-line text-sm"></i></button>
+                </div>
               </div>
             </div>
-          </div>
-          ${blocoCruzamentoHTML}
-        `;
-        cardCioEl.querySelector('.btn-editar-cio').onclick = () => editarCioExistente(c);
-        cardCioEl.querySelector('.btn-excluir-cio').onclick = () => excluirCioExistente(c.id);
-        containerCios.appendChild(cardCioEl);
-      });
-    } else {
-      if (emptyStateCios) emptyStateCios.classList.remove('hidden');
+          `;
+          cardCioEl.querySelector('.btn-excluir-cio').onclick = () => excluirCioExistente(c.id);
+          containerCios.appendChild(cardCioEl);
+        });
+      } else {
+        if (emptyStateCios) emptyStateCios.classList.remove('hidden');
+      }
+    } catch (erro) {
+      console.error('Erro ao carregar cios da ficha:', erro);
     }
   }
 
@@ -732,56 +737,74 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCancelarModalCio) btnCancelarModalCio.onclick = (e) => { e.preventDefault(); fecharModalCio(); };
 
   if (formRegistrarCio) {
-    formRegistrarCio.onsubmit = (e) => {
+    formRegistrarCio.onsubmit = async (e) => {
       e.preventDefault();
-      const caoNome = detalheNome?.textContent?.trim() || 'Fêmea';
-      const dataInicioRaw = document.getElementById('cio-data-inicio').value;
-      const dataFimRaw = document.getElementById('cio-data-fim').value;
-      const obs = document.getElementById('cio-obs').value.trim() || 'Cio registrado';
-      const houveCruzamento = toggleCruzou ? toggleCruzou.checked : false;
-      const cruzas = [];
 
-      if (houveCruzamento && containerItensCruza) {
-        containerItensCruza.querySelectorAll('.item-cruza-linha').forEach(l => {
-          const macho = l.querySelector('.cruza-padreador')?.value.trim() || 'Desconhecido';
-          const data = l.querySelector('.cruza-data')?.value || '';
-          const obsCruza = l.querySelector('.cruza-obs')?.value.trim() || '';
-          if (macho && data) cruzas.push({ macho, data, obs: obsCruza });
+      const token = localStorage.getItem('token');
+      const cachorroId = cardAtualEmExibicao?.dataset?.cachorroId;
+      if (!token || !cachorroId) { mostrarToast('Erro: token ou cachorro não identificado.'); return; }
+
+      const data_inicio = document.getElementById('cio-data-inicio').value;
+      const data_fim    = document.getElementById('cio-data-fim').value;
+      const observacoes = document.getElementById('cio-obs').value.trim() || null;
+      const cruzou      = toggleCruzou ? toggleCruzou.checked : false;
+
+      if (!data_inicio || !data_fim) { mostrarToast('Informe as datas do cio.'); return; }
+
+      try {
+        const resposta = await fetch('http://localhost:3000/api/cios', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            cachorro_id: cachorroId,
+            data_inicio,
+            data_fim,
+            cruzou,
+            observacoes
+          })
         });
+
+        const dados = await resposta.json();
+
+        if (resposta.status === 201) {
+          fecharModalCio();
+          const nomeAtual = detalheNome?.textContent?.trim() || '';
+          await carregarCiosDaFicha(nomeAtual);
+          mostrarToast('Cio registrado com sucesso!');
+        } else {
+          mostrarToast(dados.mensagem || 'Erro ao registrar cio.');
+        }
+      } catch (erro) {
+        console.error('Erro ao cadastrar cio:', erro);
+        mostrarToast('Não foi possível conectar ao servidor.');
       }
-
-      const [a1, m1, d1] = dataInicioRaw.split('-');
-      const [a2, m2, d2] = dataFimRaw.split('-');
-      const dtInicio = new Date(a1, m1 - 1, d1);
-      const dtFim = new Date(a2, m2 - 1, d2);
-      const duracaoDias = Math.ceil(Math.abs(dtFim - dtInicio) / (1000 * 60 * 60 * 24));
-
-      let ciosSalvos = lerDadosSalvos('canil_cios');
-      const objCio = {
-        caoNome, dataInicio: `${d1}/${m1}/${a1}`, dataFim: `${d2}/${m2}/${a2}`,
-        duracaoDias, obs, houveCruzamento, cruzas
-      };
-
-      if (idCioEmEdicao) {
-        const index = ciosSalvos.findIndex(c => c.id === idCioEmEdicao);
-        if (index !== -1) ciosSalvos[index] = { ...ciosSalvos[index], ...objCio };
-      } else {
-        ciosSalvos.unshift({ id: Date.now(), ...objCio });
-      }
-
-      localStorage.setItem('canil_cios', JSON.stringify(ciosSalvos));
-      fecharModalCio();
-      if (cardAtualEmExibicao) abrirDetalhesDoCao(cardAtualEmExibicao);
-      mostrarToast("Registro salvo!");
     };
   }
 
-  function excluirCioExistente(cioId) {
-    let cios = lerDadosSalvos('canil_cios');
-    cios = cios.filter(c => c.id !== cioId);
-    localStorage.setItem('canil_cios', JSON.stringify(cios));
-    if (cardAtualEmExibicao) abrirDetalhesDoCao(cardAtualEmExibicao);
-    mostrarToast("Registro removido.");
+  async function excluirCioExistente(cioId) {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const resposta = await fetch(`http://localhost:3000/api/cios/${cioId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+
+      if (resposta.ok) {
+        const nomeAtual = detalheNome?.textContent?.trim() || '';
+        await carregarCiosDaFicha(nomeAtual);
+        mostrarToast('Registro removido.');
+      } else {
+        mostrarToast('Erro ao remover cio.');
+      }
+    } catch (erro) {
+      console.error('Erro ao excluir cio:', erro);
+      mostrarToast('Não foi possível conectar ao servidor.');
+    }
   }
 
   function editarCioExistente(cio) {

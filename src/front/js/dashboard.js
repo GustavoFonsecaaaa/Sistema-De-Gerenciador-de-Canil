@@ -113,52 +113,68 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ------------------------------------------------------------------
-  // RENDERIZA "ÚLTIMOS CIOS REGISTRADOS" (mantido via localStorage)
+  // RENDERIZA "ÚLTIMOS CIOS REGISTRADOS" — busca da API
   // ------------------------------------------------------------------
-  function carregarCiosDashboard() {
-    const ciosSalvos = JSON.parse(localStorage.getItem('canil_cios')) || [];
+  async function carregarCiosDashboard() {
     const containerCios = document.getElementById('container-cios-dashboard');
     if (!containerCios) return;
 
-    containerCios.innerHTML = '';
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
-    if (ciosSalvos.length === 0) {
-      containerCios.innerHTML = `
-        <div class="text-center py-10 text-xs text-[#6B7280]">
-          <div class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mx-auto mb-2">
-            <i class="ri-heart-pulse-line"></i>
+    try {
+      const resposta = await fetch('http://localhost:3000/api/cios', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+
+      if (!resposta.ok) return;
+
+      const cios = await resposta.json();
+
+      containerCios.innerHTML = '';
+
+      if (cios.length === 0) {
+        containerCios.innerHTML = `
+          <div class="text-center py-10 text-xs text-[#6B7280]">
+            <div class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mx-auto mb-2">
+              <i class="ri-heart-pulse-line"></i>
+            </div>
+            Nenhum cio registrado até o momento.
           </div>
-          Nenhum cio registrado até o momento.
-        </div>
-      `;
-      return;
+        `;
+        return;
+      }
+
+      // Exibe os 4 cios mais recentes
+      cios.slice(0, 4).forEach(cio => {
+        const dataInicio = cio.data_inicio ? cio.data_inicio.split('T')[0].split('-').reverse().join('/') : '';
+        const dataFim    = cio.data_fim    ? cio.data_fim.split('T')[0].split('-').reverse().join('/') : '';
+
+        const badgeCruzou = cio.cruzou
+          ? `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Cruzou</span>`
+          : '';
+
+        const itemCio = document.createElement('div');
+        itemCio.className = "flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6]";
+        itemCio.innerHTML = `
+          <div class="flex items-center gap-3.5">
+            <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
+              <i class="ri-calendar-event-line text-base"></i>
+            </div>
+            <div>
+              <div class="font-bold text-xs text-[#111827]">${cio.cachorro_nome}</div>
+              <div class="text-[11px] text-[#6B7280] mt-0.5">${dataInicio} — ${dataFim}</div>
+            </div>
+          </div>
+          ${badgeCruzou}
+        `;
+        containerCios.appendChild(itemCio);
+      });
+
+    } catch (erro) {
+      console.error('Erro ao carregar cios do dashboard:', erro);
     }
-
-    const ciosRecentes = ciosSalvos.slice(0, 4);
-
-    ciosRecentes.forEach(cio => {
-      const itemCio = document.createElement('div');
-      itemCio.className = "flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFECE6]";
-
-      const badgeCruzou = cio.houveCruzamento
-        ? `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#B45309]">Cruzou</span>`
-        : '';
-
-      itemCio.innerHTML = `
-        <div class="flex items-center gap-3.5">
-          <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-laranja">
-            <i class="ri-calendar-event-line text-base"></i>
-          </div>
-          <div>
-            <div class="font-bold text-xs text-[#111827]">${cio.caoNome}</div>
-            <div class="text-[11px] text-[#6B7280] mt-0.5">${cio.dataInicio} — ${cio.dataFim}</div>
-          </div>
-        </div>
-        ${badgeCruzou}
-      `;
-
-      containerCios.appendChild(itemCio);
-    });
   }
 
   // ------------------------------------------------------------------
