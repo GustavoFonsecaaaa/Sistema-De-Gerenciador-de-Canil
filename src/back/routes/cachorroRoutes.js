@@ -6,5 +6,7 @@ const upload = require('../middlewares/uploadMiddleware');
 
 router.get('/', verificarToken, cachorroController.listarCachorros);
 router.post('/', verificarToken, upload.single('foto'), cachorroController.cadastrarCachorro);
+router.put('/:id', verificarToken, upload.single('foto'), cachorroController.atualizarCachorro);
+router.delete('/:id', verificarToken, cachorroController.excluirCachorro);
 
 module.exports = router;

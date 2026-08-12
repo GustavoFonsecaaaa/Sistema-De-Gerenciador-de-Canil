@@ -197,6 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const bgSexo = cao.sexo === 'Macho' ? 'bg-verdeokbg text-verdeok' : 'bg-pink-100 text-pink-500';
     const novoCard = document.createElement('div');
     novoCard.className = 'bg-white border border-[#EFECE6] hover:border-laranja rounded-xl overflow-hidden shadow-sm hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col justify-between';
+    // Armazena o ID do banco para uso nas chamadas de edição e exclusão
+    if (cao.id) novoCard.dataset.cachorroId = cao.id;
 
     novoCard.innerHTML = `
       <div class="relative h-44 bg-bege">
@@ -255,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
           : 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
         const nascimentoText = cao.data_nascimento ? formatarDataBR(cao.data_nascimento.split('T')[0]) : '';
         containerCards.appendChild(criarElementoCard({
+          id: cao.id,
           nome: cao.nome,
           raca: cao.raca,
           sexo: cao.sexo,
@@ -842,21 +845,35 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCancelarExclusaoCao) btnCancelarExclusaoCao.onclick = fecharModalExcluirCao;
 
   if (btnConfirmarExclusaoCao) {
-    btnConfirmarExclusaoCao.onclick = () => {
-      const nomeParaRemover = detalheNome?.textContent?.trim();
-      if (nomeParaRemover) {
-        let caes = lerDadosSalvos('canil_cachorros').filter(c => c.nome.toLowerCase() !== nomeParaRemover.toLowerCase());
-        localStorage.setItem('canil_cachorros', JSON.stringify(caes));
-        let vacinas = lerDadosSalvos('canil_vacinas').filter(v => (v.caoNome || '').toLowerCase() !== nomeParaRemover.toLowerCase());
-        localStorage.setItem('canil_vacinas', JSON.stringify(vacinas));
-        let cios = lerDadosSalvos('canil_cios').filter(c => (c.caoNome || '').toLowerCase() !== nomeParaRemover.toLowerCase());
-        localStorage.setItem('canil_cios', JSON.stringify(cios));
+    btnConfirmarExclusaoCao.onclick = async () => {
+      const cachorroId = cardAtualEmExibicao?.dataset?.cachorroId;
+      const token = localStorage.getItem('token');
 
-        fecharModalExcluirCao();
-        carregarCaesDoLocalStorage();
-        if (viewDetalhes) viewDetalhes.classList.add('hidden');
-        if (viewLista) viewLista.classList.remove('hidden');
-        mostrarToast("Cão excluído com sucesso.");
+      if (!cachorroId || !token) {
+        mostrarToast('Erro: ID do cachôrro não encontrado.');
+        return;
+      }
+
+      try {
+        const resposta = await fetch(`http://localhost:3000/api/cachorros/${cachorroId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        const dados = await resposta.json();
+
+        if (resposta.status === 200) {
+          fecharModalExcluirCao();
+          if (viewDetalhes) viewDetalhes.classList.add('hidden');
+          if (viewLista) viewLista.classList.remove('hidden');
+          await carregarCaesDoLocalStorage();
+          mostrarToast('Cão excluído com sucesso.');
+        } else {
+          mostrarToast(dados.mensagem || 'Erro ao excluir.');
+        }
+      } catch (erro) {
+        console.error('Erro ao excluir cachorro:', erro);
+        mostrarToast('Não foi possível conectar ao servidor.');
       }
     };
   }
@@ -930,32 +947,55 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   if (formEditar) {
-    formEditar.onsubmit = (e) => {
+    formEditar.onsubmit = async (e) => {
       e.preventDefault();
       if (!cardAtualEmExibicao) return;
-      const [ano, mes, dia] = editNascimento.value.split('-');
-      const { textoIdade, textoFase } = calcularIdadeEFase(new Date(ano, mes - 1, dia));
 
-      if (cardAtualEmExibicao.querySelector('h3')) cardAtualEmExibicao.querySelector('h3').textContent = editNome.value;
-      if (cardAtualEmExibicao.querySelector('p')) cardAtualEmExibicao.querySelector('p').textContent = editRaca.value;
-      if (cardAtualEmExibicao.querySelector('img')) cardAtualEmExibicao.querySelector('img').src = editPreviewFoto.src;
+      const cachorroId = cardAtualEmExibicao.dataset.cachorroId;
+      const token = localStorage.getItem('token');
 
-      const cf = cardAtualEmExibicao.querySelector('.relative');
-      if (cf) {
-        cf.querySelectorAll('.absolute.top-2.left-2 span').forEach(b => b.remove());
-        const divB = document.createElement('div'); divB.className = 'absolute top-2 left-2 flex gap-1';
-        divB.innerHTML = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sexoSelecionadoEdit === 'Macho' ? 'bg-verdeokbg text-verdeok' : 'bg-pink-100 text-pink-500'}">${sexoSelecionadoEdit}</span><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">${textoFase}</span>`;
-        cf.appendChild(divB);
+      if (!cachorroId || !token) {
+        mostrarToast('Erro: ID do cachorro não encontrado.');
+        return;
       }
-      const rodape = cardAtualEmExibicao.querySelector('.border-t');
-      if (rodape) {
-        if (rodape.querySelector('span:first-child')) rodape.querySelector('span:first-child').innerHTML = `<i class="ri-cake-2-line"></i> ${textoIdade}`;
-        if (rodape.querySelector('span:last-child')) rodape.querySelector('span:last-child').innerHTML = `<i class="ri-calendar-line"></i> ${dia}/${mes}/${ano}`;
+
+      const nome = editNome.value.trim();
+      const raca = editRaca.value.trim();
+      // Garante 'Femea' sem acento (padrão do banco)
+      const sexo = sexoSelecionadoEdit === 'Fêmea' ? 'Femea' : sexoSelecionadoEdit;
+      const data_nascimento = editNascimento.value;
+
+      const formData = new FormData();
+      formData.append('nome', nome);
+      formData.append('raca', raca);
+      formData.append('sexo', sexo);
+      formData.append('data_nascimento', data_nascimento);
+      if (editFileInput && editFileInput.files && editFileInput.files[0]) {
+        formData.append('foto', editFileInput.files[0]);
       }
-      if (detalheObs) detalheObs.textContent = editObs.value || 'Sem observações cadastradas.';
-      abrirDetalhesDoCao(cardAtualEmExibicao);
-      salvarEstadoCaesNoLocalStorage();
-      mostrarToast(`Atualizado com sucesso!`);
+
+      try {
+        const resposta = await fetch(`http://localhost:3000/api/cachorros/${cachorroId}`, {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + token },
+          body: formData
+        });
+
+        const dados = await resposta.json();
+
+        if (resposta.status === 200) {
+          mostrarToast('Atualizado com sucesso!');
+          // Recarrega a lista da API e volta para a tela de lista
+          if (viewEditar) viewEditar.classList.add('hidden');
+          if (viewLista) viewLista.classList.remove('hidden');
+          await carregarCaesDoLocalStorage();
+        } else {
+          mostrarToast(dados.mensagem || 'Erro ao atualizar.');
+        }
+      } catch (erro) {
+        console.error('Erro ao atualizar cachorro:', erro);
+        mostrarToast('Não foi possível conectar ao servidor.');
+      }
     };
   }
 

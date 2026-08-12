@@ -42,4 +42,51 @@ const cadastrarCachorro = async (req, res) => {
     }
 };
 
-module.exports = { listarCachorros, cadastrarCachorro };
+const atualizarCachorro = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const usuario_id = req.usuario.id;
+        const { nome, raca, sexo, data_nascimento } = req.body;
+
+        let sql, params;
+
+        if (req.file) {
+            // Nova foto enviada: atualiza a coluna foto
+            const fotoUrl = '/uploads/' + req.file.filename;
+            sql = 'UPDATE Cachorro SET nome = ?, raca = ?, sexo = ?, data_nascimento = ?, foto = ? WHERE id = ? AND usuario_id = ?';
+            params = [nome, raca, sexo, data_nascimento, fotoUrl, id, usuario_id];
+        } else {
+            // Sem nova foto: preserva a foto atual
+            sql = 'UPDATE Cachorro SET nome = ?, raca = ?, sexo = ?, data_nascimento = ? WHERE id = ? AND usuario_id = ?';
+            params = [nome, raca, sexo, data_nascimento, id, usuario_id];
+        }
+
+        await pool.execute(sql, params);
+
+        res.status(200).json({ mensagem: 'Cachorro atualizado com sucesso!' });
+
+    } catch (erro) {
+        console.error('Erro ao atualizar cachorro:', erro);
+        res.status(500).json({ mensagem: 'Erro interno ao atualizar cachorro.' });
+    }
+};
+
+const excluirCachorro = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const usuario_id = req.usuario.id;
+
+        await pool.execute(
+            'DELETE FROM Cachorro WHERE id = ? AND usuario_id = ?',
+            [id, usuario_id]
+        );
+
+        res.status(200).json({ mensagem: 'Cachorro excluído com sucesso!' });
+
+    } catch (erro) {
+        console.error('Erro ao excluir cachorro:', erro);
+        res.status(500).json({ mensagem: 'Erro interno ao excluir cachorro.' });
+    }
+};
+
+module.exports = { listarCachorros, cadastrarCachorro, atualizarCachorro, excluirCachorro };
