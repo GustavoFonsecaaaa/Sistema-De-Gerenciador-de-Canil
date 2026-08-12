@@ -35,6 +35,41 @@ const registrarUsuario = async (req, res) => {
     }
 };
 
+const loginUsuario = async (req, res) => {
+    try {
+        const { email, senha } = req.body;
+
+        if (!email || !senha) {
+            return res.status(400).json({ mensagem: 'Email e senha são obrigatórios!' });
+        }
+
+        const [rows] = await pool.execute('SELECT * FROM Usuario WHERE email = ?', [email]);
+
+        if (rows.length === 0) {
+            return res.status(401).json({ mensagem: 'Email ou senha incorretos.' });
+        }
+
+        const usuario = rows[0];
+
+        const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+        if (!senhaValida) {
+            return res.status(401).json({ mensagem: 'Email ou senha incorretos.' });
+        }
+
+        res.status(200).json({
+            mensagem: 'Login realizado com sucesso!',
+            usuarioId: usuario.id,
+            nome: usuario.nome
+        });
+
+    } catch (erro) {
+        console.error('Erro ao fazer login:', erro);
+        res.status(500).json({ mensagem: 'Erro interno no servidor ao tentar fazer login.' });
+    }
+};
+
 module.exports = {
-    registrarUsuario
+    registrarUsuario,
+    loginUsuario
 };
