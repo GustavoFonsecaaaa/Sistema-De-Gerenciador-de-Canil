@@ -219,16 +219,55 @@ document.addEventListener('DOMContentLoaded', () => {
     return novoCard;
   }
 
-  function carregarCaesDoLocalStorage() {
-    const listaCaes = lerDadosSalvos('canil_cachorros');
+  async function carregarCaesDoLocalStorage() {
+    const token = localStorage.getItem('token');
+    if (!token) { window.location.href = 'login.html'; return; }
+
     const containerCards = document.querySelector('.container-caes');
     if (!containerCards) return;
 
-    containerCards.innerHTML = '';
-    listaCaes.forEach(cao => containerCards.appendChild(criarElementoCard(cao)));
+    try {
+      const resposta = await fetch('http://localhost:3000/api/cachorros', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
 
-    atualizarContadorHeader();
-    aplicarFiltrosEBusca();
+      if (resposta.status === 401 || resposta.status === 403) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const listaCaes = await resposta.json();
+
+      containerCards.innerHTML = '';
+      listaCaes.forEach(cao => {
+        // Calcula fase a partir de data_nascimento retornada pela API
+        let textoFase = 'Adulto';
+        let textoIdade = '';
+        if (cao.data_nascimento) {
+          const nasc = new Date(cao.data_nascimento);
+          const { textoIdade: idade, textoFase: fase } = calcularIdadeEFase(nasc);
+          textoFase = fase;
+          textoIdade = idade;
+        }
+        const fotoUrl = cao.foto || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
+        const nascimentoText = cao.data_nascimento ? formatarDataBR(cao.data_nascimento.split('T')[0]) : '';
+        containerCards.appendChild(criarElementoCard({
+          nome: cao.nome,
+          raca: cao.raca,
+          sexo: cao.sexo,
+          fase: textoFase,
+          foto: fotoUrl,
+          idadeText: textoIdade,
+          nascimentoText
+        }));
+      });
+
+      atualizarContadorHeader();
+      aplicarFiltrosEBusca();
+    } catch (erro) {
+      console.error('Erro ao carregar cachorros da API:', erro);
+    }
   }
 
   function abrirDetalhesDoCao(card) {
@@ -945,20 +984,44 @@ document.addEventListener('DOMContentLoaded', () => {
   if (formAdicionar) {
     formAdicionar.onsubmit = async (e) => {
       e.preventDefault();
-      const nome = document.getElementById('add-nome-cao').value;
-      const [ano, mes, dia] = document.getElementById('add-nascimento-cao').value.split('-');
-      const { textoIdade, textoFase } = calcularIdadeEFase(new Date(ano, mes - 1, dia));
-      let fotoUrl = 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
-      const fileInput = document.getElementById('add-foto-file-cao');
-      if (fileInput && fileInput.files && fileInput.files[0]) fotoUrl = await comprimirImagemBase64(fileInput.files[0]);
 
-      const containerCards = document.querySelector('.container-caes');
-      if (containerCards) containerCards.appendChild(criarElementoCard({
-        nome, raca: document.getElementById('add-raca-cao').value,
-        sexo: document.getElementById('add-sexo-cao').value,
-        fase: textoFase, foto: fotoUrl, idadeText: textoIdade, nascimentoText: `${dia}/${mes}/${ano}`
-      }));
-      atualizarContadorHeader(); fecharModalAdd(); aplicarFiltrosEBusca(); salvarEstadoCaesNoLocalStorage(); mostrarToast(`Cão ${nome} cadastrado!`);
+      const token = localStorage.getItem('token');
+      if (!token) { window.location.href = 'login.html'; return; }
+
+      const nome          = document.getElementById('add-nome-cao').value.trim();
+      const raca          = document.getElementById('add-raca-cao').value.trim();
+      const sexo          = document.getElementById('add-sexo-cao').value;
+      const data_nascimento = document.getElementById('add-nascimento-cao').value;
+
+      if (!nome || !raca || !sexo || !data_nascimento) {
+        mostrarToast('Preencha todos os campos obrigatórios.');
+        return;
+      }
+
+      try {
+        const resposta = await fetch('http://localhost:3000/api/cachorros', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ nome, raca, sexo, data_nascimento })
+        });
+
+        const dados = await resposta.json();
+
+        if (resposta.status === 201 || resposta.status === 200) {
+          mostrarToast(`Cão ${nome} cadastrado com sucesso!`);
+          formAdicionar.reset();
+          fecharModalAdd();
+          await carregarCaesDoLocalStorage(); // recarrega lista da API
+        } else {
+          mostrarToast(dados.mensagem || 'Erro ao cadastrar cachorro.');
+        }
+      } catch (erro) {
+        console.error('Erro ao cadastrar cachorro:', erro);
+        mostrarToast('Não foi possível conectar ao servidor.');
+      }
     };
   }
 
