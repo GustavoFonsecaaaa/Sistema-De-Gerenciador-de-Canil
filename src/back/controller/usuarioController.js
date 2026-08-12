@@ -1,5 +1,6 @@
 const { pool } = require('../config/db');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const registrarUsuario = async (req, res) => {
     console.log('🔵 Requisição chegou no controller!', req.body);
@@ -57,10 +58,13 @@ const loginUsuario = async (req, res) => {
             return res.status(401).json({ mensagem: 'Email ou senha incorretos.' });
         }
 
+        const token = jwt.sign({ id: usuario.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
         res.status(200).json({
             mensagem: 'Login realizado com sucesso!',
             usuarioId: usuario.id,
-            nome: usuario.nome
+            nome: usuario.nome,
+            token
         });
 
     } catch (erro) {

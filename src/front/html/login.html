@@ -144,6 +144,7 @@
 
           if (resposta.status === 200) {
             mostrarToast('Login realizado com sucesso! Redirecionando...', 'sucesso');
+            localStorage.setItem('token', dados.token);
             localStorage.setItem('canil_logado', 'true');
             localStorage.setItem('canil_usuario_id', dados.usuarioId);
             localStorage.setItem('canil_usuario_nome', dados.nome);
