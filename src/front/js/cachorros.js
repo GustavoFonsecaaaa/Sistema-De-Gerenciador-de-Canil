@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       spansBadges.forEach(s => {
         const txt = s.textContent.trim();
-        if (txt === 'Macho' || txt === 'Fêmea') sexo = txt;
+        if (txt === 'Macho' || txt === 'Femea') sexo = txt;
         if (txt === 'Adulto' || txt === 'Filhote') fase = txt;
       });
 
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     spansBadges.forEach(s => {
       const txt = s.textContent.trim();
-      if (txt === 'Macho' || txt === 'Fêmea') sexo = txt;
+      if (txt === 'Macho' || txt === 'Femea') sexo = txt;
       if (txt === 'Adulto' || txt === 'Filhote') classificacao = txt;
     });
 
@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarCiosDaFicha(nome);
     carregarNinhadasDaFicha(nome); // Chama a nova função
 
-    if (sexo === 'Fêmea') {
+    if (sexo === 'Femea') {
       if (tabCio) tabCio.classList.remove('hidden');
       if (tabNinhadas) tabNinhadas.classList.remove('hidden'); // MOSTRA A ABA
       ativarAbaCio();
@@ -996,9 +996,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const data_nascimento = document.getElementById('add-nascimento-cao').value;
       const fileInput     = document.getElementById('add-foto-file-cao');
 
-      // Garante o acento correto de 'Fêmea' independente de encoding do HTML
-      if (sexo === 'Femea' || sexo === 'femea') sexo = 'Fêmea';
-
       if (!nome || !raca || !sexo || !data_nascimento) {
         mostrarToast('Preencha todos os campos obrigatórios.');
         return;
@@ -1055,12 +1052,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const nome = card.querySelector('h3')?.textContent.trim().toLowerCase() || '';
       const raca = card.querySelector('p')?.textContent.trim().toLowerCase() || '';
       let sexo = '', fase = '';
-      card.querySelectorAll('.relative span').forEach(s => { const t = s.textContent.trim().toLowerCase(); if (t === 'macho' || t === 'fêmea') sexo = t; if (t === 'adulto' || t === 'filhote') fase = t; });
+      card.querySelectorAll('.relative span').forEach(s => { const t = s.textContent.trim().toLowerCase(); if (t === 'macho' || t === 'femea') sexo = t; if (t === 'adulto' || t === 'filhote') fase = t; });
 
       let passaFiltro = false;
       if (filtroAtual === 'todos') passaFiltro = true;
       else if (filtroAtual === 'machos' && sexo === 'macho') passaFiltro = true;
-      else if (filtroAtual === 'fêmeas' && sexo === 'fêmea') passaFiltro = true;
+      else if (filtroAtual === 'fêmeas' && sexo === 'femea') passaFiltro = true;
       else if (filtroAtual === 'filhotes' && fase === 'filhote') passaFiltro = true;
       else if (filtroAtual === 'adultos' && fase === 'adulto') passaFiltro = true;
 

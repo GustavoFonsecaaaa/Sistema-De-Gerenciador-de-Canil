@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const total   = cachorros.length;
       const machos  = cachorros.filter(c => c.sexo === 'Macho').length;
-      const femeas  = cachorros.filter(c => c.sexo === 'Fêmea').length;
+      const femeas  = cachorros.filter(c => c.sexo === 'Femea').length;
       const filhotes = cachorros.filter(c => c.fase === 'Filhote').length;
 
       const kpiTotal    = document.getElementById('kpi-total-caes');
