@@ -571,8 +571,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             cruzamentosHTML = `
               <div class="mt-3 pt-2.5 border-t border-[#EFECE6]">
-                <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Histórico de Cruzamentos (${cruzamentosList.length})</div>
-                <div class="space-y-1.5">
+                <button type="button" class="btn-toggle-historico flex items-center justify-between w-full text-left text-[10px] font-bold text-[#6B7280] hover:text-[#111827] uppercase tracking-wider py-1 px-1.5 rounded-lg hover:bg-gray-100/70 transition-all cursor-pointer">
+                  <span>Histórico de Cruzamentos (${cruzamentosList.length})</span>
+                  <i class="ri-arrow-down-s-line icone-seta text-sm transition-transform duration-200"></i>
+                </button>
+                <div class="container-historico hidden space-y-1.5 mt-2">
                   ${linhasCruza}
                 </div>
               </div>
@@ -601,6 +604,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
           cardCioEl.querySelector('.btn-editar-cio').onclick = () => editarCioExistente(c);
           cardCioEl.querySelector('.btn-excluir-cio').onclick = () => excluirCioExistente(c.id);
+
+          const btnToggle = cardCioEl.querySelector('.btn-toggle-historico');
+          const containerHist = cardCioEl.querySelector('.container-historico');
+          const iconeSeta = cardCioEl.querySelector('.icone-seta');
+
+          if (btnToggle && containerHist) {
+            btnToggle.onclick = (e) => {
+              e.stopPropagation();
+              const estaEscondido = containerHist.classList.contains('hidden');
+              if (estaEscondido) {
+                containerHist.classList.remove('hidden');
+                if (iconeSeta) {
+                  iconeSeta.classList.remove('ri-arrow-down-s-line');
+                  iconeSeta.classList.add('ri-arrow-up-s-line');
+                }
+              } else {
+                containerHist.classList.add('hidden');
+                if (iconeSeta) {
+                  iconeSeta.classList.remove('ri-arrow-up-s-line');
+                  iconeSeta.classList.add('ri-arrow-down-s-line');
+                }
+              }
+            };
+          }
 
           cardCioEl.querySelectorAll('.btn-excluir-cruzamento').forEach(btn => {
             btn.onclick = async (e) => {
