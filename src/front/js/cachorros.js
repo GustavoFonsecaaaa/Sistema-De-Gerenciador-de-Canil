@@ -29,6 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnConfirmarExclusaoCao = document.getElementById('btn-confirmar-exclusao-cao');
   const textoConfirmarExclusaoCao = document.getElementById('texto-confirmar-exclusao-cao');
 
+  const modalExcluirCio = document.getElementById('modal-excluir-cio');
+  const modalExcluirCioContent = modalExcluirCio ? modalExcluirCio.querySelector('.transform') : null;
+  const btnCancelarExclusaoCio = document.getElementById('btn-cancelar-exclusao-cio');
+  const btnConfirmarExclusaoCio = document.getElementById('btn-confirmar-exclusao-cio');
+  let idCioParaExcluir = null;
+
   const detalheFoto = document.getElementById('detalhe-foto');
   const detalheNome = document.getElementById('detalhe-nome');
   const detalheBadgeSexo = document.getElementById('detalhe-badge-sexo');
@@ -995,27 +1001,57 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  async function excluirCioExistente(cioId) {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    try {
-      const resposta = await fetch(`http://localhost:3000/api/cios/${cioId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': 'Bearer ' + token }
-      });
-
-      if (resposta.ok) {
-        const nomeAtual = detalheNome?.textContent?.trim() || '';
-        await carregarCiosDaFicha(nomeAtual);
-        mostrarToast('Registro removido.');
-      } else {
-        mostrarToast('Erro ao remover cio.');
-      }
-    } catch (erro) {
-      console.error('Erro ao excluir cio:', erro);
-      mostrarToast('Não foi possível conectar ao servidor.');
+  function abrirModalExcluirCio(cioId) {
+    idCioParaExcluir = cioId;
+    if (modalExcluirCio) {
+      modalExcluirCio.classList.remove('hidden');
+      setTimeout(() => {
+        modalExcluirCio.classList.remove('opacity-0');
+        if (modalExcluirCioContent) modalExcluirCioContent.classList.remove('scale-95');
+      }, 10);
     }
+  }
+
+  function fecharModalExcluirCio() {
+    idCioParaExcluir = null;
+    if (modalExcluirCio) {
+      modalExcluirCio.classList.add('opacity-0');
+      if (modalExcluirCioContent) modalExcluirCioContent.classList.add('scale-95');
+      setTimeout(() => modalExcluirCio.classList.add('hidden'), 200);
+    }
+  }
+
+  function excluirCioExistente(cioId) {
+    abrirModalExcluirCio(cioId);
+  }
+
+  if (btnCancelarExclusaoCio) btnCancelarExclusaoCio.onclick = fecharModalExcluirCio;
+
+  if (btnConfirmarExclusaoCio) {
+    btnConfirmarExclusaoCio.onclick = async () => {
+      if (!idCioParaExcluir) return;
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      try {
+        const resposta = await fetch(`http://localhost:3000/api/cios/${idCioParaExcluir}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (resposta.ok) {
+          fecharModalExcluirCio();
+          const nomeAtual = detalheNome?.textContent?.trim() || '';
+          await carregarCiosDaFicha(nomeAtual);
+          mostrarToast('Registro removido com sucesso!');
+        } else {
+          mostrarToast('Erro ao remover cio.');
+        }
+      } catch (erro) {
+        console.error('Erro ao excluir cio:', erro);
+        mostrarToast('Não foi possível conectar ao servidor.');
+      }
+    };
   }
 
   async function editarCioExistente(cio) {

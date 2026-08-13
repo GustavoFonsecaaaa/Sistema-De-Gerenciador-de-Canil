@@ -419,6 +419,18 @@
     </div>
   </div>
 
+  <div id="modal-excluir-cio" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-7 max-w-[420px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 text-center relative">
+      <div class="w-12 h-12 rounded-full bg-vermelhobg text-vermelho flex items-center justify-center text-2xl mx-auto mb-4"><i class="ri-error-warning-line"></i></div>
+      <h3 class="font-serif text-xl font-extrabold text-[#1C1105] mb-2">Excluir Registro</h3>
+      <p id="texto-confirmar-exclusao-cio" class="text-xs text-[#6B7280] mb-6 leading-relaxed">Deseja realmente excluir este registro?</p>
+      <div class="flex items-center gap-3">
+        <button type="button" id="btn-cancelar-exclusao-cio" class="flex-1 bg-[#FAF8F5] border font-bold text-xs py-3 rounded-2xl">Cancelar</button>
+        <button type="button" id="btn-confirmar-exclusao-cio" class="flex-1 bg-vermelho text-white font-bold text-xs py-3 rounded-2xl">Sim, excluir</button>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-registrar-cio" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
     <div class="bg-creme rounded-[28px] p-8 max-w-[560px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative max-h-[90vh] overflow-y-auto">
       <button id="btn-fechar-modal-cio" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors"><i class="ri-close-line text-xl"></i></button>
