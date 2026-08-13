@@ -531,11 +531,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (ciosDoCao.length > 0) {
         if (emptyStateCios) emptyStateCios.classList.add('hidden');
-        ciosDoCao.forEach(c => {
+        for (const c of ciosDoCao) {
           const dataInicio = c.data_inicio ? formatarDataBR(c.data_inicio.split('T')[0]) : '-';
           const dataFim    = c.data_fim    ? formatarDataBR(c.data_fim.split('T')[0])    : '-';
           const textoStatus = c.cruzou ? 'Cruzou' : 'Sem cruza';
           const classeBadge = c.cruzou ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-gray-500';
+
+          // Busca o histórico real de cruzamentos via API
+          let cruzamentosList = [];
+          try {
+            const resCruz = await fetch(`http://localhost:3000/api/cruzamentos/cio/${c.id}`, {
+              method: 'GET',
+              headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (resCruz.ok) {
+              cruzamentosList = await resCruz.json();
+            }
+          } catch (errCruz) {
+            console.error('Erro ao buscar cruzamentos para cio:', errCruz);
+          }
+
+          let cruzamentosHTML = '';
+          if (cruzamentosList.length > 0) {
+            const linhasCruza = cruzamentosList.map(cr => {
+              const dtCruza = cr.data_cruzamento ? formatarDataBR(cr.data_cruzamento.split('T')[0]) : '-';
+              return `
+                <div class="flex items-center justify-between py-2 px-3 bg-white border border-[#EFECE6] rounded-xl group/cruza text-xs">
+                  <div>
+                    <span class="font-bold text-[#111827]">${cr.macho_parceiro}</span>
+                    <span class="text-[10px] text-[#6B7280] font-medium ml-2">(${dtCruza})</span>
+                    ${cr.observacoes ? `<p class="text-[10px] text-gray-500 italic mt-0.5">${cr.observacoes}</p>` : ''}
+                  </div>
+                  <button type="button" class="btn-excluir-cruzamento text-gray-400 hover:text-red-500 p-1 transition-colors opacity-0 group-hover/cruza:opacity-100" data-id="${cr.id}" title="Excluir Cruzamento">
+                    <i class="ri-delete-bin-line text-sm"></i>
+                  </button>
+                </div>
+              `;
+            }).join('');
+
+            cruzamentosHTML = `
+              <div class="mt-3 pt-2.5 border-t border-[#EFECE6]">
+                <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Histórico de Cruzamentos (${cruzamentosList.length})</div>
+                <div class="space-y-1.5">
+                  ${linhasCruza}
+                </div>
+              </div>
+            `;
+          }
 
           const cardCioEl = document.createElement('div');
           cardCioEl.className = "bg-[#FAF8F5] border border-[#EFECE6] hover:border-laranja/50 rounded-2xl p-4 text-xs relative pl-6 transition-all group";
@@ -549,14 +591,43 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${classeBadge}">${textoStatus}</span>
                 <div class="flex items-center gap-1 bg-white border border-[#EFECE6] rounded-xl p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <button class="btn-excluir-cio p-1 text-gray-400 hover:text-red-500 transition-colors"><i class="ri-delete-bin-line text-sm"></i></button>
+                  <button class="btn-editar-cio p-1 text-gray-400 hover:text-laranja transition-colors" title="Editar Cio"><i class="ri-edit-line text-sm"></i></button>
+                  <button class="btn-excluir-cio p-1 text-gray-400 hover:text-red-500 transition-colors" title="Excluir Cio"><i class="ri-delete-bin-line text-sm"></i></button>
                 </div>
               </div>
             </div>
+            ${cruzamentosHTML}
           `;
+
+          cardCioEl.querySelector('.btn-editar-cio').onclick = () => editarCioExistente(c);
           cardCioEl.querySelector('.btn-excluir-cio').onclick = () => excluirCioExistente(c.id);
+
+          cardCioEl.querySelectorAll('.btn-excluir-cruzamento').forEach(btn => {
+            btn.onclick = async (e) => {
+              e.stopPropagation();
+              const cruzaId = btn.dataset.id;
+              if (confirm('Deseja realmente excluir este registro de cruzamento?')) {
+                try {
+                  const resDel = await fetch(`http://localhost:3000/api/cruzamentos/${cruzaId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                  });
+                  if (resDel.ok) {
+                    mostrarToast('Cruzamento removido com sucesso!');
+                    await carregarCiosDaFicha(nomeCao);
+                  } else {
+                    mostrarToast('Erro ao remover cruzamento.');
+                  }
+                } catch (errDel) {
+                  console.error('Erro ao excluir cruzamento:', errDel);
+                  mostrarToast('Não foi possível conectar ao servidor.');
+                }
+              }
+            };
+          });
+
           containerCios.appendChild(cardCioEl);
-        });
+        }
       } else {
         if (emptyStateCios) emptyStateCios.classList.remove('hidden');
       }
@@ -678,17 +749,47 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!containerItensCruza) return;
     const divItem = document.createElement('div');
     divItem.className = "item-cruza-linha bg-[#FAF8F5] border border-[#EFECE6] p-3 rounded-2xl space-y-2 relative group";
+    if (dados.id) {
+      divItem.dataset.cruzaId = dados.id;
+      divItem.dataset.cruzamentoId = dados.id;
+    }
+
+    const padreadorVal = dados.macho_parceiro || dados.macho || '';
+    const dataVal = dados.data_cruzamento ? dados.data_cruzamento.split('T')[0] : (dados.data || '');
+    const obsVal = dados.observacoes || dados.obs || '';
+
     divItem.innerHTML = `
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[10px] font-bold text-[#6B7280] uppercase mb-1">Padreador *</label><input type="text" class="cruza-padreador w-full bg-white border border-[#EFECE6] rounded-xl py-2 px-3 text-xs focus:border-laranja" value="${dados.macho || ''}" required></div>
-        <div><label class="block text-[10px] font-bold text-[#6B7280] uppercase mb-1">Data *</label><input type="date" class="cruza-data w-full bg-white border border-[#EFECE6] rounded-xl py-2 px-3 text-xs focus:border-laranja" value="${dados.data || ''}" required></div>
+        <div><label class="block text-[10px] font-bold text-[#6B7280] uppercase mb-1">Padreador *</label><input type="text" name="macho_parceiro" class="cruza-padreador w-full bg-white border border-[#EFECE6] rounded-xl py-2 px-3 text-xs focus:border-laranja" value="${padreadorVal}" required></div>
+        <div><label class="block text-[10px] font-bold text-[#6B7280] uppercase mb-1">Data *</label><input type="date" name="data_cruzamento" class="cruza-data w-full bg-white border border-[#EFECE6] rounded-xl py-2 px-3 text-xs focus:border-laranja" value="${dataVal}" required></div>
       </div>
       <div class="flex items-center justify-between gap-2">
-        <input type="text" class="cruza-obs w-full bg-white border border-[#EFECE6] rounded-xl py-1.5 px-3 text-xs focus:border-laranja" placeholder="Obs (opcional)" value="${dados.obs || ''}">
+        <input type="text" name="observacoes" class="cruza-obs w-full bg-white border border-[#EFECE6] rounded-xl py-1.5 px-3 text-xs focus:border-laranja" placeholder="Obs (opcional)" value="${obsVal}">
         <button type="button" class="btn-remover-cruza text-gray-300 hover:text-red-500 p-1.5"><i class="ri-delete-bin-line text-sm"></i></button>
       </div>
     `;
-    divItem.querySelector('.btn-remover-cruza').onclick = () => divItem.remove();
+
+    divItem.querySelector('.btn-remover-cruza').onclick = async () => {
+      const idParaExcluir = divItem.dataset.cruzamentoId || divItem.dataset.cruzaId;
+      if (idParaExcluir) {
+        const token = localStorage.getItem('token');
+        if (token) {
+          try {
+            await fetch(`http://localhost:3000/api/cruzamentos/${idParaExcluir}`, {
+              method: 'DELETE',
+              headers: { 'Authorization': 'Bearer ' + token }
+            });
+            mostrarToast('Cruzamento removido!');
+            const nomeAtual = detalheNome?.textContent?.trim() || '';
+            await carregarCiosDaFicha(nomeAtual);
+          } catch (err) {
+            console.error('Erro ao excluir cruzamento:', err);
+          }
+        }
+      }
+      divItem.remove();
+    };
+
     containerItensCruza.appendChild(divItem);
   }
 
@@ -752,33 +853,116 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!data_inicio || !data_fim) { mostrarToast('Informe as datas do cio.'); return; }
 
       try {
-        const resposta = await fetch('http://localhost:3000/api/cios', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-          },
-          body: JSON.stringify({
-            cachorro_id: cachorroId,
-            data_inicio,
-            data_fim,
-            cruzou,
-            observacoes
-          })
-        });
+        let cioIdTarget = idCioEmEdicao;
 
-        const dados = await resposta.json();
+        if (idCioEmEdicao) {
+          // PUT /api/cios/:id (Edição de Cio)
+          const resposta = await fetch(`http://localhost:3000/api/cios/${idCioEmEdicao}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({
+              data_inicio,
+              data_fim,
+              cruzou,
+              observacoes
+            })
+          });
 
-        if (resposta.status === 201) {
-          fecharModalCio();
-          const nomeAtual = detalheNome?.textContent?.trim() || '';
-          await carregarCiosDaFicha(nomeAtual);
-          mostrarToast('Cio registrado com sucesso!');
+          const dados = await resposta.json();
+          if (!resposta.ok) {
+            mostrarToast(dados.mensagem || 'Erro ao atualizar cio.');
+            return;
+          }
         } else {
-          mostrarToast(dados.mensagem || 'Erro ao registrar cio.');
+          // POST /api/cios (Novo Cio)
+          const resposta = await fetch('http://localhost:3000/api/cios', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({
+              cachorro_id: cachorroId,
+              data_inicio,
+              data_fim,
+              cruzou,
+              observacoes
+            })
+          });
+
+          const dados = await resposta.json();
+          if (resposta.status === 201) {
+            cioIdTarget = dados.cioId;
+          } else {
+            mostrarToast(dados.mensagem || 'Erro ao registrar cio.');
+            return;
+          }
         }
+
+        // Se houve cruzamento, sincroniza todas as linhas de cruzamento (PUT para existentes, POST para novas)
+        if (cruzou && cioIdTarget && containerItensCruza) {
+          const linhasCruza = containerItensCruza.querySelectorAll('.item-cruza-linha');
+          const promessasCruzamento = [];
+
+          for (const linha of linhasCruza) {
+            const cruzamentoId = linha.dataset.cruzamentoId || linha.dataset.cruzaId;
+            const macho_parceiro = linha.querySelector('.cruza-padreador')?.value.trim();
+            const data_cruzamento = linha.querySelector('.cruza-data')?.value;
+            const obsCruza = linha.querySelector('.cruza-obs')?.value.trim() || null;
+
+            if (macho_parceiro && data_cruzamento) {
+              if (cruzamentoId) {
+                // PUT /api/cruzamentos/:id (Edita cruzamento existente)
+                promessasCruzamento.push(
+                  fetch(`http://localhost:3000/api/cruzamentos/${cruzamentoId}`, {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                      data_cruzamento,
+                      macho_parceiro,
+                      observacoes: obsCruza
+                    })
+                  })
+                );
+              } else {
+                // POST /api/cruzamentos (Cadastra novo cruzamento)
+                promessasCruzamento.push(
+                  fetch('http://localhost:3000/api/cruzamentos', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                      cio_id: cioIdTarget,
+                      data_cruzamento,
+                      macho_parceiro,
+                      observacoes: obsCruza
+                    })
+                  })
+                );
+              }
+            }
+          }
+
+          if (promessasCruzamento.length > 0) {
+            await Promise.all(promessasCruzamento);
+          }
+        }
+
+        fecharModalCio();
+        const nomeAtual = detalheNome?.textContent?.trim() || '';
+        await carregarCiosDaFicha(nomeAtual);
+        mostrarToast(idCioEmEdicao ? 'Cio atualizado com sucesso!' : 'Cio registrado com sucesso!');
+
       } catch (erro) {
-        console.error('Erro ao cadastrar cio:', erro);
+        console.error('Erro ao salvar cio:', erro);
         mostrarToast('Não foi possível conectar ao servidor.');
       }
     };
@@ -807,25 +991,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function editarCioExistente(cio) {
+  async function editarCioExistente(cio) {
     idCioEmEdicao = cio.id;
-    const convData = (dataBr) => {
-      if (!dataBr) return '';
-      const p = dataBr.split('/');
-      return p.length === 3 ? `${p[2]}-${p[1].padStart(2, '0')}-${p[0].padStart(2, '0')}` : '';
+    const convData = (dataIso) => {
+      if (!dataIso) return '';
+      return dataIso.split('T')[0];
     };
 
-    document.getElementById('cio-data-inicio').value = convData(cio.dataInicio);
-    document.getElementById('cio-data-fim').value = convData(cio.dataFim);
-    document.getElementById('cio-obs').value = cio.obs || '';
+    document.getElementById('cio-data-inicio').value = convData(cio.data_inicio);
+    document.getElementById('cio-data-fim').value = convData(cio.data_fim);
+    document.getElementById('cio-obs').value = cio.observacoes || '';
 
     if (containerItensCruza) containerItensCruza.innerHTML = '';
+    const houveCruzamento = cio.cruzou === 1 || cio.cruzou === true || cio.cruzou === 'true';
+
     if (toggleCruzou) {
-      toggleCruzou.checked = cio.houveCruzamento;
-      if (cio.houveCruzamento) {
+      toggleCruzou.checked = houveCruzamento;
+      if (houveCruzamento) {
         if (camposDetalhesCruzamento) camposDetalhesCruzamento.classList.remove('hidden');
-        if (cio.cruzas && cio.cruzas.length > 0) cio.cruzas.forEach(cr => criarLinhaFormularioCruza(cr));
-        else criarLinhaFormularioCruza();
+        
+        const token = localStorage.getItem('token');
+        if (token) {
+          try {
+            const resCruza = await fetch(`http://localhost:3000/api/cruzamentos/cio/${cio.id}`, {
+              headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (resCruza.ok) {
+              const cruzas = await resCruza.json();
+              if (cruzas && cruzas.length > 0) {
+                cruzas.forEach(cr => criarLinhaFormularioCruza(cr));
+              } else {
+                criarLinhaFormularioCruza();
+              }
+            } else {
+              criarLinhaFormularioCruza();
+            }
+          } catch (err) {
+            console.error('Erro ao carregar cruzamentos para edição:', err);
+            criarLinhaFormularioCruza();
+          }
+        }
       } else {
         if (camposDetalhesCruzamento) camposDetalhesCruzamento.classList.add('hidden');
       }

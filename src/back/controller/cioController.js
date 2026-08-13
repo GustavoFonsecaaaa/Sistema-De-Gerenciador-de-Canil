@@ -57,6 +57,38 @@ const cadastrarCio = async (req, res) => {
     }
 };
 
+const atualizarCio = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const usuario_id = req.usuario.id;
+        const { data_inicio, data_fim, cruzou, observacoes } = req.body;
+
+        if (!data_inicio || !data_fim) {
+            return res.status(400).json({ mensagem: 'data_inicio e data_fim são obrigatórios.' });
+        }
+
+        const cruzouBool = cruzou === true || cruzou === 'true' || cruzou === 1 ? 1 : 0;
+
+        const [resultado] = await pool.execute(
+            `UPDATE Cio 
+             SET data_inicio = ?, data_fim = ?, cruzou = ?, observacoes = ?
+             WHERE id = ? 
+             AND cachorro_id IN (SELECT id FROM Cachorro WHERE usuario_id = ?)`,
+            [data_inicio, data_fim, cruzouBool, observacoes || null, id, usuario_id]
+        );
+
+        if (resultado.affectedRows === 0) {
+            return res.status(404).json({ mensagem: 'Cio não encontrado ou sem permissão.' });
+        }
+
+        res.status(200).json({ mensagem: 'Cio atualizado com sucesso!' });
+
+    } catch (erro) {
+        console.error('Erro ao atualizar cio:', erro);
+        res.status(500).json({ mensagem: 'Erro interno ao atualizar cio.' });
+    }
+};
+
 const excluirCio = async (req, res) => {
     try {
         const { id } = req.params;
@@ -77,4 +109,5 @@ const excluirCio = async (req, res) => {
     }
 };
 
-module.exports = { listarCios, cadastrarCio, excluirCio };
+module.exports = { listarCios, cadastrarCio, atualizarCio, excluirCio };
+

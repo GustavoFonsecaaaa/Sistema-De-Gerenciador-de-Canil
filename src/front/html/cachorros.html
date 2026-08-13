@@ -343,11 +343,11 @@
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome <span class="text-red-500">*</span></label>
-                  <input type="text" id="edit-nome" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+                  <input type="text" id="edit-nome" name="nome" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Raça <span class="text-red-500">*</span></label>
-                  <input type="text" id="edit-raca" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+                  <input type="text" id="edit-raca" name="raca" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
                 </div>
               </div>
 
@@ -365,13 +365,13 @@
 
               <div>
                 <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data de Nascimento <span class="text-red-500">*</span></label>
-                <input type="date" id="edit-nascimento" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+                <input type="date" id="edit-nascimento" name="data_nascimento" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
                 <p id="edit-idade-calculada" class="text-[11px] text-[#6B7280] mt-1.5 font-medium pl-1"></p>
               </div>
 
               <div>
                 <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Observações</label>
-                <textarea id="edit-obs" rows="4" maxlength="500" placeholder="Ex: Muito dócil e brincalhão..." class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm resize-none placeholder:text-[#1C1105]/30"></textarea>
+                <textarea id="edit-obs" name="observacoes" rows="4" maxlength="500" placeholder="Ex: Muito dócil e brincalhão..." class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm resize-none placeholder:text-[#1C1105]/30"></textarea>
                 <div class="text-right text-[10px] text-[#6B7280] mt-1"><span id="edit-char-count">0</span>/500</div>
               </div>
             </div>
