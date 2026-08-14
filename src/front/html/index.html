@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth scroll-pt-24">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CanilManager – Tudo o que o seu canil precisa em um só lugar</title>
+  <meta name="description" content="Do cadastro dos cães ao controle de vacinas, ração, cio e ninhadas. O CanilManager organiza a rotina do seu canil com praticidade e cuidado.">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            marromescuro:  '#1C1105',
+            marromescuro2: '#3C240B',
+            laranja:       '#D97706',
+            laranjaclaro:  '#FEF3C7',
+            creme:         '#F8F5F0',
+            bege:          '#EFECE6',
+            verdeok:       '#10B981',
+            verdeokbg:     '#D1FAE5',
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+            sans:  ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          keyframes: {
+            fadeUp: {
+              '0%':   { opacity: '0', transform: 'translateY(28px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+          animation: {
+            'fade-up': 'fadeUp 0.7s ease both',
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Remix Icon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* Header scroll effect */
+    #site-header {
+      transition: background 0.35s ease, box-shadow 0.35s ease;
+    }
+    #site-header.scrolled {
+      background: rgba(248, 245, 240, 0.94);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 2px 24px rgba(28, 17, 5, 0.08);
+    }
+    /* Hero overlay */
+    .hero-overlay {
+      background: linear-gradient(
+        to right,
+        rgba(10, 6, 2, 0.82) 0%,
+        rgba(10, 6, 2, 0.58) 55%,
+        rgba(10, 6, 2, 0.22) 100%
+      );
+    }
+    /* Card hover lift */
+    .card-lift {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card-lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(28, 17, 5, 0.10);
+    }
+    /* Step card hover */
+    .step-card {
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .step-card:hover {
+      border-color: rgba(217, 119, 6, 0.4);
+      box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.06);
+    }
+    /* CTA overlay */
+    .cta-overlay {
+      background: linear-gradient(
+        to right,
+        rgba(10, 6, 2, 0.82) 0%,
+        rgba(10, 6, 2, 0.55) 55%,
+        rgba(10, 6, 2, 0.15) 100%
+      );
+    }
+    /* Reveal on scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body class="font-sans bg-creme text-marromescuro antialiased">
+
+  <!-- HEADER -->
+  <header id="site-header" class="fixed top-0 left-0 right-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-full bg-laranja flex items-center justify-center text-white text-base shadow-md group-hover:scale-105 transition-transform">
+          <i class="ri-heart-pulse-fill"></i>
+        </div>
+        <span class="font-serif text-xl font-extrabold text-marromescuro">
+          Canil<span class="text-laranja">Manager</span>
+        </span>
+      </a>
+
+      <!-- Nav -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#recursos"      class="text-sm font-semibold text-marromescuro/70 hover:text-laranja transition-colors">Recursos</a>
+        <a href="#como-funciona" class="text-sm font-semibold text-marromescuro/70 hover:text-laranja transition-colors">Como funciona</a>
+        <a href="#plataforma"    class="text-sm font-semibold text-marromescuro/70 hover:text-laranja transition-colors">Plataforma</a>
+      </nav>
+
+      <!-- CTAs -->
+      <div class="flex items-center gap-3">
+        <a href="login.html" class="hidden sm:inline-flex text-sm font-bold text-marromescuro hover:text-laranja transition-colors px-2 py-1">
+          Entrar
+        </a>
+        <a href="cadastro.html" class="inline-flex items-center gap-1.5 bg-laranja hover:bg-[#b45309] text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all">
+          Começar grátis
+        </a>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- HERO -->
+  <section id="hero" class="relative min-h-screen flex items-center overflow-hidden">
+    <div class="absolute inset-0">
+      <img
+        src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=1920"
+        alt="Golden Retriever no campo"
+        class="w-full h-full object-cover object-center"
+        loading="eager"
+      >
+      <div class="hero-overlay absolute inset-0"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-20 w-full">
+      <div class="max-w-2xl">
+
+        <!-- Pill badge -->
+        <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-8 animate-fade-up">
+          <span class="w-2 h-2 rounded-full bg-laranja animate-pulse"></span>
+          <span class="text-white/90 text-xs font-semibold tracking-wide">Gestão completa para criadores e cuidadores de cães</span>
+        </div>
+
+        <!-- Título -->
+        <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-6 animate-fade-up" style="animation-delay:0.1s">
+          Tudo o que o seu canil precisa
+          <span class="text-laranja italic block mt-1">em um só lugar</span>
+        </h1>
+
+        <!-- Subtítulo -->
+        <p class="text-white/80 text-base md:text-lg leading-relaxed mb-10 max-w-xl animate-fade-up" style="animation-delay:0.2s">
+          Do cadastro dos cães ao controle de vacinas, ração, cio e ninhadas. O CanilManager organiza a rotina do seu canil com praticidade e cuidado, com alertas automáticos para você nunca perder nada.
+        </p>
+
+        <!-- Botões -->
+        <div class="flex flex-wrap gap-4 animate-fade-up" style="animation-delay:0.3s">
+          <a href="cadastro.html" class="inline-flex items-center gap-2 bg-laranja hover:bg-[#b45309] text-white font-bold px-7 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all text-sm">
+            <i class="ri-arrow-right-circle-line text-lg"></i>
+            Começar grátis agora
+          </a>
+          <a href="#recursos" class="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/25 text-white font-bold px-7 py-3.5 rounded-xl transition-all text-sm">
+            <i class="ri-search-eye-line text-lg"></i>
+            Conhecer recursos
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seta de scroll -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+      <a href="#recursos" class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white/60 hover:text-white hover:border-white/60 transition-colors">
+        <i class="ri-arrow-down-line text-lg"></i>
+      </a>
+    </div>
+  </section>
+
+
+  <!-- RECURSOS -->
+  <section id="recursos" class="bg-creme py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+        <h2 class="font-serif text-3xl md:text-4xl font-extrabold text-marromescuro leading-tight mb-4">
+          Uma plataforma pensada para o dia a dia do canil
+        </h2>
+        <p class="text-marromescuro/60 text-base leading-relaxed">
+          Tudo que um criador precisa para cuidar dos cães com organização, sem planilhas e sem perda de prazo.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <div class="card-lift bg-white border border-bege rounded-3xl p-8 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-laranjaclaro flex items-center justify-center text-laranja text-xl mb-5">
+            <i class="ri-heart-fill"></i>
+          </div>
+          <h3 class="font-bold text-lg text-marromescuro mb-2">Cadastro de cachorros</h3>
+          <p class="text-sm text-marromescuro/60 leading-relaxed">Ficha completa para cada cão: foto, raça, sexo e idade, com classificação automática de filhote ou adulto.</p>
+        </div>
+
+        <div class="card-lift bg-white border border-bege rounded-3xl p-8 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-verdeokbg flex items-center justify-center text-verdeok text-xl mb-5">
+            <i class="ri-syringe-fill"></i>
+          </div>
+          <h3 class="font-bold text-lg text-marromescuro mb-2">Controle de vacinas</h3>
+          <p class="text-sm text-marromescuro/60 leading-relaxed">Registre as vacinas e as próximas doses. Alertas avisam quando uma vacina está prestes a vencer ou já venceu.</p>
+        </div>
+
+        <div class="card-lift bg-white border border-bege rounded-3xl p-8 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-laranjaclaro flex items-center justify-center text-laranja text-xl mb-5">
+            <i class="ri-goblet-fill"></i>
+          </div>
+          <h3 class="font-bold text-lg text-marromescuro mb-2">Estoque de ração</h3>
+          <p class="text-sm text-marromescuro/60 leading-relaxed">Controle marca, tipo e quantidade de sacos. Receba aviso automático quando a ração estiver acabando.</p>
+        </div>
+
+        <div class="card-lift bg-white border border-bege rounded-3xl p-8 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-laranjaclaro flex items-center justify-center text-laranja text-xl mb-5">
+            <i class="ri-hand-heart-fill"></i>
+          </div>
+          <h3 class="font-bold text-lg text-marromescuro mb-2">Maternidade</h3>
+          <p class="text-sm text-marromescuro/60 leading-relaxed">Questionário completo de ninhadas: data do parto, filhotes, machos e fêmeas, peso e tipo de parto.</p>
+        </div>
+
+        <div class="card-lift bg-white border border-bege rounded-3xl p-8 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-verdeokbg flex items-center justify-center text-verdeok text-xl mb-5">
+            <i class="ri-calendar-check-fill"></i>
+          </div>
+          <h3 class="font-bold text-lg text-marromescuro mb-2">Ciclo reprodutivo</h3>
+          <p class="text-sm text-marromescuro/60 leading-relaxed">Acompanhe o cio das fêmeas, cruzamentos e o período de amamentação, com aviso quando o cio está terminando.</p>
+        </div>
+
+        <div class="card-lift bg-white border border-bege rounded-3xl p-8 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-laranjaclaro flex items-center justify-center text-laranja text-xl mb-5">
+            <i class="ri-notification-4-fill"></i>
+          </div>
+          <h3 class="font-bold text-lg text-marromescuro mb-2">Alertas inteligentes</h3>
+          <p class="text-sm text-marromescuro/60 leading-relaxed">Notificações centralizadas para ração baixa, vacinas vencidas, cio acabando e muito mais, tudo em um só lugar.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- COMO FUNCIONA -->
+  <section id="como-funciona" class="bg-bege/50 py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="text-center max-w-xl mx-auto mb-16 reveal">
+        <span class="inline-block text-laranja text-xs font-extrabold tracking-[0.15em] uppercase mb-3">Como funciona</span>
+        <h2 class="font-serif text-4xl md:text-5xl font-extrabold text-marromescuro leading-tight mb-4">
+          Comece em três passos simples
+        </h2>
+        <p class="text-marromescuro/60 text-base">Sem curva de aprendizado. Em poucos minutos seu canil está organizado.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="step-card bg-white border border-bege rounded-3xl p-8 reveal relative overflow-hidden">
+          <span class="absolute top-6 right-7 font-serif text-6xl font-extrabold text-laranja/5 select-none leading-none">01</span>
+          <div class="w-12 h-12 rounded-2xl bg-laranja flex items-center justify-center text-white text-xl mb-6">
+            <i class="ri-user-add-fill"></i>
+          </div>
+          <h3 class="font-bold text-lg text-marromescuro mb-3">Cadastre seus cães</h3>
+          <p class="text-sm text-marromescuro/60 leading-relaxed">Crie a ficha de cada cão com foto, raça, sexo e data de nascimento. A idade é calculada automaticamente.</p>
+        </div>
+
+        <div class="step-card bg-white border border-bege rounded-3xl p-8 reveal relative overflow-hidden">
+          <span class="absolute top-6 right-7 font-serif text-6xl font-extrabold text-laranja/5 select-none leading-none">02</span>
+          <div class="w-12 h-12 rounded-2xl bg-laranja flex items-center justify-center text-white text-xl mb-6">
+            <i class="ri-shield-check-fill"></i>
+          </div>
+          <h3 class="font-bold text-lg text-marromescuro mb-3">Acompanhe a saúde</h3>
+          <p class="text-sm text-marromescuro/60 leading-relaxed">Registre vacinas e controle o estoque de ração. O sistema avisa quando algo está prestes a vencer ou acabar.</p>
+        </div>
+
+        <div class="step-card bg-white border border-bege rounded-3xl p-8 reveal relative overflow-hidden">
+          <span class="absolute top-6 right-7 font-serif text-6xl font-extrabold text-laranja/5 select-none leading-none">03</span>
+          <div class="w-12 h-12 rounded-2xl bg-laranja flex items-center justify-center text-white text-xl mb-6">
+            <i class="ri-heart-pulse-fill"></i>
+          </div>
+          <h3 class="font-bold text-lg text-marromescuro mb-3">Gerencie a reprodução</h3>
+          <p class="text-sm text-marromescuro/60 leading-relaxed">Acompanhe o cio, registre cruzamentos e ninhadas com todos os detalhes dos filhotes, em poucos cliques.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- PLATAFORMA -->
+  <section id="plataforma" class="bg-creme py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+
+        <!-- Imagem + card flutuante -->
+        <div class="reveal relative">
+          <div class="rounded-3xl overflow-hidden shadow-2xl lg:h-[540px]">
+            <img
+              src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=900"
+              alt="Pessoa segurando filhotes"
+              class="w-full h-full object-cover object-center"
+              loading="lazy"
+            >
+          </div>
+          <div class="absolute bottom-8 left-6 bg-white/95 backdrop-blur-sm border border-bege rounded-2xl px-6 py-4 shadow-xl">
+            <span class="font-serif text-3xl font-extrabold text-laranja">+40%</span>
+            <p class="text-xs text-marromescuro/60 font-semibold mt-0.5">menos retrabalho no dia a dia</p>
+          </div>
+        </div>
+
+        <!-- Texto -->
+        <div class="reveal">
+          <span class="inline-block text-laranja text-xs font-extrabold tracking-[0.15em] uppercase mb-4">Plataforma</span>
+          <h2 class="font-serif text-4xl md:text-5xl font-extrabold text-marromescuro leading-tight mb-5">
+            Cuide de cada detalhe<br>com mais tranquilidade
+          </h2>
+          <p class="text-marromescuro/60 text-base leading-relaxed mb-10">
+            O CanilManager nasceu para dar fim às planilhas espalhadas e aos papéis perdidos. Centralize tudo o que importa e foque no que você ama: os cães.
+          </p>
+
+          <ul class="space-y-6">
+            <li class="flex gap-4">
+              <div class="w-10 h-10 rounded-xl bg-verdeokbg flex items-center justify-center text-verdeok text-lg flex-shrink-0 mt-0.5">
+                <i class="ri-check-double-line"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-marromescuro mb-1">Alertas que cuidam de você</h4>
+                <p class="text-sm text-marromescuro/60 leading-relaxed">Nunca mais perca uma vacina, ração ou cio. O sistema avisa no momento certo.</p>
+              </div>
+            </li>
+            <li class="flex gap-4">
+              <div class="w-10 h-10 rounded-xl bg-laranjaclaro flex items-center justify-center text-laranja text-lg flex-shrink-0 mt-0.5">
+                <i class="ri-layout-grid-fill"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-marromescuro mb-1">Visão geral do canil</h4>
+                <p class="text-sm text-marromescuro/60 leading-relaxed">Tela principal com totais, próximas vacinas e alertas para acompanhar tudo de um relance.</p>
+              </div>
+            </li>
+            <li class="flex gap-4">
+              <div class="w-10 h-10 rounded-xl bg-bege flex items-center justify-center text-marromescuro/60 text-lg flex-shrink-0 mt-0.5">
+                <i class="ri-cloud-fill"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-marromescuro mb-1">Pronto para a nuvem</h4>
+                <p class="text-sm text-marromescuro/60 leading-relaxed">Dados seguros e sincronizados, acessíveis de qualquer lugar. Estrutura preparada para a nuvem.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CTA FINAL -->
+  <section class="py-24 px-6 bg-creme">
+    <div class="max-w-7xl mx-auto">
+      <div class="relative rounded-3xl overflow-hidden min-h-[320px] flex items-center">
+        <img
+          src="https://images.unsplash.com/photo-1534361960057-19889db9621e?auto=format&fit=crop&q=80&w=1600"
+          alt="Cães correndo na grama"
+          class="absolute inset-0 w-full h-full object-cover object-center"
+          loading="lazy"
+        >
+        <div class="cta-overlay absolute inset-0"></div>
+        <div class="relative z-10 px-10 py-14 max-w-lg reveal">
+          <h2 class="font-serif text-4xl md:text-5xl font-extrabold text-white leading-tight mb-4">
+            Pronto para organizar o seu canil?
+          </h2>
+          <p class="text-white/75 text-sm leading-relaxed mb-8">
+            Crie sua conta grátis e descubra como é simples cuidar dos seus cães com tudo em um só lugar. Sem cartão de crédito.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a href="cadastro.html" class="inline-flex items-center gap-2 bg-laranja hover:bg-[#b45309] text-white font-bold px-7 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all text-sm">
+              <i class="ri-user-add-line text-lg"></i>
+              Criar conta gratuita
+            </a>
+            <a href="login.html" class="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/25 text-white font-bold px-7 py-3.5 rounded-xl transition-all text-sm">
+              Já tenho conta
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="bg-marromescuro text-[#d8cabb] py-14 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-2.5 mb-4">
+            <div class="w-9 h-9 rounded-full bg-laranja flex items-center justify-center text-white text-base">
+              <i class="ri-heart-pulse-fill"></i>
+            </div>
+            <span class="font-serif text-xl font-extrabold text-white">Canil<span class="text-laranja">Manager</span></span>
+          </div>
+          <p class="text-sm text-[#a8998a] leading-relaxed max-w-xs">
+            A plataforma de gestão completa para criadores e cuidadores de cães. Simples, inteligente e feita com cuidado.
+          </p>
+        </div>
+
+        <div>
+          <h5 class="text-xs font-extrabold text-white uppercase tracking-widest mb-4">Produto</h5>
+          <ul class="space-y-2.5">
+            <li><a href="#recursos"      class="text-sm text-[#a8998a] hover:text-laranja transition-colors">Recursos</a></li>
+            <li><a href="#como-funciona" class="text-sm text-[#a8998a] hover:text-laranja transition-colors">Como funciona</a></li>
+            <li><a href="#plataforma"    class="text-sm text-[#a8998a] hover:text-laranja transition-colors">Plataforma</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="text-xs font-extrabold text-white uppercase tracking-widest mb-4">Conta</h5>
+          <ul class="space-y-2.5">
+            <li><a href="login.html"     class="text-sm text-[#a8998a] hover:text-laranja transition-colors">Entrar</a></li>
+            <li><a href="cadastro.html"  class="text-sm text-[#a8998a] hover:text-laranja transition-colors">Criar conta</a></li>
+            <li><a href="dashboard.html" class="text-sm text-[#a8998a] hover:text-laranja transition-colors">Tela Principal</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-xs text-[#a8998a]">&copy; <span id="footer-year"></span> CanilManager. Todos os direitos reservados.</p>
+        <p class="text-xs text-[#a8998a]">Feito com <span class="text-laranja">&#9829;</span> para criadores de cães</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <script>
+    // Ano dinâmico no footer
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+    // Header: muda visual ao rolar
+    const header = document.getElementById('site-header');
+    const onScroll = () => {
+      header.classList.toggle('scrolled', window.scrollY > 60);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Reveal on scroll com escalonamento por card
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const siblings = [...entry.target.parentElement.querySelectorAll('.reveal')];
+          const delay = siblings.indexOf(entry.target) * 90;
+          entry.target.style.transitionDelay = delay + 'ms';
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealEls.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
