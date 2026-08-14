@@ -33,6 +33,14 @@ app.use('/api/racoes', require('./routes/racaoRoutes'));
 // Rota de consumo de ração (protegida por JWT)
 app.use('/api/consumo', require('./routes/consumoRoutes'));
 
+// Rota de vacinas (protegida por JWT)
+app.use('/api/vacinas', require('./routes/vacinaRoutes'));
+
+// Rota de ninhadas / maternidade (protegida por JWT)
+app.use('/api/ninhadas', require('./routes/ninhadaRoutes'));
+
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
     console.log(`🐶 CanilManager rodando em http://localhost:${PORT}`);

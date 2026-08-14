@@ -1,15 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Script vacinas.js carregado com sucesso!");
 
-  function lerDadosSalvos(chave) {
-    try {
-      const dados = localStorage.getItem(chave);
-      return dados ? JSON.parse(dados) : [];
-    } catch (e) {
-      console.warn(`Cache corrompido na chave ${chave}. Limpando...`);
-      localStorage.setItem(chave, '[]');
-      return [];
-    }
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
   }
 
   const tabelaBody = document.getElementById('tabela-vacinas-body');
@@ -44,6 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const toastVacina = document.getElementById('toast-vacina');
   let idVacinaExcluir = null;
+  let vacinasCache = [];
+  let caesCache = [];
 
   function mostrarToast(msg = "Operação realizada com sucesso!") {
     if (!toastVacina) return;
@@ -59,53 +56,82 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3000);
   }
 
-  function salvarVacinas(lista) {
-    localStorage.setItem('canil_vacinas', JSON.stringify(lista));
-    renderizarTabela();
+  function formatarDataBR(isoStr) {
+    if (!isoStr) return '-';
+    const clean = isoStr.split('T')[0];
+    const p = clean.split('-');
+    return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : isoStr;
+  }
+
+  function formatarDataISO(isoStr) {
+    if (!isoStr) return '';
+    return isoStr.split('T')[0];
+  }
+
+  async function carregarDadosDoBackend() {
+    try {
+      // Buscar cães e vacinas em paralelo
+      const [resCaes, resVacinas] = await Promise.all([
+        fetch('http://localhost:3000/api/cachorros', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        }),
+        fetch('http://localhost:3000/api/vacinas', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        })
+      ]);
+
+      if (resCaes.status === 401 || resCaes.status === 403 || resVacinas.status === 401 || resVacinas.status === 403) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (resCaes.ok) {
+        caesCache = await resCaes.json();
+        popularSelectCaes();
+      }
+
+      if (resVacinas.ok) {
+        vacinasCache = await resVacinas.json();
+        renderizarTabela();
+      }
+    } catch (erro) {
+      console.error('Erro ao carregar vacinas/cães:', erro);
+    }
   }
 
   function popularSelectCaes() {
     if (!selectCaoGlobal) return;
-    const caes = lerDadosSalvos('canil_cachorros');
     selectCaoGlobal.innerHTML = '<option value="">Selecione o cachorro...</option>';
 
-    if (caes.length === 0) {
+    if (caesCache.length === 0) {
       selectCaoGlobal.innerHTML = '<option value="">Nenhum cão cadastrado no sistema</option>';
       return;
     }
 
-    caes.forEach(c => {
+    caesCache.forEach(c => {
       const opt = document.createElement('option');
-      opt.value = JSON.stringify({ nome: c.nome, raca: c.raca }); // Sem carregar a foto!
+      opt.value = c.id;
       opt.textContent = `${c.nome} (${c.raca})`;
       selectCaoGlobal.appendChild(opt);
     });
   }
 
-  function formatarDataBR(iso) {
-    if (!iso) return '-';
-    const p = iso.split('-');
-    return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
-  }
-
   function renderizarTabela() {
-    const todasVacinas = lerDadosSalvos('canil_vacinas');
-    const caes = lerDadosSalvos('canil_cachorros');
     const busca = inputBusca ? inputBusca.value.trim().toLowerCase() : '';
 
     const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
     const seteDias = new Date(hoje); seteDias.setDate(hoje.getDate() + 7);
 
-    // Dita a lógica: A tabela global só exibe a dose MAIS RECENTE de cada vacina por cachorro!
+    // Lógica: A tabela global exibe a dose MAIS RECENTE de cada vacina por cachorro
     const activeVacinasMap = {};
-    todasVacinas.forEach(v => {
-        const key = `${(v.caoNome||'').trim().toLowerCase()}_${(v.vacinaNome||'').trim().toLowerCase()}`;
-        if (!activeVacinasMap[key]) {
+    vacinasCache.forEach(v => {
+        const caoNome = (v.cachorro_nome || '').trim().toLowerCase();
+        const vacinaNome = (v.nome_vacina || '').trim().toLowerCase();
+        const key = `${caoNome}_${vacinaNome}`;
+
+        const dataAplicacao = new Date(v.data_aplicacao);
+        if (!activeVacinasMap[key] || dataAplicacao > new Date(activeVacinasMap[key].data_aplicacao)) {
             activeVacinasMap[key] = v;
-        } else {
-            if (new Date(v.dataAplicacaoIso) > new Date(activeVacinasMap[key].dataAplicacaoIso)) {
-                activeVacinasMap[key] = v;
-            }
         }
     });
 
@@ -116,25 +142,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const caesVacinadosSet = new Set();
 
     activeVacinas.forEach(v => {
-      const dtProxima = new Date(v.proximaDoseIso);
+      const dtProxima = new Date(v.proxima_dose);
       if (dtProxima < hoje) {
         totalVencidas++;
       } else {
-        caesVacinadosSet.add((v.caoNome || '').toLowerCase());
+        caesVacinadosSet.add((v.cachorro_nome || '').toLowerCase());
         if (dtProxima <= seteDias) totalVencemBreve++;
       }
     });
 
-    if (statTotalRegistros) statTotalRegistros.textContent = todasVacinas.length; // O KPI mostra TODAS as aplicações históricas
+    if (statTotalRegistros) statTotalRegistros.textContent = vacinasCache.length;
     if (statCaesVacinados) statCaesVacinados.textContent = caesVacinadosSet.size;
-    if (statSubCaes) statSubCaes.textContent = `de ${caes.length} cães no canil`;
+    if (statSubCaes) statSubCaes.textContent = `de ${caesCache.length} cães no canil`;
     if (statVencidas) statVencidas.textContent = totalVencidas;
     if (statVencemBreve) statVencemBreve.textContent = totalVencemBreve;
 
     const filtradas = activeVacinas.filter(v => {
-      const nomeCao = (v.caoNome || '').toLowerCase();
-      const racaCao = (v.caoRaca || '').toLowerCase();
-      const nomeVacina = (v.vacinaNome || '').toLowerCase();
+      const nomeCao = (v.cachorro_nome || '').toLowerCase();
+      const racaCao = (v.cachorro_raca || '').toLowerCase();
+      const nomeVacina = (v.nome_vacina || '').toLowerCase();
 
       let passaFiltro = filtroVacinaAtual === 'Todas' || nomeVacina.includes(filtroVacinaAtual.toLowerCase());
       let passaBusca = busca === '' || nomeCao.includes(busca) || racaCao.includes(busca) || nomeVacina.includes(busca);
@@ -152,17 +178,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (emptyState) emptyState.classList.add('hidden');
 
     filtradas.forEach(v => {
-      const dtProxima = new Date(v.proximaDoseIso);
+      const dtProxima = new Date(v.proxima_dose);
       const estaVencida = dtProxima < hoje;
 
-      const textoProxima = estaVencida ? 'Vencida!' : v.proximaDose;
+      const textoProxima = estaVencida ? 'Vencida!' : formatarDataBR(v.proxima_dose);
       const corTextoProxima = estaVencida ? 'text-[#B45309]' : 'text-[#10B981]';
       const badgeTexto = estaVencida ? 'Pendente' : 'Em dia';
       const badgeClasse = estaVencida ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#D1FAE5] text-[#10B981]';
 
-      const caoRef = caes.find(c => c.nome === v.caoNome) || {};
-      const fotoExibicao = caoRef.foto || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=100';
-      const racaExibicao = caoRef.raca || v.caoRaca || '';
+      const fotoExibicao = v.cachorro_foto || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=100';
+      const racaExibicao = v.cachorro_raca || '';
 
       const tr = document.createElement('tr');
       tr.className = "hover:bg-[#FAF8F5] transition-colors text-xs border-b border-[#FAFAF9]";
@@ -171,13 +196,13 @@ document.addEventListener('DOMContentLoaded', () => {
         <td class="py-3.5 px-5">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full overflow-hidden bg-bege flex-shrink-0 border border-[#EFECE6]">
-              <img src="${fotoExibicao}" alt="${v.caoNome}" class="w-full h-full object-cover">
+              <img src="${fotoExibicao}" alt="${v.cachorro_nome}" class="w-full h-full object-cover">
             </div>
-            <div><div class="font-bold text-[#111827]">${v.caoNome}</div><div class="text-[10px] text-[#6B7280]">${racaExibicao}</div></div>
+            <div><div class="font-bold text-[#111827]">${v.cachorro_nome}</div><div class="text-[10px] text-[#6B7280]">${racaExibicao}</div></div>
           </div>
         </td>
-        <td class="py-3.5 px-5 font-bold text-[#111827]">${v.vacinaNome}</td>
-        <td class="py-3.5 px-5 text-[#6B7280]">${v.dataAplicacao}</td>
+        <td class="py-3.5 px-5 font-bold text-[#111827]">${v.nome_vacina}</td>
+        <td class="py-3.5 px-5 text-[#6B7280]">${formatarDataBR(v.data_aplicacao)}</td>
         <td class="py-3.5 px-5 font-bold ${corTextoProxima}">${textoProxima}</td>
         <td class="py-3.5 px-5"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClasse}">${badgeTexto}</span></td>
         <td class="py-3.5 px-5 text-right">
@@ -216,40 +241,47 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCancelarModalGlobal) btnCancelarModalGlobal.onclick = fecharModalCadastrar;
 
   if (formGlobal) {
-    formGlobal.onsubmit = (e) => {
+    formGlobal.onsubmit = async (e) => {
       e.preventDefault();
       if (!selectCaoGlobal || !selectCaoGlobal.value) { alert("Por favor, selecione um cachorro."); return; }
 
-      const caoObj = JSON.parse(selectCaoGlobal.value);
-      const dtDoseRaw = document.getElementById('vglobal-data-dose').value;
-      const dtProximaRaw = document.getElementById('vglobal-data-proxima').value;
+      const cachorro_id = parseInt(selectCaoGlobal.value);
+      const nome_vacina = document.getElementById('vglobal-nome').value.trim();
+      const data_aplicacao = document.getElementById('vglobal-data-dose').value;
+      const proxima_dose = document.getElementById('vglobal-data-proxima').value;
 
-      const vacinas = lerDadosSalvos('canil_vacinas');
-      
-      vacinas.unshift({
-        id: Date.now(),
-        caoNome: caoObj.nome, 
-        caoRaca: caoObj.raca,
-        vacinaNome: document.getElementById('vglobal-nome').value.trim(),
-        descVacina: 'Proteção preventiva',
-        dataAplicacao: formatarDataBR(dtDoseRaw), 
-        proximaDose: formatarDataBR(dtProximaRaw),
-        dataAplicacaoIso: dtDoseRaw, 
-        proximaDoseIso: dtProximaRaw
-      });
+      try {
+        const resposta = await fetch('http://localhost:3000/api/vacinas', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ cachorro_id, nome_vacina, data_aplicacao, proxima_dose })
+        });
 
-      salvarVacinas(vacinas);
-      fecharModalCadastrar();
-      mostrarToast(`Vacina registrada para ${caoObj.nome}!`);
+        if (resposta.ok) {
+          fecharModalCadastrar();
+          const cao = caesCache.find(c => c.id === cachorro_id);
+          mostrarToast(`Vacina registrada${cao ? ' para ' + cao.nome : ''}!`);
+          await carregarDadosDoBackend();
+        } else {
+          const erro = await resposta.json();
+          alert(erro.mensagem || 'Erro ao cadastrar vacina.');
+        }
+      } catch (err) {
+        console.error('Erro no cadastramento de vacina:', err);
+        alert('Erro ao conectar ao servidor.');
+      }
     };
   }
 
   function abrirModalEditar(vacina) {
     document.getElementById('veditar-id').value = vacina.id;
-    document.getElementById('veditar-cao-nome').value = `${vacina.caoNome} (${vacina.caoRaca || ''})`;
-    document.getElementById('veditar-nome').value = vacina.vacinaNome;
-    document.getElementById('veditar-data-dose').value = vacina.dataAplicacaoIso || '';
-    document.getElementById('veditar-data-proxima').value = vacina.proximaDoseIso || '';
+    document.getElementById('veditar-cao-nome').value = `${vacina.cachorro_nome} (${vacina.cachorro_raca || ''})`;
+    document.getElementById('veditar-nome').value = vacina.nome_vacina;
+    document.getElementById('veditar-data-dose').value = formatarDataISO(vacina.data_aplicacao);
+    document.getElementById('veditar-data-proxima').value = formatarDataISO(vacina.proxima_dose);
 
     if (modalEditar) {
       modalEditar.classList.remove('hidden');
@@ -269,32 +301,41 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCancelarModalEditar) btnCancelarModalEditar.onclick = fecharModalEditar;
 
   if (formEditar) {
-    formEditar.onsubmit = (e) => {
+    formEditar.onsubmit = async (e) => {
       e.preventDefault();
-      const id = parseInt(document.getElementById('veditar-id').value);
-      const dtDoseRaw = document.getElementById('veditar-data-dose').value;
-      const dtProximaRaw = document.getElementById('veditar-data-proxima').value;
+      const id = document.getElementById('veditar-id').value;
+      const nome_vacina = document.getElementById('veditar-nome').value.trim();
+      const data_aplicacao = document.getElementById('veditar-data-dose').value;
+      const proxima_dose = document.getElementById('veditar-data-proxima').value;
 
-      const vacinas = lerDadosSalvos('canil_vacinas');
-      const idx = vacinas.findIndex(v => v.id === id);
+      try {
+        const resposta = await fetch(`http://localhost:3000/api/vacinas/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nome_vacina, data_aplicacao, proxima_dose })
+        });
 
-      if (idx !== -1) {
-        vacinas[idx].vacinaNome = document.getElementById('veditar-nome').value.trim();
-        vacinas[idx].dataAplicacaoIso = dtDoseRaw;
-        vacinas[idx].proximaDoseIso = dtProximaRaw;
-        vacinas[idx].dataAplicacao = formatarDataBR(dtDoseRaw);
-        vacinas[idx].proximaDose = formatarDataBR(dtProximaRaw);
-
-        salvarVacinas(vacinas);
-        fecharModalEditar();
-        mostrarToast("Vacina atualizada com sucesso!");
+        if (resposta.ok) {
+          fecharModalEditar();
+          mostrarToast("Vacina atualizada com sucesso!");
+          await carregarDadosDoBackend();
+        } else {
+          const erro = await resposta.json();
+          alert(erro.mensagem || 'Erro ao atualizar vacina.');
+        }
+      } catch (err) {
+        console.error('Erro na atualização da vacina:', err);
+        alert('Erro ao conectar ao servidor.');
       }
     };
   }
 
   function abrirModalExcluir(vacina) {
     idVacinaExcluir = vacina.id;
-    if (textoConfirmacaoExclusao) textoConfirmacaoExclusao.textContent = `Tem certeza que deseja excluir a vacina ${vacina.vacinaNome} de ${vacina.caoNome}?`;
+    if (textoConfirmacaoExclusao) textoConfirmacaoExclusao.textContent = `Tem certeza que deseja excluir a vacina ${vacina.nome_vacina} de ${vacina.cachorro_nome}?`;
     if (modalExcluir) {
       modalExcluir.classList.remove('hidden');
       setTimeout(() => { modalExcluir.classList.remove('opacity-0'); const t = modalExcluir.querySelector('.transform'); if (t) t.classList.remove('scale-95'); }, 10);
@@ -312,12 +353,26 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCancelarExcluir) btnCancelarExcluir.onclick = fecharModalExcluir;
 
   if (btnConfirmarExcluir) {
-    btnConfirmarExcluir.onclick = () => {
-      if (idVacinaExcluir) {
-        let vacinas = lerDadosSalvos('canil_vacinas').filter(v => v.id !== idVacinaExcluir);
-        salvarVacinas(vacinas);
-        fecharModalExcluir();
-        mostrarToast("Vacina excluída do sistema.");
+    btnConfirmarExcluir.onclick = async () => {
+      if (!idVacinaExcluir) return;
+
+      try {
+        const resposta = await fetch(`http://localhost:3000/api/vacinas/${idVacinaExcluir}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (resposta.ok) {
+          fecharModalExcluir();
+          mostrarToast("Vacina excluída do sistema.");
+          await carregarDadosDoBackend();
+        } else {
+          const erro = await resposta.json();
+          alert(erro.mensagem || 'Erro ao excluir vacina.');
+        }
+      } catch (err) {
+        console.error('Erro na exclusão de vacina:', err);
+        alert('Erro ao conectar ao servidor.');
       }
     };
   }
@@ -337,5 +392,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  renderizarTabela();
+  carregarDadosDoBackend();
 });

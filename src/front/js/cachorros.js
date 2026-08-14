@@ -35,6 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnConfirmarExclusaoCio = document.getElementById('btn-confirmar-exclusao-cio');
   let idCioParaExcluir = null;
 
+  const modalExcluirNinhadaFicha = document.getElementById('modal-excluir-ninhada-ficha');
+  const modalExcluirNinhadaFichaContent = modalExcluirNinhadaFicha ? modalExcluirNinhadaFicha.querySelector('.transform') : null;
+  const btnCancelarExclusaoNinhadaFicha = document.getElementById('btn-cancelar-exclusao-ninhada-ficha');
+  const btnConfirmarExclusaoNinhadaFicha = document.getElementById('btn-confirmar-exclusao-ninhada-ficha');
+  let ninhadaIdParaExcluirFicha = null;
+
   const detalheFoto = document.getElementById('detalhe-foto');
   const detalheNome = document.getElementById('detalhe-nome');
   const detalheBadgeSexo = document.getElementById('detalhe-badge-sexo');
@@ -340,176 +346,252 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- NOVA FUNÇÃO: CARREGAR NINHADAS (MATERNIDADE) DA FICHA ---
-  function carregarNinhadasDaFicha(nomeCao) {
+  async function carregarNinhadasDaFicha(nomeCao) {
     const containerNinhadas = document.getElementById('lista-ninhadas-container');
     const emptyStateNinhadas = document.getElementById('empty-state-ninhadas');
     if (!containerNinhadas) return;
 
     containerNinhadas.innerHTML = '';
-    const ninhadas = lerDadosSalvos('canil_ninhadas');
-    const ninhadasDaFicha = ninhadas.filter(n => (n.maeNome || '').toLowerCase() === nomeCao.toLowerCase());
+    const token = localStorage.getItem('token');
+    const cachorroId = cardAtualEmExibicao?.dataset?.cachorroId;
+    if (!token) return;
 
-    // Ordenar as ninhadas pela mais recente
-    ninhadasDaFicha.sort((a, b) => new Date(b.dataIso) - new Date(a.dataIso));
-
-    if (ninhadasDaFicha.length > 0) {
-      if (emptyStateNinhadas) emptyStateNinhadas.classList.add('hidden');
-      
-      ninhadasDaFicha.forEach(n => {
-        const badgeParto = n.tipoParto === 'Natural' ? 'bg-[#D1FAE5] text-[#10B981]' : 'bg-[#FEF3C7] text-[#D97706]';
-        const badgeAmamentando = n.amamentando ? `<span class="bg-[#D1FAE5] text-[#10B981] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-wide">Amamentando</span>` : '';
-        const totalFilhotes = n.machos + n.femeas;
-
-        const itemHTML = `
-          <div class="bg-[#FAF8F5] border border-[#EFECE6] hover:border-pink-300 rounded-2xl p-5 text-xs transition-all shadow-sm">
-            <div class="flex justify-between items-start mb-4">
-              <div>
-                <h4 class="font-bold text-[#111827] text-sm mb-0.5">Parto em ${n.dataBr}</h4>
-                <p class="text-[11px] text-[#6B7280]">Padreador (Pai): ${n.paiNome}</p>
-              </div>
-              <div class="flex items-center gap-2">
-                ${badgeAmamentando}
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeParto}">${n.tipoParto}</span>
-              </div>
-            </div>
-            
-            <div class="grid grid-cols-4 gap-3 text-center bg-white border border-[#EFECE6] rounded-xl p-3 shadow-sm">
-              <div>
-                <div class="font-extrabold text-[#111827] text-base">${totalFilhotes}</div>
-                <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Total</div>
-              </div>
-              <div>
-                <div class="font-extrabold text-[#111827] text-base">${n.machos}</div>
-                <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Machos</div>
-              </div>
-              <div>
-                <div class="font-extrabold text-[#111827] text-base">${n.femeas}</div>
-                <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Fêmeas</div>
-              </div>
-              <div>
-                <div class="font-extrabold text-[#111827] text-base">${n.pesoMedio}g</div>
-                <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Peso Médio</div>
-              </div>
-            </div>
-          </div>
-        `;
-        containerNinhadas.insertAdjacentHTML('beforeend', itemHTML);
+    try {
+      const resposta = await fetch('http://localhost:3000/api/ninhadas', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token }
       });
-    } else {
-      if (emptyStateNinhadas) emptyStateNinhadas.classList.remove('hidden');
+
+      if (!resposta.ok) return;
+
+      const todasNinhadas = await resposta.json();
+      const ninhadasDaFicha = todasNinhadas.filter(n =>
+        (cachorroId && String(n.mae_id) === String(cachorroId)) ||
+        ((n.mae_nome || '').toLowerCase() === (nomeCao || '').toLowerCase())
+      );
+
+      ninhadasDaFicha.sort((a, b) => new Date(b.data_nascimento) - new Date(a.data_nascimento));
+
+      if (ninhadasDaFicha.length > 0) {
+        if (emptyStateNinhadas) emptyStateNinhadas.classList.add('hidden');
+        
+        ninhadasDaFicha.forEach(n => {
+          let extra = {};
+          try {
+            extra = typeof n.observacoes === 'string' ? JSON.parse(n.observacoes) : (n.observacoes || {});
+          } catch (e) {
+            extra = { obsTexto: n.observacoes };
+          }
+
+          const paiNome = extra.paiNome || 'Não informado';
+          const tipoParto = extra.tipoParto || 'Natural';
+          const machos = extra.machos ?? (n.quantidade_filhotes || 0);
+          const femeas = extra.femeas ?? 0;
+          const totalFilhotes = n.quantidade_filhotes ?? (machos + femeas);
+          const pesoMedio = extra.pesoMedio ?? 0;
+          const amamentando = extra.amamentando ?? false;
+          const dataBr = n.data_nascimento ? formatarDataBR(String(n.data_nascimento).split('T')[0]) : '-';
+
+          const badgeParto = tipoParto === 'Natural' ? 'bg-[#D1FAE5] text-[#10B981]' : 'bg-[#FEF3C7] text-[#D97706]';
+          const badgeAmamentando = amamentando ? `<span class="bg-[#D1FAE5] text-[#10B981] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-wide">Amamentando</span>` : '';
+
+          const itemHTML = `
+            <div class="bg-[#FAF8F5] border border-[#EFECE6] hover:border-pink-300 rounded-2xl p-5 text-xs transition-all shadow-sm" data-ninhada-id="${n.id}">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h4 class="font-bold text-[#111827] text-sm mb-0.5">Parto em ${dataBr}</h4>
+                  <p class="text-[11px] text-[#6B7280]">Padreador (Pai): ${paiNome}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  ${badgeAmamentando}
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeParto}">${tipoParto}</span>
+                  <a href="maternidade.html" class="p-1 text-gray-400 hover:text-laranja hover:bg-orange-50 rounded transition-colors" title="Editar na Maternidade"><i class="ri-pencil-line text-sm"></i></a>
+                  <button type="button" class="btn-excluir-ninhada-ficha p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors" title="Excluir Ninhada"><i class="ri-delete-bin-line text-sm"></i></button>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-4 gap-3 text-center bg-white border border-[#EFECE6] rounded-xl p-3 shadow-sm">
+                <div>
+                  <div class="font-extrabold text-[#111827] text-base">${totalFilhotes}</div>
+                  <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Total</div>
+                </div>
+                <div>
+                  <div class="font-extrabold text-[#111827] text-base">${machos}</div>
+                  <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Machos</div>
+                </div>
+                <div>
+                  <div class="font-extrabold text-[#111827] text-base">${femeas}</div>
+                  <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">F\u00eameas</div>
+                </div>
+                <div>
+                  <div class="font-extrabold text-[#111827] text-base">${pesoMedio}g</div>
+                  <div class="text-[9px] text-[#6B7280] uppercase tracking-wider font-bold mt-0.5">Peso M\u00e9dio</div>
+                </div>
+              </div>
+            </div>
+          `;
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = itemHTML;
+          const itemEl = tempDiv.firstElementChild;
+          itemEl.querySelector('.btn-excluir-ninhada-ficha').addEventListener('click', () => {
+            abrirModalExcluirNinhadaFicha(n.id, nomeCao);
+          });
+          containerNinhadas.appendChild(itemEl);
+        });
+      } else {
+        if (emptyStateNinhadas) emptyStateNinhadas.classList.remove('hidden');
+      }
+    } catch (err) {
+      console.error("Erro ao carregar ninhadas da ficha:", err);
     }
   }
 
   // --- LÓGICA DE HISTÓRICO DE VACINAS (AGRUPAMENTO) ---
-  function carregarVacinasDaFicha(nomeCao) {
+  async function carregarVacinasDaFicha(nomeCao) {
     const containerVacinas = document.getElementById('lista-vacinas-container');
     const emptyStateVacinas = document.getElementById('empty-state-vacinas-detalhe');
     if (!containerVacinas) return;
     
     containerVacinas.innerHTML = '';
-    const todasVacinas = lerDadosSalvos('canil_vacinas');
-    const vacinasDoCao = todasVacinas.filter(v => (v.caoNome || '').toLowerCase() === nomeCao.toLowerCase());
+    const token = localStorage.getItem('token');
+    const cachorroId = cardAtualEmExibicao?.dataset?.cachorroId;
+    if (!token) return;
 
-    if (vacinasDoCao.length > 0) {
-      if (emptyStateVacinas) emptyStateVacinas.classList.add('hidden');
-
-      // Agrupar as vacinas pelo nome (ex: "V10")
-      const vacinasAgrupadas = {};
-      vacinasDoCao.forEach(v => {
-        const nomeKey = v.vacinaNome.trim().toLowerCase();
-        if (!vacinasAgrupadas[nomeKey]) vacinasAgrupadas[nomeKey] = { nomeExibicao: v.vacinaNome, desc: v.descVacina, doses: [] };
-        vacinasAgrupadas[nomeKey].doses.push(v);
+    try {
+      const resposta = await fetch('http://localhost:3000/api/vacinas', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token }
       });
 
-      Object.values(vacinasAgrupadas).forEach(grupo => {
-        grupo.doses.sort((a, b) => new Date(b.dataAplicacaoIso) - new Date(a.dataAplicacaoIso));
-        const ultimaDose = grupo.doses[0];
+      if (!resposta.ok) return;
 
-        const dtProxima = new Date(ultimaDose.proximaDoseIso);
-        const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
-        const estaVencida = dtProxima < hoje;
+      const todasVacinas = await resposta.json();
+      
+      // Atualiza o cache local para notificações
+      localStorage.setItem('canil_vacinas', JSON.stringify(todasVacinas.map(v => ({
+        id: v.id,
+        caoNome: v.cachorro_nome,
+        caoRaca: v.cachorro_raca,
+        vacinaNome: v.nome_vacina,
+        descVacina: 'Proteção preventiva',
+        dataAplicacao: v.data_aplicacao ? formatarDataBR(String(v.data_aplicacao).split('T')[0]) : '-',
+        proximaDose: v.proxima_dose ? formatarDataBR(String(v.proxima_dose).split('T')[0]) : '-',
+        dataAplicacaoIso: v.data_aplicacao ? String(v.data_aplicacao).split('T')[0] : '',
+        proximaDoseIso: v.proxima_dose ? String(v.proxima_dose).split('T')[0] : ''
+      }))));
 
-        const textoProxima = estaVencida ? 'Vencida!' : ultimaDose.proximaDose;
-        const corTextoProxima = estaVencida ? 'text-[#B45309]' : 'text-[#10B981]';
-        const badgeTexto = estaVencida ? 'Pendente' : 'Em dia';
-        const badgeClasse = estaVencida ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#D1FAE5] text-[#10B981]';
+      const vacinasDoCao = todasVacinas.filter(v => 
+        (cachorroId && String(v.cachorro_id) === String(cachorroId)) ||
+        ((v.cachorro_nome || '').toLowerCase() === (nomeCao || '').toLowerCase())
+      );
 
-        let historicoHTML = '';
-        if (grupo.doses.length > 1) {
-          const linhasHist = grupo.doses.slice(1).map(d => `
-            <div class="flex items-center justify-between py-2 px-3 bg-white border border-[#EFECE6] rounded-xl group/linha">
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-[#111827]">${d.dataAplicacao}</span>
-                <span class="text-[10px] text-[#6B7280] font-medium">(Próx: ${d.proximaDose})</span>
-              </div>
-              <div class="flex gap-1 opacity-0 group-hover/linha:opacity-100 transition-opacity">
-                  <button type="button" class="btn-editar-hist-vacina text-gray-400 hover:text-laranja p-1 transition-colors" data-id="${d.id}"><i class="ri-edit-line text-sm"></i></button>
-                  <button type="button" class="btn-excluir-hist-vacina text-gray-400 hover:text-red-500 p-1 transition-colors" data-id="${d.id}"><i class="ri-delete-bin-line text-sm"></i></button>
-              </div>
-            </div>
-          `).join('');
+      if (vacinasDoCao.length > 0) {
+        if (emptyStateVacinas) emptyStateVacinas.classList.add('hidden');
 
-          historicoHTML = `
-            <div class="mt-3 pt-2.5 border-t border-[#EFECE6]">
-              <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Histórico de Doses Anteriores (${grupo.doses.length - 1})</div>
-              <div class="space-y-1.5 text-xs">
-                ${linhasHist}
-              </div>
-            </div>
-          `;
-        }
+        // Agrupar as vacinas pelo nome (ex: "V10")
+        const vacinasAgrupadas = {};
+        vacinasDoCao.forEach(v => {
+          const nomeKey = (v.nome_vacina || '').trim().toLowerCase();
+          if (!vacinasAgrupadas[nomeKey]) vacinasAgrupadas[nomeKey] = { nomeExibicao: v.nome_vacina, desc: 'Proteção preventiva', doses: [] };
+          vacinasAgrupadas[nomeKey].doses.push(v);
+        });
 
-        const cardHTML = document.createElement('div');
-        cardHTML.className = "bg-[#FAF8F5] border border-[#EFECE6] hover:border-laranja/50 rounded-2xl p-4 text-xs transition-all group";
-        cardHTML.innerHTML = `
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] text-laranja flex items-center justify-center"><i class="ri-syringe-line text-lg"></i></div>
-              <div>
-                <h4 class="font-bold text-[#111827] text-sm">${grupo.nomeExibicao}</h4>
-                <p class="text-[11px] text-[#6B7280]">${grupo.desc || 'Proteção preventiva'}</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClasse}">${badgeTexto}</span>
-                <div class="flex items-center gap-1 bg-white border border-[#EFECE6] rounded-xl p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <button class="btn-nova-dose p-1 text-laranja hover:bg-orange-50 transition-colors rounded" title="Registrar Nova Dose"><i class="ri-add-line text-sm"></i></button>
-                  <button class="btn-editar-ultima p-1 text-gray-400 hover:text-laranja transition-colors" title="Editar Última Dose"><i class="ri-edit-line text-sm"></i></button>
-                  <button class="btn-excluir-ultima p-1 text-gray-400 hover:text-red-500 transition-colors" title="Excluir Última Dose"><i class="ri-delete-bin-line text-sm"></i></button>
+        Object.values(vacinasAgrupadas).forEach(grupo => {
+          grupo.doses.sort((a, b) => new Date(b.data_aplicacao) - new Date(a.data_aplicacao));
+          const ultimaDose = grupo.doses[0];
+
+          const dtProximaStr = String(ultimaDose.proxima_dose).split('T')[0];
+          const dtProxima = new Date(dtProximaStr + 'T00:00:00');
+          const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+          const estaVencida = dtProxima < hoje;
+
+          const textoProxima = estaVencida ? 'Vencida!' : formatarDataBR(dtProximaStr);
+          const corTextoProxima = estaVencida ? 'text-[#B45309]' : 'text-[#10B981]';
+          const badgeTexto = estaVencida ? 'Pendente' : 'Em dia';
+          const badgeClasse = estaVencida ? 'bg-[#FEF3C7] text-[#B45309]' : 'bg-[#D1FAE5] text-[#10B981]';
+
+          let historicoHTML = '';
+          if (grupo.doses.length > 1) {
+            const linhasHist = grupo.doses.slice(1).map(d => {
+              const dtAppStr = String(d.data_aplicacao).split('T')[0];
+              const dtProxStr = String(d.proxima_dose).split('T')[0];
+              return `
+                <div class="flex items-center justify-between py-2 px-3 bg-white border border-[#EFECE6] rounded-xl group/linha">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-[#111827]">${formatarDataBR(dtAppStr)}</span>
+                    <span class="text-[10px] text-[#6B7280] font-medium">(Próx: ${formatarDataBR(dtProxStr)})</span>
+                  </div>
+                  <div class="flex gap-1 opacity-0 group-hover/linha:opacity-100 transition-opacity">
+                      <button type="button" class="btn-editar-hist-vacina text-gray-400 hover:text-laranja p-1 transition-colors" data-id="${d.id}"><i class="ri-edit-line text-sm"></i></button>
+                      <button type="button" class="btn-excluir-hist-vacina text-gray-400 hover:text-red-500 p-1 transition-colors" data-id="${d.id}"><i class="ri-delete-bin-line text-sm"></i></button>
+                  </div>
                 </div>
+              `;
+            }).join('');
+
+            historicoHTML = `
+              <div class="mt-3 pt-2.5 border-t border-[#EFECE6]">
+                <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Histórico de Doses Anteriores (${grupo.doses.length - 1})</div>
+                <div class="space-y-1.5 text-xs">
+                  ${linhasHist}
+                </div>
+              </div>
+            `;
+          }
+
+          const cardHTML = document.createElement('div');
+          cardHTML.className = "bg-[#FAF8F5] border border-[#EFECE6] hover:border-laranja/50 rounded-2xl p-4 text-xs transition-all group";
+          cardHTML.innerHTML = `
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-[#FEF3C7] text-laranja flex items-center justify-center"><i class="ri-syringe-line text-lg"></i></div>
+                <div>
+                  <h4 class="font-bold text-[#111827] text-sm">${grupo.nomeExibicao}</h4>
+                  <p class="text-[11px] text-[#6B7280]">${grupo.desc || 'Proteção preventiva'}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClasse}">${badgeTexto}</span>
+                  <div class="flex items-center gap-1 bg-white border border-[#EFECE6] rounded-xl p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button class="btn-nova-dose p-1 text-laranja hover:bg-orange-50 transition-colors rounded" title="Registrar Nova Dose"><i class="ri-add-line text-sm"></i></button>
+                    <button class="btn-editar-ultima p-1 text-gray-400 hover:text-laranja transition-colors" title="Editar Última Dose"><i class="ri-edit-line text-sm"></i></button>
+                    <button class="btn-excluir-ultima p-1 text-gray-400 hover:text-red-500 transition-colors" title="Excluir Última Dose"><i class="ri-delete-bin-line text-sm"></i></button>
+                  </div>
+              </div>
             </div>
-          </div>
-          
-          <div class="grid grid-cols-2 gap-4 bg-white border border-[#EFECE6] rounded-xl p-3 shadow-sm">
-            <div><div class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider mb-0.5">Última aplicação</div><div class="font-bold text-[#111827] text-sm">${ultimaDose.dataAplicacao}</div></div>
-            <div class="text-right"><div class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider mb-0.5">Próxima dose</div><div class="font-bold ${corTextoProxima} text-sm">${textoProxima}</div></div>
-          </div>
-          ${historicoHTML}
-        `;
+            
+            <div class="grid grid-cols-2 gap-4 bg-white border border-[#EFECE6] rounded-xl p-3 shadow-sm">
+              <div><div class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider mb-0.5">Última aplicação</div><div class="font-bold text-[#111827] text-sm">${formatarDataBR(String(ultimaDose.data_aplicacao).split('T')[0])}</div></div>
+              <div class="text-right"><div class="text-[10px] text-[#6B7280] uppercase font-bold tracking-wider mb-0.5">Próxima dose</div><div class="font-bold ${corTextoProxima} text-sm">${textoProxima}</div></div>
+            </div>
+            ${historicoHTML}
+          `;
 
-        cardHTML.querySelector('.btn-nova-dose').onclick = () => {
-          abrirModalVacina("Registrar Nova Dose");
-          document.getElementById('vacina-nome').value = grupo.nomeExibicao;
-          document.getElementById('vacina-desc').value = grupo.desc;
-        };
-        cardHTML.querySelector('.btn-editar-ultima').onclick = () => editarVacinaExistente(ultimaDose);
-        cardHTML.querySelector('.btn-excluir-ultima').onclick = () => excluirVacinaExistente(ultimaDose.id);
+          cardHTML.querySelector('.btn-nova-dose').onclick = () => {
+            abrirModalVacina("Registrar Nova Dose");
+            document.getElementById('vacina-nome').value = grupo.nomeExibicao;
+          };
+          cardHTML.querySelector('.btn-editar-ultima').onclick = () => editarVacinaExistente(ultimaDose);
+          cardHTML.querySelector('.btn-excluir-ultima').onclick = () => excluirVacinaExistente(ultimaDose.id);
 
-        cardHTML.querySelectorAll('.btn-editar-hist-vacina').forEach(btn => {
-            btn.onclick = () => {
-                const dose = grupo.doses.find(d => d.id === parseInt(btn.dataset.id));
-                if(dose) editarVacinaExistente(dose);
-            }
+          cardHTML.querySelectorAll('.btn-editar-hist-vacina').forEach(btn => {
+              btn.onclick = () => {
+                  const dose = grupo.doses.find(d => d.id === parseInt(btn.dataset.id));
+                  if(dose) editarVacinaExistente(dose);
+              }
+          });
+          cardHTML.querySelectorAll('.btn-excluir-hist-vacina').forEach(btn => {
+              btn.onclick = () => excluirVacinaExistente(parseInt(btn.dataset.id));
+          });
+
+          containerVacinas.appendChild(cardHTML);
         });
-        cardHTML.querySelectorAll('.btn-excluir-hist-vacina').forEach(btn => {
-            btn.onclick = () => excluirVacinaExistente(parseInt(btn.dataset.id));
-        });
 
-        containerVacinas.appendChild(cardHTML);
-      });
-
-    } else {
-      if (emptyStateVacinas) emptyStateVacinas.classList.remove('hidden');
+      } else {
+        if (emptyStateVacinas) emptyStateVacinas.classList.remove('hidden');
+      }
+    } catch (err) {
+      console.error("Erro ao carregar vacinas da ficha:", err);
     }
   }
 
@@ -689,10 +771,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function editarVacinaExistente(vacina) {
     idVacinaEmEdicao = vacina.id;
-    document.getElementById('vacina-nome').value = vacina.vacinaNome;
-    document.getElementById('vacina-desc').value = vacina.descVacina || '';
-    document.getElementById('vacina-data-dose').value = vacina.dataAplicacaoIso;
-    document.getElementById('vacina-data-proxima').value = vacina.proximaDoseIso;
+    const nomeVacinaInput = document.getElementById('vacina-nome');
+    const descVacinaInput = document.getElementById('vacina-desc');
+    const dtDoseInput = document.getElementById('vacina-data-dose');
+    const dtProxInput = document.getElementById('vacina-data-proxima');
+
+    if (nomeVacinaInput) nomeVacinaInput.value = vacina.nome_vacina || vacina.vacinaNome || '';
+    if (descVacinaInput) descVacinaInput.value = vacina.descVacina || 'Proteção preventiva';
+
+    const dtAppIso = vacina.data_aplicacao ? String(vacina.data_aplicacao).split('T')[0] : (vacina.dataAplicacaoIso || '');
+    const dtProxIso = vacina.proxima_dose ? String(vacina.proxima_dose).split('T')[0] : (vacina.proximaDoseIso || '');
+
+    if (dtDoseInput) dtDoseInput.value = dtAppIso;
+    if (dtProxInput) dtProxInput.value = dtProxIso;
 
     const modalTitulo = modalVacina ? modalVacina.querySelector('h3') : null;
     if (modalTitulo) modalTitulo.textContent = "Editar Dose de Vacina";
@@ -707,13 +798,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function excluirVacinaExistente(id) {
-    if(confirm("Tem certeza que deseja remover este registro de dose?")) {
-        let vacinas = lerDadosSalvos('canil_vacinas');
-        vacinas = vacinas.filter(v => v.id !== id);
-        localStorage.setItem('canil_vacinas', JSON.stringify(vacinas));
-        if (cardAtualEmExibicao) abrirDetalhesDoCao(cardAtualEmExibicao);
+  async function excluirVacinaExistente(id) {
+    if (!confirm("Tem certeza que deseja remover este registro de dose?")) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const resposta = await fetch(`http://localhost:3000/api/vacinas/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+
+      if (resposta.ok) {
         mostrarToast("Dose removida!");
+        const caoNome = detalheNome?.textContent?.trim() || '';
+        await carregarVacinasDaFicha(caoNome);
+      } else {
+        const erro = await resposta.json();
+        alert(erro.mensagem || "Erro ao excluir vacina.");
+      }
+    } catch (err) {
+      console.error("Erro ao excluir vacina:", err);
+      alert("Erro de conexão ao excluir vacina.");
     }
   }
 
@@ -731,49 +838,57 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCancelarModalVacina) btnCancelarModalVacina.onclick = (e) => { e.preventDefault(); fecharModalVacina(); };
 
   if (formRegistrarVacina) {
-    formRegistrarVacina.onsubmit = (e) => {
+    formRegistrarVacina.onsubmit = async (e) => {
       e.preventDefault();
+      const token = localStorage.getItem('token');
+      const cachorroId = cardAtualEmExibicao?.dataset?.cachorroId;
       const nomeVacina = document.getElementById('vacina-nome')?.value.trim();
-      const descVacina = document.getElementById('vacina-desc')?.value.trim() || 'Proteção preventiva';
       const dataDoseRaw = document.getElementById('vacina-data-dose')?.value;
       const dataProximaRaw = document.getElementById('vacina-data-proxima')?.value;
 
-      if (!nomeVacina || !dataDoseRaw || !dataProximaRaw) return;
-
-      const p1 = dataDoseRaw.split('-');
-      const p2 = dataProximaRaw.split('-');
-      const dataFmtDose = `${p1[2]}/${p1[1]}/${p1[0]}`;
-      const dataFmtProxima = `${p2[2]}/${p2[1]}/${p2[0]}`;
-
-      const caoNome = detalheNome?.textContent?.trim() || 'Cão';
-      const caoRaca = detalheRaca?.textContent?.trim() || '';
-
-      const vacinasSalvas = lerDadosSalvos('canil_vacinas');
-      
-      const objVacina = {
-        caoNome: caoNome, 
-        caoRaca: caoRaca, 
-        vacinaNome: nomeVacina, 
-        descVacina: descVacina,
-        dataAplicacao: dataFmtDose, 
-        proximaDose: dataFmtProxima,
-        dataAplicacaoIso: dataDoseRaw, 
-        proximaDoseIso: dataProximaRaw
-      };
-
-      if (idVacinaEmEdicao) {
-          const index = vacinasSalvas.findIndex(v => v.id === idVacinaEmEdicao);
-          if (index !== -1) {
-              vacinasSalvas[index] = { ...vacinasSalvas[index], ...objVacina };
-          }
-      } else {
-          vacinasSalvas.unshift({ id: Date.now(), ...objVacina });
+      if (!token || !cachorroId || !nomeVacina || !dataDoseRaw || !dataProximaRaw) {
+        alert("Por favor, preencha todos os campos obrigatórios.");
+        return;
       }
 
-      localStorage.setItem('canil_vacinas', JSON.stringify(vacinasSalvas));
-      fecharModalVacina();
-      if (cardAtualEmExibicao) abrirDetalhesDoCao(cardAtualEmExibicao);
-      mostrarToast(idVacinaEmEdicao ? "Vacina atualizada!" : `Nova dose salva para ${caoNome}!`);
+      const caoNome = detalheNome?.textContent?.trim() || 'Cão';
+
+      try {
+        let url = 'http://localhost:3000/api/vacinas';
+        let method = 'POST';
+        let bodyPayload = {
+          cachorro_id: parseInt(cachorroId),
+          nome_vacina: nomeVacina,
+          data_aplicacao: dataDoseRaw,
+          proxima_dose: dataProximaRaw
+        };
+
+        if (idVacinaEmEdicao) {
+          url = `http://localhost:3000/api/vacinas/${idVacinaEmEdicao}`;
+          method = 'PUT';
+        }
+
+        const resposta = await fetch(url, {
+          method: method,
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(bodyPayload)
+        });
+
+        if (resposta.ok) {
+          fecharModalVacina();
+          mostrarToast(idVacinaEmEdicao ? "Vacina atualizada!" : `Nova dose salva para ${caoNome}!`);
+          await carregarVacinasDaFicha(caoNome);
+        } else {
+          const erro = await resposta.json();
+          alert(erro.mensagem || "Erro ao salvar vacina.");
+        }
+      } catch (err) {
+        console.error("Erro ao salvar vacina:", err);
+        alert("Erro de conexão com o servidor.");
+      }
     };
   }
 
@@ -1050,6 +1165,55 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (erro) {
         console.error('Erro ao excluir cio:', erro);
         mostrarToast('Não foi possível conectar ao servidor.');
+      }
+    };
+  }
+
+  function abrirModalExcluirNinhadaFicha(id, nomeCao) {
+    ninhadaIdParaExcluirFicha = id;
+    _nomeCaoParaRecarregar = nomeCao;
+    if (modalExcluirNinhadaFicha) {
+      modalExcluirNinhadaFicha.classList.remove('hidden');
+      setTimeout(() => {
+        modalExcluirNinhadaFicha.classList.remove('opacity-0');
+        if (modalExcluirNinhadaFichaContent) modalExcluirNinhadaFichaContent.classList.remove('scale-95');
+      }, 10);
+    }
+  }
+
+  function fecharModalExcluirNinhadaFicha() {
+    ninhadaIdParaExcluirFicha = null;
+    if (modalExcluirNinhadaFicha) {
+      modalExcluirNinhadaFicha.classList.add('opacity-0');
+      if (modalExcluirNinhadaFichaContent) modalExcluirNinhadaFichaContent.classList.add('scale-95');
+      setTimeout(() => modalExcluirNinhadaFicha.classList.add('hidden'), 200);
+    }
+  }
+
+  let _nomeCaoParaRecarregar = null;
+
+  if (btnCancelarExclusaoNinhadaFicha) btnCancelarExclusaoNinhadaFicha.onclick = fecharModalExcluirNinhadaFicha;
+
+  if (btnConfirmarExclusaoNinhadaFicha) {
+    btnConfirmarExclusaoNinhadaFicha.onclick = async () => {
+      if (!ninhadaIdParaExcluirFicha) return;
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const resposta = await fetch(`http://localhost:3000/api/ninhadas/${ninhadaIdParaExcluirFicha}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        fecharModalExcluirNinhadaFicha();
+        if (resposta.ok) {
+          mostrarToast('Ninhada removida com sucesso!');
+          if (_nomeCaoParaRecarregar) await carregarNinhadasDaFicha(_nomeCaoParaRecarregar);
+        } else {
+          mostrarToast('Erro ao remover ninhada.');
+        }
+      } catch (err) {
+        console.error('Erro ao excluir ninhada da ficha:', err);
+        mostrarToast('N\u00e3o foi poss\u00edvel conectar ao servidor.');
       }
     };
   }

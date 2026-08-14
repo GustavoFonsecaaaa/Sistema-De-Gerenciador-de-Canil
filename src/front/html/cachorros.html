@@ -473,6 +473,21 @@
     </div>
   </div>
 
+  <!-- MODAL CONFIRMAR EXCLUSÃO DE NINHADA (Aba Maternidade da Ficha) -->
+  <div id="modal-excluir-ninhada-ficha" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-creme rounded-[28px] p-7 max-w-[420px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 text-center relative">
+      <div class="w-12 h-12 rounded-full bg-vermelhobg text-vermelho flex items-center justify-center text-2xl mx-auto mb-4">
+        <i class="ri-error-warning-line"></i>
+      </div>
+      <h3 class="font-serif text-xl font-extrabold text-[#1C1105] mb-2">Excluir Ninhada</h3>
+      <p class="text-xs text-[#6B7280] mb-6 leading-relaxed">Tem certeza que deseja excluir esta ninhada? Esta ação não pode ser desfeita.</p>
+      <div class="flex items-center gap-3">
+        <button type="button" id="btn-cancelar-exclusao-ninhada-ficha" class="flex-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#1C1105] font-bold text-xs py-3 rounded-2xl hover:bg-bege transition-colors">Cancelar</button>
+        <button type="button" id="btn-confirmar-exclusao-ninhada-ficha" class="flex-1 bg-vermelho text-white font-bold text-xs py-3 rounded-2xl hover:bg-red-600 transition-colors">Sim, excluir</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-sucesso-cao" class="fixed top-6 right-8 z-50 flex items-center gap-2.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
     <div class="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs"><i class="ri-check-line"></i></div>
     <span class="text-xs font-semibold">Operação realizada com sucesso!</span>
