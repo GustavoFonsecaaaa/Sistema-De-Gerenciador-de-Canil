@@ -40,14 +40,33 @@
 </head>
 <body class="font-sans bg-creme text-marromescuro flex min-h-screen relative">
 
+  <!-- HEADER MOBILE -->
+  <header class="fixed top-0 left-0 right-0 w-full z-40 bg-creme border-b border-[#EFECE6] px-4 py-3 flex items-center justify-between md:hidden shadow-sm">
+    <button id="btn-open-sidebar" type="button" class="p-2 rounded-lg bg-white border border-[#EFECE6] text-marromescuro hover:text-laranja focus:outline-none transition-colors" aria-label="Abrir Menu">
+      <i class="ri-menu-line text-xl"></i>
+    </button>
+    <div class="font-serif text-lg font-extrabold text-marromescuro absolute left-1/2 -translate-x-1/2">
+      Canil<span class="text-laranja">Manager</span>
+    </div>
+    <div class="w-9"></div>
+  </header>
+
+  <!-- OVERLAY SIDEBAR MOBILE -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity"></div>
+
   <!-- SIDEBAR -->
-  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between z-40">
+  <aside id="sidebar" class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 h-screen border-r border-white/5 justify-between z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
     <div class="sidebar-top">
       <div class="flex items-center justify-between mb-1 relative">
         <div class="font-serif text-xl font-extrabold text-white">Canil<span class="text-laranja">Manager</span></div>
-        <button class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
-          <i class="ri-notification-3-line text-base"></i>
-        </button>
+        <div class="flex items-center gap-2">
+          <button class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
+            <i class="ri-notification-3-line text-base"></i>
+          </button>
+          <button id="btn-close-sidebar" type="button" class="md:hidden w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer" title="Fechar menu">
+            <i class="ri-close-line text-base"></i>
+          </button>
+        </div>
       </div>
 
       <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
@@ -85,8 +104,7 @@
   </aside>
 
   <!-- CONTEÚDO PRINCIPAL -->
-  <main class="ml-60 flex-1 p-8">
-    
+  <main class="ml-0 md:ml-60 flex-1 p-4 md:p-8 pt-20 md:pt-8 min-w-0 w-full">
     <header class="mb-8">
       <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Meu Perfil</h1>
       <p class="text-xs text-[#6B7280] mt-1">Gerencie suas informações pessoais e do canil</p>
@@ -95,7 +113,7 @@
     <div class="grid grid-cols-12 gap-6 items-start">
       
       <!-- COLUNA ESQUERDA (CARDS MENORES) -->
-      <div class="col-span-4 space-y-4">
+      <div class="col-span-12 lg:col-span-4 space-y-4">
         
         <!-- CARD FOTO E RESUMO -->
         <div class="bg-white border border-[#EFECE6] rounded-[24px] p-8 flex flex-col items-center text-center shadow-sm">
@@ -129,19 +147,19 @@
       </div>
 
      <!-- COLUNA DIREITA (INFORMAÇÕES E ABAS) -->
-      <div class="col-span-8 bg-white border border-[#EFECE6] rounded-[24px] p-8 shadow-sm">
+      <div class="col-span-12 lg:col-span-8 bg-white border border-[#EFECE6] rounded-[24px] p-6 md:p-8 shadow-sm">
         
         <!-- CABEÇALHO DAS ABAS -->
-        <div class="flex items-center justify-between border-b border-[#EFECE6] mb-8">
-          <div class="flex gap-8">
-            <button id="aba-dados" class="flex items-center gap-2 text-xs font-bold text-laranja border-b-2 border-laranja pb-4 transition-colors">
+        <div class="flex flex-wrap items-center justify-between border-b border-[#EFECE6] mb-8 gap-4">
+          <div class="flex gap-6 overflow-x-auto">
+            <button id="aba-dados" class="flex items-center gap-2 text-xs font-bold text-laranja border-b-2 border-laranja pb-4 transition-colors whitespace-nowrap">
               <i class="ri-user-line text-sm"></i> Dados Pessoais
             </button>
-            <button id="aba-canil" class="flex items-center gap-2 text-xs font-medium text-[#6B7280] hover:text-[#111827] border-b-2 border-transparent pb-4 transition-colors">
+            <button id="aba-canil" class="flex items-center gap-2 text-xs font-medium text-[#6B7280] hover:text-[#111827] border-b-2 border-transparent pb-4 transition-colors whitespace-nowrap">
               <i class="ri-home-4-line text-sm"></i> Canil
             </button>
           </div>
-          <div class="flex items-center gap-3 -mt-3">
+          <div class="flex items-center gap-3">
             <button id="btn-cancelar-edicao" class="hidden text-xs font-bold text-[#6B7280] hover:text-[#111827] px-4 py-2 transition-colors">
               Cancelar
             </button>
@@ -486,6 +504,29 @@
         });
       }
 
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      const btnOpenSidebar = document.getElementById('btn-open-sidebar');
+      const btnCloseSidebar = document.getElementById('btn-close-sidebar');
+
+      if (btnOpenSidebar && sidebar && sidebarOverlay) {
+        btnOpenSidebar.addEventListener('click', () => {
+          sidebar.classList.remove('-translate-x-full');
+          sidebarOverlay.classList.remove('hidden');
+        });
+      }
+
+      const fecharSidebar = () => {
+        if (sidebar) sidebar.classList.add('-translate-x-full');
+        if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
+      };
+
+      if (btnCloseSidebar) btnCloseSidebar.addEventListener('click', fecharSidebar);
+      if (sidebarOverlay) sidebarOverlay.addEventListener('click', fecharSidebar);
     });
   </script>
 </body>

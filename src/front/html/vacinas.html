@@ -41,20 +41,39 @@
 </head>
 <body class="font-sans bg-creme text-marromescuro flex min-h-screen relative">
 
+  <!-- HEADER MOBILE -->
+  <header class="fixed top-0 left-0 right-0 w-full z-40 bg-creme border-b border-[#EFECE6] px-4 py-3 flex items-center justify-between md:hidden shadow-sm">
+    <button id="btn-open-sidebar" type="button" class="p-2 rounded-lg bg-white border border-[#EFECE6] text-marromescuro hover:text-laranja focus:outline-none transition-colors" aria-label="Abrir Menu">
+      <i class="ri-menu-line text-xl"></i>
+    </button>
+    <div class="font-serif text-lg font-extrabold text-marromescuro absolute left-1/2 -translate-x-1/2">
+      Canil<span class="text-laranja">Manager</span>
+    </div>
+    <div class="w-9"></div>
+  </header>
+
+  <!-- OVERLAY SIDEBAR MOBILE -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity"></div>
+
   <!-- SIDEBAR -->
-  <aside class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 border-r border-white/5 justify-between z-40">
+  <aside id="sidebar" class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 h-screen border-r border-white/5 justify-between z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
     <div class="sidebar-top">
       <!-- CABEÇALHO DA SIDEBAR + SININHO DE NOTIFICAÇÕES -->
       <div class="flex items-center justify-between mb-1 relative">
         <div class="font-serif text-xl font-extrabold text-white">Canil<span class="text-laranja">Manager</span></div>
         
-        <!-- BOTÃO DO SININHO -->
-        <button id="btn-notificacoes" class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
-          <i class="ri-notification-3-line text-base"></i>
-          <span id="badge-notificacoes-count" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold text-[9px] min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border-2 border-marromescuro hidden shadow-sm">
-            0
-          </span>
-        </button>
+        <div class="flex items-center gap-2">
+          <!-- BOTÃO DO SININHO -->
+          <button id="btn-notificacoes" class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
+            <i class="ri-notification-3-line text-base"></i>
+            <span id="badge-notificacoes-count" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold text-[9px] min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border-2 border-marromescuro hidden shadow-sm">
+              0
+            </span>
+          </button>
+          <button id="btn-close-sidebar" type="button" class="md:hidden w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer" title="Fechar menu">
+            <i class="ri-close-line text-base"></i>
+          </button>
+        </div>
       </div>
 
       <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
@@ -92,7 +111,7 @@
   </aside>
 
   <!-- DROPDOWN POPOVER DE NOTIFICAÇÕES -->
-  <div id="popover-notificacoes" class="fixed left-64 top-4 z-50 w-[420px] bg-creme border border-[#EFECE6] rounded-3xl shadow-2xl overflow-hidden hidden opacity-0 transition-all duration-200 -translate-y-2">
+  <div id="popover-notificacoes" class="fixed left-4 right-4 md:left-64 md:right-auto top-4 z-50 md:w-[420px] bg-creme border border-[#EFECE6] rounded-3xl shadow-2xl overflow-hidden hidden opacity-0 transition-all duration-200 -translate-y-2">
     <div class="p-5 bg-white border-b border-[#EFECE6] flex items-center justify-between">
       <div class="flex items-center gap-2">
         <h3 class="font-serif text-base font-extrabold text-[#111827]">Notificações</h3>
@@ -133,7 +152,7 @@
   </div>
 
   <!-- CONTEÚDO -->
-  <main class="ml-60 flex-1 p-8">
+  <main class="ml-0 md:ml-60 flex-1 p-4 md:p-8 pt-20 md:pt-8 min-w-0 w-full">
     <header class="mb-6 flex justify-between items-center">
       <div>
         <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Vacinas</h1>
@@ -145,7 +164,7 @@
     </header>
 
     <!-- CARDS DE ESTATÍSTICAS (KPIs) -->
-    <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <div class="bg-white border border-[#EFECE6] rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div>
           <div class="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Registros</div>
@@ -193,24 +212,24 @@
 
     <!-- BUSCA E FILTROS -->
     <div class="flex gap-4 mb-6 flex-wrap items-center">
-      <div class="w-80 relative shadow-sm">
+      <div class="w-full sm:w-80 relative shadow-sm">
         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
           <i class="ri-search-line"></i>
         </span>
         <input type="text" id="input-busca-vacinas" placeholder="Buscar por nome do cão ou raça..." class="w-full bg-white border border-[#EFECE6] rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-laranja transition-colors">
       </div>
       
-      <div id="container-filtros-vacinas" class="flex bg-white border border-[#EFECE6] rounded-xl p-0.5 gap-0.5 shadow-sm">
-        <button class="px-3 py-1.5 rounded-lg text-xs font-bold bg-laranja text-white">Todas</button>
-        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">V10</button>
-        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Antirrábica</button>
-        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Gripe Canina</button>
-        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors">Giardíase</button>
+      <div id="container-filtros-vacinas" class="flex overflow-x-auto max-w-full bg-white border border-[#EFECE6] rounded-xl p-0.5 gap-0.5 shadow-sm">
+        <button class="px-3 py-1.5 rounded-lg text-xs font-bold bg-laranja text-white whitespace-nowrap">Todas</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">V10</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Antirrábica</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Gripe Canina</button>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Giardíase</button>
       </div>
     </div>
 
-    <!-- TABELA -->
-    <div class="bg-white border border-[#EFECE6] rounded-xl overflow-hidden shadow-sm">
+    <!-- TABELA COM SCROLL HORIZONTAL -->
+    <div class="bg-white border border-[#EFECE6] rounded-xl overflow-x-auto shadow-sm">
       <table class="w-full border-collapse">
         <thead class="bg-[#FAFAF9] border-b border-[#EFECE6]">
           <tr>
@@ -359,5 +378,28 @@
 
   <script src="/src/front/js/notificacoes.js"></script>
   <script src="/src/front/js/vacinas.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      const btnOpenSidebar = document.getElementById('btn-open-sidebar');
+      const btnCloseSidebar = document.getElementById('btn-close-sidebar');
+
+      if (btnOpenSidebar && sidebar && sidebarOverlay) {
+        btnOpenSidebar.addEventListener('click', () => {
+          sidebar.classList.remove('-translate-x-full');
+          sidebarOverlay.classList.remove('hidden');
+        });
+      }
+
+      const fecharSidebar = () => {
+        if (sidebar) sidebar.classList.add('-translate-x-full');
+        if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
+      };
+
+      if (btnCloseSidebar) btnCloseSidebar.addEventListener('click', fecharSidebar);
+      if (sidebarOverlay) sidebarOverlay.addEventListener('click', fecharSidebar);
+    });
+  </script>
 </body>
 </html>
