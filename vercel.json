@@ -20,8 +20,12 @@
       "dest": "/src/front/html/index.html"
     },
     {
+      "src": "/(.*\\.(html|css|js|png|jpg|ico))",
+      "dest": "/src/front/html/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/src/front/$1"
+      "dest": "/src/front/html/$1.html"
     }
   ]
 }
