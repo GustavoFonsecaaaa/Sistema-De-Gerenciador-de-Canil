@@ -16,6 +16,10 @@
       "dest": "/src/back/server.js"
     },
     {
+      "src": "/",
+      "dest": "/src/front/html/index.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/src/front/$1"
     }
