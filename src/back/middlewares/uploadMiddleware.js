@@ -1,21 +1,28 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
-// Garante que a pasta uploads/ exista na raiz do projeto
-const pastaUploads = path.join(__dirname, '../../../uploads');
-if (!fs.existsSync(pastaUploads)) {
-    fs.mkdirSync(pastaUploads, { recursive: true });
-}
+// Usamos memoryStorage para compatibilidade total com Vercel / Serverless e ambiente local.
+// Evita erros de leitura/escrita no sistema de arquivos read-only da Vercel.
+const storage = multer.memoryStorage();
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, pastaUploads);
-    },
-    filename: (req, file, cb) => {
-        const nomeUnico = Date.now() + path.extname(file.originalname);
-        cb(null, nomeUnico);
+const instance = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB
     }
 });
 
-module.exports = multer({ storage });
+const processarSingle = (fieldName) => {
+    return (req, res, next) => {
+        instance.single(fieldName)(req, res, (err) => {
+            if (err) {
+                console.error(`[uploadMiddleware] Erro ao processar upload do campo '${fieldName}':`, err.message);
+            }
+            next();
+        });
+    };
+};
+
+module.exports = {
+    single: processarSingle,
+    instance
+};

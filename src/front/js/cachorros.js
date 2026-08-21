@@ -1372,6 +1372,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const nome = detalheNome?.textContent || '';
     if (editSubtitulo) editSubtitulo.textContent = `Atualize as informações de ${nome}`;
     if (editPreviewFoto) editPreviewFoto.src = detalheFoto?.src || '';
+    const editFotoUrlInput = document.getElementById('edit-foto-url');
+    if (editFotoUrlInput) {
+      const srcAtual = detalheFoto?.src || '';
+      editFotoUrlInput.value = (srcAtual && !srcAtual.startsWith('data:') && !srcAtual.includes('unsplash')) ? srcAtual : '';
+    }
     if (editNome) editNome.value = nome;
     if (editRaca) editRaca.value = detalheRaca?.textContent || '';
     if (editObs) { editObs.value = detalheObs?.textContent || ''; if (editCharCount) editCharCount.textContent = editObs.value.length; }
@@ -1420,13 +1425,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const sexo = sexoSelecionadoEdit === 'Fêmea' ? 'Femea' : sexoSelecionadoEdit;
       const data_nascimento = editNascimento.value;
 
+      const editFotoUrlInput = document.getElementById('edit-foto-url');
+      const fotoUrlText = editFotoUrlInput ? editFotoUrlInput.value.trim() : '';
+
       const formData = new FormData();
       formData.append('nome', nome);
       formData.append('raca', raca);
       formData.append('sexo', sexo);
       formData.append('data_nascimento', data_nascimento);
+
       if (editFileInput && editFileInput.files && editFileInput.files[0]) {
         formData.append('foto', editFileInput.files[0]);
+      } else if (fotoUrlText) {
+        formData.append('foto', fotoUrlText);
       }
 
       try {
@@ -1489,6 +1500,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const raca          = document.getElementById('add-raca-cao').value.trim();
       let   sexo          = document.getElementById('add-sexo-cao').value;
       const data_nascimento = document.getElementById('add-nascimento-cao').value;
+      const fotoUrlText = document.getElementById('add-foto-url-cao')?.value.trim();
       const fileInput     = document.getElementById('add-foto-file-cao');
 
       if (!nome || !raca || !sexo || !data_nascimento) {
@@ -1502,8 +1514,11 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('raca', raca);
       formData.append('sexo', sexo);
       formData.append('data_nascimento', data_nascimento);
+
       if (fileInput && fileInput.files && fileInput.files[0]) {
         formData.append('foto', fileInput.files[0]);
+      } else if (fotoUrlText) {
+        formData.append('foto', fotoUrlText);
       }
 
       try {

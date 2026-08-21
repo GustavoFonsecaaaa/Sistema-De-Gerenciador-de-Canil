@@ -20,20 +20,30 @@ const listarCachorros = async (req, res) => {
 const cadastrarCachorro = async (req, res) => {
     try {
         const usuario_id = req.usuario.id;
-        const { nome, raca, sexo, data_nascimento } = req.body;
+        const { nome, raca, sexo, data_nascimento, foto, foto_url } = req.body || {};
 
         if (!nome || !raca || !sexo || !data_nascimento) {
             return res.status(400).json({ mensagem: 'Nome, raça, sexo e data de nascimento são obrigatórios.' });
         }
 
-        const fotoUrl = req.file ? '/uploads/' + req.file.filename : null;
+        // Aceita URL em formato de texto enviada no corpo da requisição (foto ou foto_url)
+        let fotoUrl = (foto && typeof foto === 'string' && foto.trim()) || 
+                      (foto_url && typeof foto_url === 'string' && foto_url.trim()) || 
+                      null;
+
+        // Se um arquivo foi enviado via upload (Multer em memória)
+        if (req.file && req.file.buffer) {
+            const mime = req.file.mimetype || 'image/jpeg';
+            fotoUrl = `data:${mime};base64,${req.file.buffer.toString('base64')}`;
+        }
 
         const sql = 'INSERT INTO Cachorro (nome, raca, sexo, data_nascimento, usuario_id, foto) VALUES (?, ?, ?, ?, ?, ?)';
         const [resultado] = await pool.execute(sql, [nome, raca, sexo, data_nascimento, usuario_id, fotoUrl]);
 
         res.status(201).json({
             mensagem: 'Cachorro cadastrado com sucesso!',
-            cachorroId: resultado.insertId
+            cachorroId: resultado.insertId,
+            foto: fotoUrl
         });
 
     } catch (erro) {
@@ -46,17 +56,25 @@ const atualizarCachorro = async (req, res) => {
     try {
         const { id } = req.params;
         const usuario_id = req.usuario.id;
-        const { nome, raca, sexo, data_nascimento } = req.body;
+        const { nome, raca, sexo, data_nascimento, foto, foto_url } = req.body || {};
+
+        let fotoUrl = (foto && typeof foto === 'string' && foto.trim()) || 
+                      (foto_url && typeof foto_url === 'string' && foto_url.trim()) || 
+                      null;
+
+        if (req.file && req.file.buffer) {
+            const mime = req.file.mimetype || 'image/jpeg';
+            fotoUrl = `data:${mime};base64,${req.file.buffer.toString('base64')}`;
+        }
 
         let sql, params;
 
-        if (req.file) {
-            // Nova foto enviada: atualiza a coluna foto
-            const fotoUrl = '/uploads/' + req.file.filename;
+        if (fotoUrl !== null) {
+            // Nova foto fornecida (URL texto ou Base64 de upload em memória)
             sql = 'UPDATE Cachorro SET nome = ?, raca = ?, sexo = ?, data_nascimento = ?, foto = ? WHERE id = ? AND usuario_id = ?';
             params = [nome, raca, sexo, data_nascimento, fotoUrl, id, usuario_id];
         } else {
-            // Sem nova foto: preserva a foto atual
+            // Preserva a foto atual no banco
             sql = 'UPDATE Cachorro SET nome = ?, raca = ?, sexo = ?, data_nascimento = ? WHERE id = ? AND usuario_id = ?';
             params = [nome, raca, sexo, data_nascimento, id, usuario_id];
         }
