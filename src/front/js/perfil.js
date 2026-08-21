@@ -214,10 +214,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnSair = document.getElementById('btn-sair-conta');
   if (btnSair) {
     btnSair.addEventListener('click', () => {
-      if (confirm("Tem certeza que deseja sair da conta?")) {
-        localStorage.removeItem('canil_logado');
-        window.location.href = 'login.html';
+      if (typeof window.mostrarNotificacao === 'function') {
+        window.mostrarNotificacao('Saindo da conta... Até logo!', 'sucesso');
+      } else {
+        mostrarToast('Saindo da conta... Até logo!');
       }
+
+      setTimeout(() => {
+        localStorage.removeItem('canil_logado');
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+      }, 1500);
     });
   }
 
@@ -303,8 +310,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (resposta.ok) {
-          localStorage.clear();
-          window.location.href = 'index.html';
+          if (typeof window.mostrarNotificacao === 'function') {
+            window.mostrarNotificacao('Conta e dados excluídos com sucesso!', 'sucesso');
+          }
+          setTimeout(() => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+          }, 1200);
         } else {
           let msgErro = 'Erro ao excluir conta. Tente novamente.';
           try {
@@ -313,13 +325,24 @@ document.addEventListener('DOMContentLoaded', () => {
               msgErro = erroData.mensagem || erroData.message || erroData.error;
             }
           } catch (e) {}
-          alert(msgErro);
+
+          if (typeof window.mostrarNotificacao === 'function') {
+            window.mostrarNotificacao(msgErro, 'erro');
+          } else {
+            mostrarToast(msgErro);
+          }
+
           btnConfirmarExclusao.disabled = false;
           btnConfirmarExclusao.innerHTML = '<i class="ri-delete-bin-line"></i> Sim, excluir tudo';
         }
       } catch (erro) {
         console.error('Erro ao excluir conta:', erro);
-        alert('Não foi possível conectar ao servidor. Tente novamente mais tarde.');
+        const msgConexao = 'Erro ao excluir conta. Tente novamente.';
+        if (typeof window.mostrarNotificacao === 'function') {
+          window.mostrarNotificacao(msgConexao, 'erro');
+        } else {
+          mostrarToast(msgConexao);
+        }
         btnConfirmarExclusao.disabled = false;
         btnConfirmarExclusao.innerHTML = '<i class="ri-delete-bin-line"></i> Sim, excluir tudo';
       }

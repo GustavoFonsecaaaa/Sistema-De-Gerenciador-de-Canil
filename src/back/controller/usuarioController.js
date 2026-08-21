@@ -73,7 +73,98 @@ const loginUsuario = async (req, res) => {
     }
 };
 
+const excluirMinhaConta = async (req, res) => {
+    const usuario_id = req.usuario.id;
+    console.log(`🔴 Iniciando exclusão em cascata do usuário ID: ${usuario_id}`);
+
+    const connection = await pool.getConnection();
+
+    try {
+        await connection.beginTransaction();
+
+        // 1. Apagar Cruzamentos cujos Cios pertencem a Cachorros do usuário
+        await connection.execute(
+            `DELETE FROM Cruzamento 
+             WHERE cio_id IN (
+                 SELECT c.id FROM Cio c 
+                 JOIN Cachorro ca ON c.cachorro_id = ca.id 
+                 WHERE ca.usuario_id = ?
+             )`,
+            [usuario_id]
+        );
+
+        // 2. Apagar Vacinas dos Cachorros do usuário
+        await connection.execute(
+            `DELETE FROM Vacina 
+             WHERE cachorro_id IN (
+                 SELECT id FROM Cachorro WHERE usuario_id = ?
+             )`,
+            [usuario_id]
+        );
+
+        // 3. Apagar Ninhadas das Mães do usuário
+        await connection.execute(
+            `DELETE FROM Ninhada 
+             WHERE mae_id IN (
+                 SELECT id FROM Cachorro WHERE usuario_id = ?
+             )`,
+            [usuario_id]
+        );
+
+        // 4. Apagar Cios dos Cachorros do usuário
+        await connection.execute(
+            `DELETE FROM Cio 
+             WHERE cachorro_id IN (
+                 SELECT id FROM Cachorro WHERE usuario_id = ?
+             )`,
+            [usuario_id]
+        );
+
+        // 5. Apagar Consumo de Ração do usuário
+        await connection.execute(
+            `DELETE FROM ConsumoRacao WHERE usuario_id = ?`,
+            [usuario_id]
+        );
+
+        // 6. Apagar Rações do usuário
+        await connection.execute(
+            `DELETE FROM Racao WHERE usuario_id = ?`,
+            [usuario_id]
+        );
+
+        // 7. Apagar Cachorros do usuário
+        await connection.execute(
+            `DELETE FROM Cachorro WHERE usuario_id = ?`,
+            [usuario_id]
+        );
+
+        // 8. Apagar o próprio Usuário
+        const [resultado] = await connection.execute(
+            `DELETE FROM Usuario WHERE id = ?`,
+            [usuario_id]
+        );
+
+        if (resultado.affectedRows === 0) {
+            await connection.rollback();
+            return res.status(404).json({ mensagem: 'Usuário não encontrado.' });
+        }
+
+        await connection.commit();
+        console.log(`✅ Usuário ID: ${usuario_id} e todos os registros dependentes foram excluídos com sucesso!`);
+
+        res.status(200).json({ mensagem: 'Conta e dados associados foram excluídos com sucesso.' });
+
+    } catch (erro) {
+        await connection.rollback();
+        console.error('❌ Erro ao excluir conta de usuário:', erro);
+        res.status(500).json({ mensagem: 'Erro interno no servidor ao tentar excluir a conta.' });
+    } finally {
+        connection.release();
+    }
+};
+
 module.exports = {
     registrarUsuario,
-    loginUsuario
+    loginUsuario,
+    excluirMinhaConta
 };

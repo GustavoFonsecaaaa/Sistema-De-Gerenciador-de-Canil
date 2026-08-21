@@ -284,3 +284,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
   gerarNotificacoes();
 });
+
+// Expor função global de notificação / toast para todo o sistema
+window.mostrarNotificacao = function(mensagem, tipo = 'sucesso') {
+  let container = document.getElementById('toast-container-global');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container-global';
+    container.className = 'fixed top-6 right-8 z-50 flex flex-col gap-2 pointer-events-none';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  const isSucesso = tipo === 'sucesso' || tipo === 'success' || tipo === 'ok';
+  const isErro = tipo === 'erro' || tipo === 'error' || tipo === 'danger';
+  
+  let bgClass = 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]';
+  let iconBg = 'bg-[#10B981]';
+  let iconClass = 'ri-check-line';
+
+  if (isErro) {
+    bgClass = 'bg-red-50 border-red-200 text-red-700';
+    iconBg = 'bg-red-500';
+    iconClass = 'ri-error-warning-line';
+  } else if (tipo === 'aviso' || tipo === 'warning') {
+    bgClass = 'bg-amber-50 border-amber-200 text-amber-800';
+    iconBg = 'bg-amber-500';
+    iconClass = 'ri-alert-line';
+  }
+
+  toast.className = `flex items-center gap-2.5 ${bgClass} border px-4 py-3 rounded-xl shadow-lg transition-all duration-300 transform opacity-0 translate-y-[-10px] pointer-events-auto`;
+  toast.innerHTML = `
+    <div class="w-5 h-5 rounded-full ${iconBg} text-white flex items-center justify-center text-xs flex-shrink-0">
+      <i class="${iconClass}"></i>
+    </div>
+    <span class="text-xs font-semibold">${mensagem}</span>
+  `;
+
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.remove('opacity-0', 'translate-y-[-10px]');
+    toast.classList.add('opacity-100', 'translate-y-0');
+  });
+
+  setTimeout(() => {
+    toast.classList.remove('opacity-100', 'translate-y-0');
+    toast.classList.add('opacity-0', 'translate-y-[-10px]');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+};
+
+window.mostrarToast = window.mostrarNotificacao;
