@@ -72,10 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       // Buscar cães e vacinas em paralelo
       const [resCaes, resVacinas] = await Promise.all([
-        fetch('http://localhost:3000/api/cachorros', {
+        fetch('/api/cachorros', {
           headers: { 'Authorization': 'Bearer ' + token }
         }),
-        fetch('http://localhost:3000/api/vacinas', {
+        fetch('/api/vacinas', {
           headers: { 'Authorization': 'Bearer ' + token }
         })
       ]);
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const proxima_dose = document.getElementById('vglobal-data-proxima').value;
 
       try {
-        const resposta = await fetch('http://localhost:3000/api/vacinas', {
+        const resposta = await fetch('/api/vacinas', {
           method: 'POST',
           headers: {
             'Authorization': 'Bearer ' + token,
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const proxima_dose = document.getElementById('veditar-data-proxima').value;
 
       try {
-        const resposta = await fetch(`http://localhost:3000/api/vacinas/${id}`, {
+        const resposta = await fetch(`/api/vacinas/${id}`, {
           method: 'PUT',
           headers: {
             'Authorization': 'Bearer ' + token,
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!idVacinaExcluir) return;
 
       try {
-        const resposta = await fetch(`http://localhost:3000/api/vacinas/${idVacinaExcluir}`, {
+        const resposta = await fetch(`/api/vacinas/${idVacinaExcluir}`, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + token }
         });

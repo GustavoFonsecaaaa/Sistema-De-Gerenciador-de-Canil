@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnConfirmarExclusao.disabled = true;
         btnConfirmarExclusao.textContent = 'Excluindo...';
 
-        const resposta = await fetch('http://localhost:3000/api/usuarios/me', {
+        const resposta = await fetch('/api/usuarios/me', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

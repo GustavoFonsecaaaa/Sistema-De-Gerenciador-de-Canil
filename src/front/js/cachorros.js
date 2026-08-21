@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!containerCards) return;
 
     try {
-      const resposta = await fetch('http://localhost:3000/api/cachorros', {
+      const resposta = await fetch('/api/cachorros', {
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
           textoIdade = idade;
         }
         const fotoUrl = cao.foto
-          ? 'http://localhost:3000' + cao.foto
+          ? cao.foto
           : 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400';
         const nascimentoText = cao.data_nascimento ? formatarDataBR(cao.data_nascimento.split('T')[0]) : '';
         containerCards.appendChild(criarElementoCard({
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!token) return;
 
     try {
-      const resposta = await fetch('http://localhost:3000/api/ninhadas', {
+      const resposta = await fetch('/api/ninhadas', {
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!token) return;
 
     try {
-      const resposta = await fetch('http://localhost:3000/api/vacinas', {
+      const resposta = await fetch('/api/vacinas', {
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -607,7 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!token || !cachorroId) return;
 
     try {
-      const resposta = await fetch('http://localhost:3000/api/cios', {
+      const resposta = await fetch('/api/cios', {
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -628,7 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // Busca o histórico real de cruzamentos via API
           let cruzamentosList = [];
           try {
-            const resCruz = await fetch(`http://localhost:3000/api/cruzamentos/cio/${c.id}`, {
+            const resCruz = await fetch(`/api/cruzamentos/cio/${c.id}`, {
               method: 'GET',
               headers: { 'Authorization': 'Bearer ' + token }
             });
@@ -723,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
               const cruzaId = btn.dataset.id;
               if (confirm('Deseja realmente excluir este registro de cruzamento?')) {
                 try {
-                  const resDel = await fetch(`http://localhost:3000/api/cruzamentos/${cruzaId}`, {
+                  const resDel = await fetch(`/api/cruzamentos/${cruzaId}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': 'Bearer ' + token }
                   });
@@ -805,7 +805,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!token) return;
 
     try {
-      const resposta = await fetch(`http://localhost:3000/api/vacinas/${id}`, {
+      const resposta = await fetch(`/api/vacinas/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -854,7 +854,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const caoNome = detalheNome?.textContent?.trim() || 'Cão';
 
       try {
-        let url = 'http://localhost:3000/api/vacinas';
+        let url = '/api/vacinas';
         let method = 'POST';
         let bodyPayload = {
           cachorro_id: parseInt(cachorroId),
@@ -864,7 +864,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (idVacinaEmEdicao) {
-          url = `http://localhost:3000/api/vacinas/${idVacinaEmEdicao}`;
+          url = `/api/vacinas/${idVacinaEmEdicao}`;
           method = 'PUT';
         }
 
@@ -923,7 +923,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const token = localStorage.getItem('token');
         if (token) {
           try {
-            await fetch(`http://localhost:3000/api/cruzamentos/${idParaExcluir}`, {
+            await fetch(`/api/cruzamentos/${idParaExcluir}`, {
               method: 'DELETE',
               headers: { 'Authorization': 'Bearer ' + token }
             });
@@ -1005,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (idCioEmEdicao) {
           // PUT /api/cios/:id (Edição de Cio)
-          const resposta = await fetch(`http://localhost:3000/api/cios/${idCioEmEdicao}`, {
+          const resposta = await fetch(`/api/cios/${idCioEmEdicao}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -1026,7 +1026,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         } else {
           // POST /api/cios (Novo Cio)
-          const resposta = await fetch('http://localhost:3000/api/cios', {
+          const resposta = await fetch('/api/cios', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -1065,7 +1065,7 @@ document.addEventListener('DOMContentLoaded', () => {
               if (cruzamentoId) {
                 // PUT /api/cruzamentos/:id (Edita cruzamento existente)
                 promessasCruzamento.push(
-                  fetch(`http://localhost:3000/api/cruzamentos/${cruzamentoId}`, {
+                  fetch(`/api/cruzamentos/${cruzamentoId}`, {
                     method: 'PUT',
                     headers: {
                       'Content-Type': 'application/json',
@@ -1081,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', () => {
               } else {
                 // POST /api/cruzamentos (Cadastra novo cruzamento)
                 promessasCruzamento.push(
-                  fetch('http://localhost:3000/api/cruzamentos', {
+                  fetch('/api/cruzamentos', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
@@ -1149,7 +1149,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!token) return;
 
       try {
-        const resposta = await fetch(`http://localhost:3000/api/cios/${idCioParaExcluir}`, {
+        const resposta = await fetch(`/api/cios/${idCioParaExcluir}`, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + token }
         });
@@ -1200,7 +1200,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const resposta = await fetch(`http://localhost:3000/api/ninhadas/${ninhadaIdParaExcluirFicha}`, {
+        const resposta = await fetch(`/api/ninhadas/${ninhadaIdParaExcluirFicha}`, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + token }
         });
@@ -1240,7 +1240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const token = localStorage.getItem('token');
         if (token) {
           try {
-            const resCruza = await fetch(`http://localhost:3000/api/cruzamentos/cio/${cio.id}`, {
+            const resCruza = await fetch(`/api/cruzamentos/cio/${cio.id}`, {
               headers: { 'Authorization': 'Bearer ' + token }
             });
             if (resCruza.ok) {
@@ -1310,7 +1310,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const resposta = await fetch(`http://localhost:3000/api/cachorros/${cachorroId}`, {
+        const resposta = await fetch(`/api/cachorros/${cachorroId}`, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + token }
         });
@@ -1430,7 +1430,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const resposta = await fetch(`http://localhost:3000/api/cachorros/${cachorroId}`, {
+        const resposta = await fetch(`/api/cachorros/${cachorroId}`, {
           method: 'PUT',
           headers: { 'Authorization': 'Bearer ' + token },
           body: formData
@@ -1507,7 +1507,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const resposta = await fetch('http://localhost:3000/api/cachorros', {
+        const resposta = await fetch('/api/cachorros', {
           method: 'POST',
           headers: {
             // SEM Content-Type: o navegador define o boundary do multipart/form-data

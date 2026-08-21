@@ -89,10 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
   async function carregarDadosDoBackend() {
     try {
       const [resCaes, resNinhadas] = await Promise.all([
-        fetch('http://localhost:3000/api/cachorros', {
+        fetch('/api/cachorros', {
           headers: { 'Authorization': 'Bearer ' + token }
         }),
-        fetch('http://localhost:3000/api/ninhadas', {
+        fetch('/api/ninhadas', {
           headers: { 'Authorization': 'Bearer ' + token }
         })
       ]);
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmarExclusaoNinhada.onclick = async () => {
       if (!ninhadaIdParaExcluir) return;
       try {
-        const resposta = await fetch(`http://localhost:3000/api/ninhadas/${ninhadaIdParaExcluir}`, {
+        const resposta = await fetch(`/api/ninhadas/${ninhadaIdParaExcluir}`, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + token }
         });
@@ -501,11 +501,11 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        let url = 'http://localhost:3000/api/ninhadas';
+        let url = '/api/ninhadas';
         let method = 'POST';
 
         if (idNinhadaEmEdicao) {
-          url = `http://localhost:3000/api/ninhadas/${idNinhadaEmEdicao}`;
+          url = `/api/ninhadas/${idNinhadaEmEdicao}`;
           method = 'PUT';
         }
 

@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const resposta = await fetch('http://localhost:3000/api/racoes', {
+      const resposta = await fetch('/api/racoes', {
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!token) return;
 
     try {
-      const resposta = await fetch('http://localhost:3000/api/consumo', {
+      const resposta = await fetch('/api/consumo', {
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hojeIso = new Date().toISOString().split('T')[0];
 
     try {
-      const resposta = await fetch(`http://localhost:3000/api/consumo/${consumoId}/fechar`, {
+      const resposta = await fetch(`/api/consumo/${consumoId}/fechar`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       // 1. Reduz 1 unidade no estoque (Racao)
-      const resPut = await fetch(`http://localhost:3000/api/racoes/${racao.id}`, {
+      const resPut = await fetch(`/api/racoes/${racao.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 2. Registra a abertura do saco no ConsumoRacao
-      const resPost = await fetch('http://localhost:3000/api/consumo/abrir', {
+      const resPost = await fetch('/api/consumo/abrir', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const data_compra = racao.data_compra ? racao.data_compra.split('T')[0] : null;
 
     try {
-      const resposta = await fetch(`http://localhost:3000/api/racoes/${racao.id}`, {
+      const resposta = await fetch(`/api/racoes/${racao.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -544,7 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const resposta = await fetch('http://localhost:3000/api/racoes', {
+        const resposta = await fetch('/api/racoes', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -614,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data_compra = document.getElementById('edit-data').value || null;
 
       try {
-        const resposta = await fetch(`http://localhost:3000/api/racoes/${idRacaoParaEditar}`, {
+        const resposta = await fetch(`/api/racoes/${idRacaoParaEditar}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -669,7 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!token) return;
 
       try {
-        const resposta = await fetch(`http://localhost:3000/api/racoes/${idRacaoParaExcluir}`, {
+        const resposta = await fetch(`/api/racoes/${idRacaoParaExcluir}`, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + token }
         });

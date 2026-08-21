@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const resposta = await fetch('http://localhost:3000/api/cachorros', {
+      const resposta = await fetch('/api/cachorros', {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + token
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!token) return;
 
     try {
-      const resposta = await fetch('http://localhost:3000/api/cios', {
+      const resposta = await fetch('/api/cios', {
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + token }
       });
