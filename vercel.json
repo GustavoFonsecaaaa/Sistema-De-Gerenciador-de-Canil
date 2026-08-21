@@ -13,11 +13,11 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/src/back/server.js"
+      "dest": "src/back/server.js"
     },
     {
       "src": "/",
-      "dest": "/src/front/html/index.html"
+      "dest": "src/front/html/index.html"
     },
     {
       "src": "/(.*\\.(html|css|js|png|jpg|ico))",

@@ -42,7 +42,13 @@ app.use('/api/ninhadas', require('./routes/ninhadaRoutes'));
 
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, async () => {
-    console.log(`🐶 CanilManager rodando em http://localhost:${PORT}`);
-    await testarConexao();
-});
+
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, async () => {
+        console.log(`🐶 CanilManager rodando em http://localhost:${PORT}`);
+        await testarConexao();
+    });
+}
+
+
+module.exports = app;
