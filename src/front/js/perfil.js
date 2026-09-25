@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Elements - Profile
   const elNomeCard = document.getElementById('perfil-nome-card');
   const elEmailCard = document.getElementById('perfil-email-card');
+  const elMembroDesde = document.getElementById('perfil-membro-desde');
   const elNomeDetalhe = document.getElementById('perfil-nome-detalhe');
   const elEmailDetalhe = document.getElementById('perfil-email-detalhe');
   const elTelefoneDetalhe = document.getElementById('perfil-telefone-detalhe');
@@ -39,6 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let emModoEdicao = false;
 
+  // Função utilitária para formatar data para o padrão brasileiro (DD/MM/YYYY)
+  function formatarDataBR(dataVal) {
+    if (!dataVal) return null;
+    try {
+      const dataObj = new Date(dataVal);
+      if (isNaN(dataObj.getTime())) return null;
+      return new Intl.DateTimeFormat('pt-BR').format(dataObj);
+    } catch (e) {
+      return null;
+    }
+  }
+
   // 1. Função para carregar dados do localStorage e renderizar
   function carregarPerfil() {
     const nomeSalvo = localStorage.getItem('canil_usuario_nome') || 'Carlos Oliveira';
@@ -49,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const canilCidadeSalvo = localStorage.getItem('canil_cidade') || 'Igarapé';
     const canilEstadoSalvo = localStorage.getItem('canil_estado') || 'MG';
     const fotoSalva = localStorage.getItem('canil_usuario_foto');
+    const dataCriacaoSalva = localStorage.getItem('canil_usuario_created_at');
 
     const inicial = nomeSalvo.charAt(0).toUpperCase();
 
@@ -58,6 +72,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elNomeDetalhe) elNomeDetalhe.textContent = nomeSalvo;
     if (elEmailDetalhe) elEmailDetalhe.textContent = emailSalvo;
     if (elTelefoneDetalhe) elTelefoneDetalhe.textContent = telefoneSalvo;
+
+    if (elMembroDesde) {
+      const dataFormatada = formatarDataBR(dataCriacaoSalva);
+      if (dataFormatada) {
+        elMembroDesde.textContent = `Membro desde ${dataFormatada}`;
+      } else {
+        elMembroDesde.textContent = 'Membro desde --/--/----';
+      }
+    }
 
     if (inputEditNome) inputEditNome.value = nomeSalvo;
     if (inputEditEmail) inputEditEmail.value = emailSalvo;
@@ -115,7 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Buscar dados reais do servidor se o usuário estiver autenticado
   async function carregarPerfilDoServidor() {
     const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!token) {
+      if (elMembroDesde && !localStorage.getItem('canil_usuario_created_at')) {
+        elMembroDesde.textContent = 'Membro desde --/--/----';
+      }
+      return;
+    }
 
     try {
       const resposta = await fetch('/api/usuarios/me', {
@@ -128,10 +156,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const dados = await resposta.json();
         if (dados.nome) localStorage.setItem('canil_usuario_nome', dados.nome);
         if (dados.email) localStorage.setItem('canil_usuario_cadastrado_email', dados.email);
+
+        const dataCriacao = dados.createdAt || dados.created_at || dados.criado_em || dados.data_criacao;
+        if (dataCriacao) {
+          localStorage.setItem('canil_usuario_created_at', dataCriacao);
+        }
+
         carregarPerfil();
+      } else {
+        if (elMembroDesde && !localStorage.getItem('canil_usuario_created_at')) {
+          elMembroDesde.textContent = 'Membro desde --/--/----';
+        }
       }
     } catch (erro) {
       console.error('Erro ao buscar perfil do servidor:', erro);
+      if (elMembroDesde && !localStorage.getItem('canil_usuario_created_at')) {
+        elMembroDesde.textContent = 'Membro desde --/--/----';
+      }
     }
   }
 

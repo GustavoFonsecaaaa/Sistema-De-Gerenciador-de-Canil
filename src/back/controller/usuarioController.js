@@ -182,7 +182,7 @@ const obterPerfil = async (req, res) => {
   try {
     const usuario_id = req.usuario.id;
     const [rows] = await pool.execute(
-      "SELECT id, nome, email FROM Usuario WHERE id = ?",
+      "SELECT * FROM Usuario WHERE id = ?",
       [usuario_id],
     );
 
@@ -190,7 +190,10 @@ const obterPerfil = async (req, res) => {
       return res.status(404).json({ mensagem: "Usuário não encontrado." });
     }
 
-    res.status(200).json(rows[0]);
+    const usuario = { ...rows[0] };
+    delete usuario.senha;
+
+    res.status(200).json(usuario);
   } catch (erro) {
     console.error("Erro ao obter perfil do usuário:", erro);
     res
