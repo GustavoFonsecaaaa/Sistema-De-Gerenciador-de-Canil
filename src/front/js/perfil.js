@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Form inputs
   const inputEditNome = document.getElementById('input-perfil-nome');
+  const inputEditEmail = document.getElementById('input-perfil-email');
   const inputEditTelefone = document.getElementById('input-perfil-telefone');
   const inputEditCanilNome = document.getElementById('input-canil-nome');
   const inputEditCanilEndereco = document.getElementById('input-canil-endereco');
@@ -57,6 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elNomeDetalhe) elNomeDetalhe.textContent = nomeSalvo;
     if (elEmailDetalhe) elEmailDetalhe.textContent = emailSalvo;
     if (elTelefoneDetalhe) elTelefoneDetalhe.textContent = telefoneSalvo;
+
+    if (inputEditNome) inputEditNome.value = nomeSalvo;
+    if (inputEditEmail) inputEditEmail.value = emailSalvo;
+    if (inputEditTelefone) inputEditTelefone.value = telefoneSalvo;
 
     // Atualizar foto do perfil principal
     if (fotoSalva) {
@@ -107,8 +112,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elCanilEstado) elCanilEstado.textContent = canilEstadoSalvo;
   }
 
+  // Buscar dados reais do servidor se o usuário estiver autenticado
+  async function carregarPerfilDoServidor() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const resposta = await fetch('/api/usuarios/me', {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+
+      if (resposta.ok) {
+        const dados = await resposta.json();
+        if (dados.nome) localStorage.setItem('canil_usuario_nome', dados.nome);
+        if (dados.email) localStorage.setItem('canil_usuario_cadastrado_email', dados.email);
+        carregarPerfil();
+      }
+    } catch (erro) {
+      console.error('Erro ao buscar perfil do servidor:', erro);
+    }
+  }
+
   // Inicializa a tela com os dados
   carregarPerfil();
+  carregarPerfilDoServidor();
 
   // Evento de alteração de foto de perfil
   if (inputAvatar) {
@@ -160,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.perfil-edicao').forEach(el => el.classList.remove('hidden'));
 
       if (inputEditNome) inputEditNome.value = localStorage.getItem('canil_usuario_nome') || 'Carlos Oliveira';
+      if (inputEditEmail) inputEditEmail.value = localStorage.getItem('canil_usuario_cadastrado_email') || 'admin@canil.com';
       if (inputEditTelefone) inputEditTelefone.value = localStorage.getItem('canil_usuario_telefone') || '(31) 98765-4321';
       if (inputEditCanilNome) inputEditCanilNome.value = localStorage.getItem('canil_nome') || 'Canil Villa Dog';
       if (inputEditCanilEndereco) inputEditCanilEndereco.value = localStorage.getItem('canil_endereco') || 'Rua dos Pinheiros, 450';
@@ -184,20 +214,75 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Salvar alterações inline
   if (btnSalvar) {
-    btnSalvar.onclick = () => {
+    btnSalvar.onclick = async () => {
       const nomeVal = inputEditNome ? inputEditNome.value.trim() : '';
+      const emailVal = inputEditEmail ? inputEditEmail.value.trim() : '';
       const telefoneVal = inputEditTelefone ? inputEditTelefone.value.trim() : '';
       const canilNomeVal = inputEditCanilNome ? inputEditCanilNome.value.trim() : '';
       const canilEnderecoVal = inputEditCanilEndereco ? inputEditCanilEndereco.value.trim() : '';
       const canilCidadeVal = inputEditCanilCidade ? inputEditCanilCidade.value.trim() : '';
       const canilEstadoVal = inputEditCanilEstado ? inputEditCanilEstado.value.trim().toUpperCase() : '';
 
-      if (!nomeVal || !telefoneVal || !canilNomeVal || !canilEnderecoVal || !canilCidadeVal || !canilEstadoVal) {
+      if (!nomeVal || !emailVal || !telefoneVal || !canilNomeVal || !canilEnderecoVal || !canilCidadeVal || !canilEstadoVal) {
         alert("Por favor, preencha todos os campos obrigatórios.");
         return;
       }
 
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          btnSalvar.disabled = true;
+          btnSalvar.textContent = 'Salvando...';
+
+          const resposta = await fetch('/api/usuarios/me', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({
+              nome: nomeVal,
+              email: emailVal
+            })
+          });
+
+          if (!resposta.ok) {
+            let msgErro = 'Erro ao atualizar perfil.';
+            try {
+              const erroData = await resposta.json();
+              if (erroData.mensagem || erroData.message || erroData.error) {
+                msgErro = erroData.mensagem || erroData.message || erroData.error;
+              }
+            } catch (e) {}
+
+            if (typeof window.mostrarNotificacao === 'function') {
+              window.mostrarNotificacao(msgErro, 'erro');
+            } else {
+              alert(msgErro);
+            }
+            btnSalvar.disabled = false;
+            btnSalvar.textContent = 'Salvar';
+            return;
+          }
+        } catch (erro) {
+          console.error('Erro na requisição de atualização:', erro);
+          const msgConexao = 'Erro ao conectar ao servidor para atualizar perfil.';
+          if (typeof window.mostrarNotificacao === 'function') {
+            window.mostrarNotificacao(msgConexao, 'erro');
+          } else {
+            alert(msgConexao);
+          }
+          btnSalvar.disabled = false;
+          btnSalvar.textContent = 'Salvar';
+          return;
+        } finally {
+          btnSalvar.disabled = false;
+          btnSalvar.textContent = 'Salvar';
+        }
+      }
+
       localStorage.setItem('canil_usuario_nome', nomeVal);
+      localStorage.setItem('canil_usuario_cadastrado_email', emailVal);
       localStorage.setItem('canil_usuario_telefone', telefoneVal);
       localStorage.setItem('canil_nome', canilNomeVal);
       localStorage.setItem('canil_endereco', canilEnderecoVal);
