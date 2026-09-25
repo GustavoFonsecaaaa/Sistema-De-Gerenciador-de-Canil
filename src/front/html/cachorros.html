@@ -1,48 +1,55 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CanilManager - Cachorros</title>
 
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          marromescuro: '#1C1105',     
-          marromescuro2: '#3C240B',    
-          laranja: '#D97706',          
-          laranjaclaro: '#FEF3C7',     
-          creme: '#F8F5F0',            
-          bege: '#EFECE6',             
-          verdeok: '#10B981',
-          verdeokbg: '#D1FAE5',
-          vermelho: '#EF4444',
-          vermelhobg: '#FEE2E2',
-        },
-        fontFamily: {
-          serif: ['Playfair Display', 'Georgia', 'serif'],
-          sans: ['Plus Jakarta Sans', 'sans-serif'],
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CanilManager - Cachorros</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            marromescuro: '#1C1105',
+            marromescuro2: '#3C240B',
+            laranja: '#D97706',
+            laranjaclaro: '#FEF3C7',
+            creme: '#F8F5F0',
+            bege: '#EFECE6',
+            verdeok: '#10B981',
+            verdeokbg: '#D1FAE5',
+            vermelho: '#EF4444',
+            vermelhobg: '#FEE2E2',
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          }
         }
       }
     }
-  }
-</script>
-<!-- Remix Icon -->
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </script>
+  <!-- Remix Icon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
 </head>
+
 <body class="font-sans bg-creme text-marromescuro flex min-h-screen relative">
 
   <!-- HEADER MOBILE -->
-  <header class="fixed top-0 left-0 right-0 w-full z-40 bg-creme border-b border-[#EFECE6] px-4 py-3 flex items-center justify-between md:hidden shadow-sm">
-    <button id="btn-open-sidebar" type="button" class="p-2 rounded-lg bg-white border border-[#EFECE6] text-marromescuro hover:text-laranja focus:outline-none transition-colors" aria-label="Abrir Menu">
+  <header
+    class="fixed top-0 left-0 right-0 w-full z-40 bg-creme border-b border-[#EFECE6] px-4 py-3 flex items-center justify-between md:hidden shadow-sm">
+    <button id="btn-open-sidebar" type="button"
+      class="p-2 rounded-lg bg-white border border-[#EFECE6] text-marromescuro hover:text-laranja focus:outline-none transition-colors"
+      aria-label="Abrir Menu">
       <i class="ri-menu-line text-xl"></i>
     </button>
     <div class="font-serif text-lg font-extrabold text-marromescuro absolute left-1/2 -translate-x-1/2">
@@ -55,16 +62,21 @@
   <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity"></div>
 
   <!-- SIDEBAR -->
-  <aside id="sidebar" class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 h-screen border-r border-white/5 justify-between z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+  <aside id="sidebar"
+    class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 h-screen border-r border-white/5 justify-between z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
     <div class="sidebar-top">
       <div class="flex items-center justify-between mb-1 relative">
         <div class="font-serif text-xl font-extrabold text-white">Canil<span class="text-laranja">Manager</span></div>
         <div class="flex items-center gap-2">
-          <button id="btn-notificacoes" class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
+          <button id="btn-notificacoes"
+            class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
             <i class="ri-notification-3-line text-base"></i>
-            <span id="badge-notificacoes-count" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold text-[9px] min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border-2 border-marromescuro hidden shadow-sm">0</span>
+            <span id="badge-notificacoes-count"
+              class="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold text-[9px] min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border-2 border-marromescuro hidden shadow-sm">0</span>
           </button>
-          <button id="btn-close-sidebar" type="button" class="md:hidden w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer" title="Fechar menu">
+          <button id="btn-close-sidebar" type="button"
+            class="md:hidden w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer"
+            title="Fechar menu">
             <i class="ri-close-line text-base"></i>
           </button>
         </div>
@@ -73,27 +85,34 @@
       <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
 
       <nav class="flex flex-col gap-1.5">
-        <a href="dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+        <a href="dashboard.html"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-layout-grid-line text-base"></i> Tela Principal
         </a>
-        <a href="cachorros.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-marromescuro2 text-laranja font-semibold text-xs">
+        <a href="cachorros.html"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-marromescuro2 text-laranja font-semibold text-xs">
           <i class="ri-baidu-fill text-base"></i> Cachorros
         </a>
-        <a href="maternidade.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+        <a href="maternidade.html"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-heart-pulse-line text-base"></i> Maternidade
         </a>
-        <a href="vacinas.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+        <a href="vacinas.html"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-syringe-line text-base"></i> Vacinas
         </a>
-        <a href="racoes.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+        <a href="racoes.html"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-goblet-line text-base"></i> Rações
         </a>
       </nav>
     </div>
 
-   <!-- RODAPÉ DA SIDEBAR CLICÁVEL -->
-    <a href="perfil.html" class="flex items-center gap-2.5 pt-3 pb-3 px-3 -mx-3 border-t border-white/10 hover:bg-white/5 rounded-xl transition-colors cursor-pointer">
-      <div id="sidebar-avatar-container" class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs overflow-hidden">
+    <!-- RODAPÉ DA SIDEBAR CLICÁVEL -->
+    <a href="perfil.html"
+      class="flex items-center gap-2.5 pt-3 pb-3 px-3 -mx-3 border-t border-white/10 hover:bg-white/5 rounded-xl transition-colors cursor-pointer">
+      <div id="sidebar-avatar-container"
+        class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs overflow-hidden">
         <img id="sidebar-avatar-img" class="w-full h-full object-cover hidden" src="" alt="Avatar">
         <span id="sidebar-avatar-inicial">C</span>
       </div>
@@ -105,29 +124,44 @@
   </aside>
 
   <!-- DROPDOWN POPOVER DE NOTIFICAÇÕES -->
-  <div id="popover-notificacoes" class="fixed left-4 right-4 md:left-64 md:right-auto top-4 z-50 md:w-[420px] bg-creme border border-[#EFECE6] rounded-3xl shadow-2xl overflow-hidden hidden opacity-0 transition-all duration-200 -translate-y-2">
+  <div id="popover-notificacoes"
+    class="fixed left-4 right-4 md:left-64 md:right-auto top-4 z-50 md:w-[420px] bg-creme border border-[#EFECE6] rounded-3xl shadow-2xl overflow-hidden hidden opacity-0 transition-all duration-200 -translate-y-2">
     <div class="p-5 bg-white border-b border-[#EFECE6] flex items-center justify-between">
       <div class="flex items-center gap-2">
         <h3 class="font-serif text-base font-extrabold text-[#111827]">Notificações</h3>
-        <span id="popover-badge-nao-lidas" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-600">0 não lidas</span>
+        <span id="popover-badge-nao-lidas"
+          class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-600">0 não lidas</span>
       </div>
       <button id="btn-marcar-todas-lidas" class="text-[11px] font-bold text-laranja hover:underline transition-colors">
         Marcar todas como lidas
       </button>
     </div>
 
-    <div class="p-3 bg-[#FAF8F5] border-b border-[#EFECE6] overflow-x-auto scrollbar-none flex gap-1.5 text-xs" id="container-filtros-notificacoes">
-      <button data-filtro="todas" class="px-3 py-1 rounded-xl font-bold bg-laranja text-white whitespace-nowrap shadow-sm">Todas <span id="cnt-todas" class="text-[10px] opacity-80">0</span></button>
-      <button data-filtro="vacina-vencida" class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">Vacina vencida <span id="cnt-vacina-vencida" class="text-[10px] opacity-80">0</span></button>
-      <button data-filtro="vacina-vencer" class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">Vacina a vencer <span id="cnt-vacina-vencer" class="text-[10px] opacity-80">0</span></button>
-      <button data-filtro="racao-baixa" class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">Ração baixa <span id="cnt-racao-baixa" class="text-[10px] opacity-80">0</span></button>
-      <button data-filtro="cio-terminando" class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">Cio terminando <span id="cnt-cio-terminando" class="text-[10px] opacity-80">0</span></button>
+    <div class="p-3 bg-[#FAF8F5] border-b border-[#EFECE6] overflow-x-auto scrollbar-none flex gap-1.5 text-xs"
+      id="container-filtros-notificacoes">
+      <button data-filtro="todas"
+        class="px-3 py-1 rounded-xl font-bold bg-laranja text-white whitespace-nowrap shadow-sm">Todas <span
+          id="cnt-todas" class="text-[10px] opacity-80">0</span></button>
+      <button data-filtro="vacina-vencida"
+        class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">Vacina
+        vencida <span id="cnt-vacina-vencida" class="text-[10px] opacity-80">0</span></button>
+      <button data-filtro="vacina-vencer"
+        class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">Vacina
+        a vencer <span id="cnt-vacina-vencer" class="text-[10px] opacity-80">0</span></button>
+      <button data-filtro="racao-baixa"
+        class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">Ração
+        baixa <span id="cnt-racao-baixa" class="text-[10px] opacity-80">0</span></button>
+      <button data-filtro="cio-terminando"
+        class="px-3 py-1 rounded-xl font-medium text-[#6B7280] hover:bg-white whitespace-nowrap transition-colors">Cio
+        terminando <span id="cnt-cio-terminando" class="text-[10px] opacity-80">0</span></button>
     </div>
 
     <div id="lista-notificacoes" class="max-h-[380px] overflow-y-auto divide-y divide-[#EFECE6] bg-white"></div>
 
-    <div id="empty-state-notificacoes" class="p-10 text-center flex flex-col items-center justify-center hidden bg-white">
-      <div class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mb-2">
+    <div id="empty-state-notificacoes"
+      class="p-10 text-center flex flex-col items-center justify-center hidden bg-white">
+      <div
+        class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mb-2">
         <i class="ri-notification-off-line"></i>
       </div>
       <p class="text-xs font-bold text-[#1C1105]">Nenhuma notificação</p>
@@ -137,7 +171,7 @@
 
   <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
   <div class="ml-0 md:ml-60 flex-1 flex flex-col min-h-screen min-w-0 w-full p-4 md:p-8 pt-20 md:pt-8">
-    
+
     <!-- VIEW 1: LISTA DE CACHORROS -->
     <main id="view-lista-caes" class="flex-1">
       <header class="mb-6 flex justify-between items-center">
@@ -145,7 +179,8 @@
           <h1 class="font-serif text-3xl font-extrabold text-[#111827]">Cachorros</h1>
           <p class="text-xs text-[#6B7280] mt-1">0 cães cadastrados no canil</p>
         </div>
-        <button id="btn-novo-cachorro" class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
+        <button id="btn-novo-cachorro"
+          class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
           <i class="ri-add-line text-base"></i> Novo Cachorro
         </button>
       </header>
@@ -155,22 +190,30 @@
           <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
             <i class="ri-search-line"></i>
           </span>
-          <input type="text" placeholder="Buscar por nome ou raça..." class="w-full bg-white border border-[#EFECE6] rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-laranja transition-colors">
+          <input type="text" placeholder="Buscar por nome ou raça..."
+            class="w-full bg-white border border-[#EFECE6] rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-laranja transition-colors">
         </div>
-        
-        <div class="flex overflow-x-auto max-w-full bg-white border border-[#EFECE6] rounded-xl p-0.5 gap-0.5 shadow-sm">
-          <button class="px-3 py-1.5 rounded-lg text-xs font-bold bg-marromescuro text-white whitespace-nowrap">Todos</button>
-          <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Machos</button>
-          <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Fêmeas</button>
-          <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Filhotes</button>
-          <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Adultos</button>
+
+        <div
+          class="flex overflow-x-auto max-w-full bg-white border border-[#EFECE6] rounded-xl p-0.5 gap-0.5 shadow-sm">
+          <button
+            class="px-3 py-1.5 rounded-lg text-xs font-bold bg-marromescuro text-white whitespace-nowrap">Todos</button>
+          <button
+            class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Machos</button>
+          <button
+            class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Fêmeas</button>
+          <button
+            class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Filhotes</button>
+          <button
+            class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6B7280] hover:bg-gray-50 transition-colors whitespace-nowrap">Adultos</button>
         </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 container-caes"></div>
 
       <div id="empty-state-caes" class="hidden flex flex-col items-center justify-center py-20 text-center">
-        <div class="w-14 h-14 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/40 text-2xl mb-4 shadow-sm">
+        <div
+          class="w-14 h-14 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/40 text-2xl mb-4 shadow-sm">
           <i class="ri-emotion-sad-line"></i>
         </div>
         <h3 class="font-serif text-lg font-bold text-[#1C1105] mb-1">Nenhum cachorro encontrado</h3>
@@ -180,12 +223,13 @@
 
     <!-- VIEW 2: TELA DE DETALHES DO CACHORRO -->
     <div id="view-detalhes-cao" class="py-4 md:py-8 hidden">
-      <button id="btn-voltar-lista" class="flex items-center gap-2 text-xs font-semibold text-[#6B7280] hover:text-[#111827] mb-6 transition-colors">
+      <button id="btn-voltar-lista"
+        class="flex items-center gap-2 text-xs font-semibold text-[#6B7280] hover:text-[#111827] mb-6 transition-colors">
         <i class="ri-arrow-left-line text-sm"></i> Voltar para lista
       </button>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+
         <!-- COLUNA ESQUERDA: PERFIL DO CACHORRO -->
         <div class="col-span-12 lg:col-span-4 bg-white border border-[#EFECE6] rounded-3xl p-5 shadow-sm space-y-4">
           <div class="h-64 rounded-2xl overflow-hidden bg-bege">
@@ -197,12 +241,16 @@
               <h2 id="detalhe-nome" class="font-serif text-2xl font-extrabold text-[#111827]"></h2>
               <span id="detalhe-badge-sexo" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold"></span>
             </div>
-            
+
             <div class="flex items-center gap-1.5">
-              <button id="btn-editar-cao-detalhe" class="w-8 h-8 rounded-xl bg-[#FAFAF9] border border-[#EFECE6] flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors" title="Editar cão">
+              <button id="btn-editar-cao-detalhe"
+                class="w-8 h-8 rounded-xl bg-[#FAFAF9] border border-[#EFECE6] flex items-center justify-center text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                title="Editar cão">
                 <i class="ri-edit-line text-sm"></i>
               </button>
-              <button id="btn-excluir-cao-detalhe" class="w-8 h-8 rounded-xl bg-[#FAFAF9] border border-[#EFECE6] flex items-center justify-center text-gray-500 hover:text-vermelho hover:bg-vermelhobg transition-colors" title="Excluir cão">
+              <button id="btn-excluir-cao-detalhe"
+                class="w-8 h-8 rounded-xl bg-[#FAFAF9] border border-[#EFECE6] flex items-center justify-center text-gray-500 hover:text-vermelho hover:bg-vermelhobg transition-colors"
+                title="Excluir cão">
                 <i class="ri-delete-bin-line text-sm"></i>
               </button>
             </div>
@@ -221,7 +269,8 @@
             </div>
             <div class="flex justify-between items-center">
               <span class="text-[#6B7280]">Classificação</span>
-              <span id="detalhe-classificacao" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600"></span>
+              <span id="detalhe-classificacao"
+                class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600"></span>
             </div>
           </div>
 
@@ -233,36 +282,44 @@
 
         <!-- COLUNA DIREITA: ABAS -->
         <div class="col-span-12 lg:col-span-8 space-y-6">
-          <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-1 flex gap-1 w-fit max-w-full shadow-sm overflow-x-auto">
-            <button id="tab-cio" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all hidden">
+          <div
+            class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-1 flex gap-1 w-fit max-w-full shadow-sm overflow-x-auto">
+            <button id="tab-cio"
+              class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white text-[#111827] shadow-sm transition-all hidden">
               <i class="ri-heart-pulse-line text-sm text-laranja"></i> Ciclo Reprodutivo
             </button>
             <!-- NOVA ABA NINHADAS -->
-            <button id="tab-ninhadas" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all hidden">
+            <button id="tab-ninhadas"
+              class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all hidden">
               <i class="ri-hand-heart-line text-sm text-pink-500"></i> Ninhadas
             </button>
-            <button id="tab-vacinas" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all">
+            <button id="tab-vacinas"
+              class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all">
               <i class="ri-syringe-line text-sm text-verdeok"></i> Vacinas
             </button>
-            <button id="tab-informacoes" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all">
+            <button id="tab-informacoes"
+              class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-all">
               <i class="ri-information-line text-sm"></i> Informações
             </button>
           </div>
 
           <!-- ABA 0: CICLO REPRODUTIVO -->
-          <div id="conteudo-tab-cio" class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-5 hidden">
+          <div id="conteudo-tab-cio"
+            class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-5 hidden">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2 font-serif text-lg font-bold text-[#111827]">
                 <i class="ri-heart-pulse-fill text-laranja"></i>
                 <span>Ciclo Reprodutivo</span>
               </div>
-              <button id="btn-registrar-cio" class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors shadow-sm">
+              <button id="btn-registrar-cio"
+                class="bg-laranja hover:bg-opacity-90 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors shadow-sm">
                 <i class="ri-add-line text-sm"></i> Registrar Cio
               </button>
             </div>
             <div id="lista-cios-container" class="space-y-3"></div>
             <div id="empty-state-cios" class="text-center py-10 text-[#6B7280] text-xs space-y-2">
-              <div class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mx-auto">
+              <div
+                class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mx-auto">
                 <i class="ri-heart-pulse-line"></i>
               </div>
               <p>Nenhum registro de cio cadastrado para esta fêmea.</p>
@@ -270,13 +327,15 @@
           </div>
 
           <!-- ABA 1: NINHADAS (MATERNIDADE) -->
-          <div id="conteudo-tab-ninhadas" class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-5 hidden">
+          <div id="conteudo-tab-ninhadas"
+            class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-5 hidden">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2 font-serif text-lg font-bold text-[#111827]">
                 <i class="ri-hand-heart-fill text-pink-500"></i>
                 <span>Histórico de Ninhadas</span>
               </div>
-              <a href="maternidade.html" class="text-[11px] font-bold text-laranja hover:underline flex items-center gap-1">
+              <a href="maternidade.html"
+                class="text-[11px] font-bold text-laranja hover:underline flex items-center gap-1">
                 Acessar Maternidade <i class="ri-arrow-right-line"></i>
               </a>
             </div>
@@ -284,7 +343,8 @@
             <div id="lista-ninhadas-container" class="space-y-4"></div>
 
             <div id="empty-state-ninhadas" class="text-center py-10 text-[#6B7280] text-xs space-y-2">
-              <div class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mx-auto">
+              <div
+                class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mx-auto">
                 <i class="ri-hand-heart-line"></i>
               </div>
               <p>Nenhuma ninhada registrada para esta matriz.</p>
@@ -292,19 +352,22 @@
           </div>
 
           <!-- ABA 2: VACINAS -->
-          <div id="conteudo-tab-vacinas" class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-5 hidden">
+          <div id="conteudo-tab-vacinas"
+            class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-5 hidden">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2 font-serif text-lg font-bold text-[#111827]">
                 <i class="ri-syringe-fill text-verdeok"></i>
                 <span>Vacinas</span>
               </div>
-              <button id="btn-registrar-vacina" class="bg-verdeok hover:bg-opacity-90 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors shadow-sm">
+              <button id="btn-registrar-vacina"
+                class="bg-verdeok hover:bg-opacity-90 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors shadow-sm">
                 <i class="ri-add-line text-sm"></i> Registrar Vacina
               </button>
             </div>
             <div id="lista-vacinas-container" class="space-y-4"></div>
             <div id="empty-state-vacinas-detalhe" class="text-center py-10 text-[#6B7280] text-xs space-y-2">
-              <div class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mx-auto">
+              <div
+                class="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#1C1105]/30 text-lg mx-auto">
                 <i class="ri-syringe-line"></i>
               </div>
               <p>Nenhuma vacina cadastrada para este cão.</p>
@@ -312,18 +375,37 @@
           </div>
 
           <!-- ABA 3: INFORMAÇÕES GERAIS -->
-          <div id="conteudo-tab-informacoes" class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-5 hidden">
+          <div id="conteudo-tab-informacoes"
+            class="bg-white border border-[#EFECE6] rounded-3xl p-6 shadow-sm space-y-5 hidden">
             <div class="flex items-center gap-2 font-serif text-lg font-bold text-[#111827]">
               <i class="ri-information-fill text-laranja"></i>
               <span>Informações Gerais</span>
             </div>
             <div class="grid grid-cols-2 gap-4 text-xs">
-              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4"><div class="text-[10px] text-[#6B7280] mb-1">Nome</div><div id="info-nome" class="font-bold text-[#111827] text-sm"></div></div>
-              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4"><div class="text-[10px] text-[#6B7280] mb-1">Raça</div><div id="info-raca" class="font-bold text-[#111827] text-sm"></div></div>
-              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4"><div class="text-[10px] text-[#6B7280] mb-1">Sexo</div><div id="info-sexo" class="font-bold text-[#111827] text-sm"></div></div>
-              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4"><div class="text-[10px] text-[#6B7280] mb-1">Data de Nascimento</div><div id="info-nascimento" class="font-bold text-[#111827] text-sm"></div></div>
-              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4"><div class="text-[10px] text-[#6B7280] mb-1">Idade</div><div id="info-idade" class="font-bold text-[#111827] text-sm"></div></div>
-              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4"><div class="text-[10px] text-[#6B7280] mb-1">Classificação</div><div id="info-classificacao" class="font-bold text-[#111827] text-sm"></div></div>
+              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4">
+                <div class="text-[10px] text-[#6B7280] mb-1">Nome</div>
+                <div id="info-nome" class="font-bold text-[#111827] text-sm"></div>
+              </div>
+              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4">
+                <div class="text-[10px] text-[#6B7280] mb-1">Raça</div>
+                <div id="info-raca" class="font-bold text-[#111827] text-sm"></div>
+              </div>
+              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4">
+                <div class="text-[10px] text-[#6B7280] mb-1">Sexo</div>
+                <div id="info-sexo" class="font-bold text-[#111827] text-sm"></div>
+              </div>
+              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4">
+                <div class="text-[10px] text-[#6B7280] mb-1">Data de Nascimento</div>
+                <div id="info-nascimento" class="font-bold text-[#111827] text-sm"></div>
+              </div>
+              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4">
+                <div class="text-[10px] text-[#6B7280] mb-1">Idade</div>
+                <div id="info-idade" class="font-bold text-[#111827] text-sm"></div>
+              </div>
+              <div class="bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl p-4">
+                <div class="text-[10px] text-[#6B7280] mb-1">Classificação</div>
+                <div id="info-classificacao" class="font-bold text-[#111827] text-sm"></div>
+              </div>
             </div>
           </div>
 
@@ -335,7 +417,8 @@
     <!-- VIEW 3: TELA DE EDITAR CACHORRO -->
     <!-- (Mantida exatamente como você já tinha no original) -->
     <div id="view-editar-cao" class="p-8 hidden max-w-4xl mx-auto w-full">
-      <button id="btn-voltar-detalhes" class="flex items-center gap-2 text-xs font-semibold text-[#6B7280] hover:text-[#111827] mb-6 transition-colors">
+      <button id="btn-voltar-detalhes"
+        class="flex items-center gap-2 text-xs font-semibold text-[#6B7280] hover:text-[#111827] mb-6 transition-colors">
         <i class="ri-arrow-left-line text-sm"></i> Voltar para detalhes
       </button>
 
@@ -355,11 +438,13 @@
               <div class="space-y-2">
                 <div>
                   <label class="block text-[11px] font-medium text-[#6B7280] mb-1">URL da Foto (opcional)</label>
-                  <input type="url" id="edit-foto-url" placeholder="https://exemplo.com/foto.jpg" class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-2 px-3 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja">
+                  <input type="url" id="edit-foto-url" placeholder="https://exemplo.com/foto.jpg"
+                    class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-2 px-3 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja">
                 </div>
                 <div>
                   <label class="block text-[11px] font-medium text-[#6B7280] mb-1">Ou Alterar Foto (Galeria)</label>
-                  <input type="file" id="edit-foto-file" accept="image/*" class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-2 px-3 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja transition-all file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-laranja file:text-white cursor-pointer">
+                  <input type="file" id="edit-foto-file" accept="image/*"
+                    class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-2 px-3 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja transition-all file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-laranja file:text-white cursor-pointer">
                 </div>
               </div>
             </div>
@@ -367,46 +452,59 @@
             <div class="col-span-7 space-y-4">
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome <span class="text-red-500">*</span></label>
-                  <input type="text" id="edit-nome" name="nome" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+                  <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome <span
+                      class="text-red-500">*</span></label>
+                  <input type="text" id="edit-nome" name="nome" required
+                    class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
                 </div>
                 <div>
-                  <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Raça <span class="text-red-500">*</span></label>
-                  <input type="text" id="edit-raca" name="raca" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+                  <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Raça <span
+                      class="text-red-500">*</span></label>
+                  <input type="text" id="edit-raca" name="raca" required
+                    class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
                 </div>
               </div>
 
               <div>
-                <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Sexo <span class="text-red-500">*</span></label>
+                <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Sexo <span
+                    class="text-red-500">*</span></label>
                 <div class="grid grid-cols-2 gap-3">
-                  <button type="button" id="btn-sexo-macho" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border text-xs font-bold transition-all shadow-sm">
+                  <button type="button" id="btn-sexo-macho"
+                    class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border text-xs font-bold transition-all shadow-sm">
                     <i class="ri-mars-line text-sm"></i> Macho
                   </button>
-                  <button type="button" id="btn-sexo-femea" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border text-xs font-bold transition-all shadow-sm">
+                  <button type="button" id="btn-sexo-femea"
+                    class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border text-xs font-bold transition-all shadow-sm">
                     <i class="ri-venus-line text-sm"></i> Fêmea
                   </button>
                 </div>
               </div>
 
               <div>
-                <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data de Nascimento <span class="text-red-500">*</span></label>
-                <input type="date" id="edit-nascimento" name="data_nascimento" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+                <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data de Nascimento <span
+                    class="text-red-500">*</span></label>
+                <input type="date" id="edit-nascimento" name="data_nascimento" required
+                  class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
                 <p id="edit-idade-calculada" class="text-[11px] text-[#6B7280] mt-1.5 font-medium pl-1"></p>
               </div>
 
               <div>
                 <label class="block text-xs font-bold text-[#1C1105] mb-1.5">Observações</label>
-                <textarea id="edit-obs" name="observacoes" rows="4" maxlength="500" placeholder="Ex: Muito dócil e brincalhão..." class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm resize-none placeholder:text-[#1C1105]/30"></textarea>
+                <textarea id="edit-obs" name="observacoes" rows="4" maxlength="500"
+                  placeholder="Ex: Muito dócil e brincalhão..."
+                  class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs text-[#1C1105] font-medium focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm resize-none placeholder:text-[#1C1105]/30"></textarea>
                 <div class="text-right text-[10px] text-[#6B7280] mt-1"><span id="edit-char-count">0</span>/500</div>
               </div>
             </div>
           </div>
 
           <div class="flex items-center gap-4 pt-4 border-t border-[#FAFAF9]">
-            <button type="submit" class="bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3.5 px-6 rounded-2xl transition-all shadow-sm flex items-center gap-2">
+            <button type="submit"
+              class="bg-laranja hover:bg-opacity-95 text-white font-bold text-xs py-3.5 px-6 rounded-2xl transition-all shadow-sm flex items-center gap-2">
               <i class="ri-save-line text-sm"></i> Salvar Alterações
             </button>
-            <button type="button" id="btn-cancelar-editar-cao" class="bg-[#FAF8F5] border border-[#EFECE6] hover:bg-white text-[#1C1105] font-bold text-xs py-3.5 px-6 rounded-2xl transition-all shadow-sm">
+            <button type="button" id="btn-cancelar-editar-cao"
+              class="bg-[#FAF8F5] border border-[#EFECE6] hover:bg-white text-[#1C1105] font-bold text-xs py-3.5 px-6 rounded-2xl transition-all shadow-sm">
               Cancelar
             </button>
           </div>
@@ -418,107 +516,195 @@
 
   <!-- OUTROS MODAIS EXISTENTES (Adicionar Cão, Excluir Cão, Registrar Cio, Registrar Vacina) -->
   <!-- MODAL ADICIONAR CACHORRO -->
-  <div id="modal-adicionar-cachorro" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
-    <div class="bg-creme rounded-[28px] p-7 max-w-[480px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative max-h-[90vh] overflow-y-auto">
-      <button id="btn-fechar-modal-cadastrar" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors"><i class="ri-close-line text-lg"></i></button>
+  <div id="modal-adicionar-cachorro"
+    class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-creme rounded-[28px] p-7 max-w-[480px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative max-h-[90vh] overflow-y-auto">
+      <button id="btn-fechar-modal-cadastrar" type="button"
+        class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors"><i
+          class="ri-close-line text-lg"></i></button>
       <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Novo Cachorro</h3>
       <form id="form-adicionar-cachorro" class="space-y-4">
-        <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome do Cão *</label><input type="text" id="add-nome-cao" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja"></div>
-        <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Raça *</label><input type="text" id="add-raca-cao" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja"></div>
+        <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome do Cão *</label><input type="text"
+            id="add-nome-cao" required
+            class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja">
+        </div>
+        <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Raça *</label><input type="text"
+            id="add-raca-cao" required
+            class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja">
+        </div>
         <div class="grid grid-cols-2 gap-3.5">
-          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Sexo *</label><select id="add-sexo-cao" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja"><option value="Macho">Macho</option><option value="Femea">Fêmea</option></select></div>
-          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data de Nascimento *</label><input type="date" id="add-nascimento-cao" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja"></div>
+          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Sexo *</label><select id="add-sexo-cao"
+              required
+              class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja">
+              <option value="Macho">Macho</option>
+              <option value="Femea">Fêmea</option>
+            </select></div>
+          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data de Nascimento *</label><input
+              type="date" id="add-nascimento-cao" required
+              class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja">
+          </div>
         </div>
         <div class="space-y-2">
           <label class="block text-xs font-bold text-[#1C1105]">Foto do Cão (URL ou Arquivo)</label>
-          <input type="url" id="add-foto-url-cao" placeholder="URL da foto (ex: https://...)" class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-2.5 px-3 text-xs focus:border-laranja">
-          <input type="file" id="add-foto-file-cao" accept="image/*" class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-2.5 px-3 text-xs file:bg-laranja file:text-white file:rounded-xl file:border-0 file:px-3 file:py-1.5 file:text-xs file:font-bold">
+          <input type="url" id="add-foto-url-cao" placeholder="URL da foto (ex: https://...)"
+            class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-2.5 px-3 text-xs focus:border-laranja">
+          <input type="file" id="add-foto-file-cao" accept="image/*"
+            class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-2.5 px-3 text-xs file:bg-laranja file:text-white file:rounded-xl file:border-0 file:px-3 file:py-1.5 file:text-xs file:font-bold">
         </div>
-        <div class="flex items-center gap-3 pt-3"><button type="button" id="btn-cancelar-cadastrar" class="flex-1 bg-[#FAF8F5] border border-[#EFECE6] font-bold text-xs py-3.5 rounded-2xl">Cancelar</button><button type="submit" class="flex-1 bg-laranja text-white font-bold text-xs py-3.5 rounded-2xl">Cadastrar</button></div>
+        <div class="flex items-center gap-3 pt-3"><button type="button" id="btn-cancelar-cadastrar"
+            class="flex-1 bg-[#FAF8F5] border border-[#EFECE6] font-bold text-xs py-3.5 rounded-2xl">Cancelar</button><button
+            type="submit" class="flex-1 bg-laranja text-white font-bold text-xs py-3.5 rounded-2xl">Cadastrar</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <div id="modal-confirmar-exclusao-cao" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
-    <div class="bg-creme rounded-[28px] p-7 max-w-[420px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 text-center relative">
-      <div class="w-12 h-12 rounded-full bg-vermelhobg text-vermelho flex items-center justify-center text-2xl mx-auto mb-4"><i class="ri-error-warning-line"></i></div>
+  <div id="modal-confirmar-exclusao-cao"
+    class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-creme rounded-[28px] p-7 max-w-[420px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 text-center relative">
+      <div
+        class="w-12 h-12 rounded-full bg-vermelhobg text-vermelho flex items-center justify-center text-2xl mx-auto mb-4">
+        <i class="ri-error-warning-line"></i>
+      </div>
       <h3 class="font-serif text-xl font-extrabold text-[#1C1105] mb-2">Excluir Cachorro</h3>
-      <p id="texto-confirmar-exclusao-cao" class="text-xs text-[#6B7280] mb-6 leading-relaxed">Tem certeza que deseja excluir este cão?</p>
-      <div class="flex items-center gap-3"><button type="button" id="btn-cancelar-exclusao-cao" class="flex-1 bg-[#FAF8F5] border font-bold text-xs py-3 rounded-2xl">Cancelar</button><button type="button" id="btn-confirmar-exclusao-cao" class="flex-1 bg-vermelho text-white font-bold text-xs py-3 rounded-2xl">Sim, excluir</button></div>
+      <p id="texto-confirmar-exclusao-cao" class="text-xs text-[#6B7280] mb-6 leading-relaxed">Tem certeza que deseja
+        excluir este cão?</p>
+      <div class="flex items-center gap-3"><button type="button" id="btn-cancelar-exclusao-cao"
+          class="flex-1 bg-[#FAF8F5] border font-bold text-xs py-3 rounded-2xl">Cancelar</button><button type="button"
+          id="btn-confirmar-exclusao-cao" class="flex-1 bg-vermelho text-white font-bold text-xs py-3 rounded-2xl">Sim,
+          excluir</button></div>
     </div>
   </div>
 
-  <div id="modal-excluir-cio" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
-    <div class="bg-creme rounded-[28px] p-7 max-w-[420px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 text-center relative">
-      <div class="w-12 h-12 rounded-full bg-vermelhobg text-vermelho flex items-center justify-center text-2xl mx-auto mb-4"><i class="ri-error-warning-line"></i></div>
+  <div id="modal-excluir-cio"
+    class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-creme rounded-[28px] p-7 max-w-[420px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 text-center relative">
+      <div
+        class="w-12 h-12 rounded-full bg-vermelhobg text-vermelho flex items-center justify-center text-2xl mx-auto mb-4">
+        <i class="ri-error-warning-line"></i>
+      </div>
       <h3 class="font-serif text-xl font-extrabold text-[#1C1105] mb-2">Excluir Registro</h3>
-      <p id="texto-confirmar-exclusao-cio" class="text-xs text-[#6B7280] mb-6 leading-relaxed">Deseja realmente excluir este registro?</p>
+      <p id="texto-confirmar-exclusao-cio" class="text-xs text-[#6B7280] mb-6 leading-relaxed">Deseja realmente excluir
+        este registro?</p>
       <div class="flex items-center gap-3">
-        <button type="button" id="btn-cancelar-exclusao-cio" class="flex-1 bg-[#FAF8F5] border font-bold text-xs py-3 rounded-2xl">Cancelar</button>
-        <button type="button" id="btn-confirmar-exclusao-cio" class="flex-1 bg-vermelho text-white font-bold text-xs py-3 rounded-2xl">Sim, excluir</button>
+        <button type="button" id="btn-cancelar-exclusao-cio"
+          class="flex-1 bg-[#FAF8F5] border font-bold text-xs py-3 rounded-2xl">Cancelar</button>
+        <button type="button" id="btn-confirmar-exclusao-cio"
+          class="flex-1 bg-vermelho text-white font-bold text-xs py-3 rounded-2xl">Sim, excluir</button>
       </div>
     </div>
   </div>
 
-  <div id="modal-registrar-cio" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
-    <div class="bg-creme rounded-[28px] p-8 max-w-[560px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative max-h-[90vh] overflow-y-auto">
-      <button id="btn-fechar-modal-cio" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors"><i class="ri-close-line text-xl"></i></button>
+  <div id="modal-registrar-cio"
+    class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-creme rounded-[28px] p-8 max-w-[560px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative max-h-[90vh] overflow-y-auto">
+      <button id="btn-fechar-modal-cio" type="button"
+        class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors"><i
+          class="ri-close-line text-xl"></i></button>
       <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Registrar Novo Cio</h3>
       <form id="form-registrar-cio" class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
-          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Início do Cio *</label><input type="date" id="cio-data-inicio" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja"></div>
-          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Fim do Cio *</label><input type="date" id="cio-data-fim" required class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja"></div>
+          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Início do Cio *</label><input type="date"
+              id="cio-data-inicio" required
+              class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja">
+          </div>
+          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Fim do Cio *</label><input type="date"
+              id="cio-data-fim" required
+              class="w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs focus:border-laranja">
+          </div>
         </div>
-        <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Observações Gerais</label><textarea id="cio-obs" rows="2" class="w-full bg-[#FAF8F5] border rounded-2xl py-3 px-4 text-xs focus:border-laranja resize-none"></textarea></div>
+        <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Observações Gerais</label><textarea
+            id="cio-obs" rows="2"
+            class="w-full bg-[#FAF8F5] border rounded-2xl py-3 px-4 text-xs focus:border-laranja resize-none"></textarea>
+        </div>
         <div class="bg-[#FAF8F5] border rounded-2xl p-4 flex justify-between">
-          <div><div class="text-xs font-bold text-[#1C1105]">Houve cruzamento neste ciclo?</div></div>
-          <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="cio-toggle-cruzou" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-laranja peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label>
+          <div>
+            <div class="text-xs font-bold text-[#1C1105]">Houve cruzamento neste ciclo?</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="cio-toggle-cruzou"
+              class="sr-only peer">
+            <div
+              class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-laranja peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all">
+            </div>
+          </label>
         </div>
         <div id="campos-detalhes-cruzamento" class="space-y-3 pt-2 hidden border-t border-[#EFECE6]">
-          <div class="flex items-center justify-between"><label class="block text-xs font-bold">Molações Registradas</label><button type="button" id="btn-add-item-cruza" class="text-xs font-bold text-laranja hover:underline flex items-center gap-1"><i class="ri-add-circle-line"></i> Adicionar Cruza</button></div>
+          <div class="flex items-center justify-between"><label class="block text-xs font-bold">Molações
+              Registradas</label><button type="button" id="btn-add-item-cruza"
+              class="text-xs font-bold text-laranja hover:underline flex items-center gap-1"><i
+                class="ri-add-circle-line"></i> Adicionar Cruza</button></div>
           <div id="container-itens-cruza" class="space-y-3"></div>
         </div>
         <div class="flex items-center justify-end gap-3 pt-4 border-t border-[#EFECE6]">
-          <button type="button" id="btn-cancelar-modal-cio" class="bg-transparent font-bold text-xs py-3 px-6 rounded-2xl">Cancelar</button>
-          <button type="submit" class="bg-laranja text-white font-bold text-xs py-3 px-6 rounded-2xl">Salvar Registro</button>
+          <button type="button" id="btn-cancelar-modal-cio"
+            class="bg-transparent font-bold text-xs py-3 px-6 rounded-2xl">Cancelar</button>
+          <button type="submit" class="bg-laranja text-white font-bold text-xs py-3 px-6 rounded-2xl">Salvar
+            Registro</button>
         </div>
       </form>
     </div>
   </div>
 
-  <div id="modal-registrar-vacina" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
-    <div class="bg-creme rounded-[28px] p-8 max-w-[500px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative">
-      <button id="btn-fechar-modal-vacina" type="button" class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors"><i class="ri-close-line text-xl"></i></button>
+  <div id="modal-registrar-vacina"
+    class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-creme rounded-[28px] p-8 max-w-[500px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 relative">
+      <button id="btn-fechar-modal-vacina" type="button"
+        class="absolute top-6 right-6 text-[#1C1105]/40 hover:text-[#1C1105] transition-colors"><i
+          class="ri-close-line text-xl"></i></button>
       <h3 class="font-serif text-2xl font-extrabold text-[#1C1105] mb-6">Registrar Vacina</h3>
       <form id="form-registrar-vacina" class="space-y-4">
-        <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome da Vacina *</label><input type="text" id="vacina-nome" required class="w-full bg-[#FAF8F5] border rounded-2xl py-3 px-4 text-xs focus:border-verdeok"></div>
-        <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Descrição / Proteção</label><input type="text" id="vacina-desc" class="w-full bg-[#FAF8F5] border rounded-2xl py-3 px-4 text-xs focus:border-verdeok"></div>
-        <div class="grid grid-cols-2 gap-4">
-          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data da Última Dose *</label><input type="date" id="vacina-data-dose" required class="w-full bg-[#FAF8F5] border rounded-2xl py-3 px-4 text-xs focus:border-verdeok"></div>
-          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Próxima Dose *</label><input type="date" id="vacina-data-proxima" required class="w-full bg-[#FAF8F5] border rounded-2xl py-3 px-4 text-xs focus:border-verdeok"></div>
+        <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Nome da Vacina *</label><input type="text"
+            id="vacina-nome" required
+            class="w-full bg-[#FAF8F5] border rounded-2xl py-3 px-4 text-xs focus:border-verdeok"></div>
+        <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Descrição / Proteção</label><input type="text"
+            id="vacina-desc" class="w-full bg-[#FAF8F5] border rounded-2xl py-3 px-4 text-xs focus:border-verdeok">
         </div>
-        <div class="flex items-center justify-end gap-3 pt-4"><button type="button" id="btn-cancelar-modal-vacina" class="bg-transparent font-bold text-xs py-3 px-6 rounded-2xl">Cancelar</button><button type="submit" class="bg-verdeok text-white font-bold text-xs py-3 px-6 rounded-2xl">Salvar Vacina</button></div>
+        <div class="grid grid-cols-2 gap-4">
+          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Data da Última Dose *</label><input
+              type="date" id="vacina-data-dose" required
+              class="w-full bg-[#FAF8F5] border rounded-2xl py-3 px-4 text-xs focus:border-verdeok"></div>
+          <div><label class="block text-xs font-bold text-[#1C1105] mb-1.5">Próxima Dose *</label><input type="date"
+              id="vacina-data-proxima" required
+              class="w-full bg-[#FAF8F5] border rounded-2xl py-3 px-4 text-xs focus:border-verdeok"></div>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-4"><button type="button" id="btn-cancelar-modal-vacina"
+            class="bg-transparent font-bold text-xs py-3 px-6 rounded-2xl">Cancelar</button><button type="submit"
+            class="bg-verdeok text-white font-bold text-xs py-3 px-6 rounded-2xl">Salvar Vacina</button></div>
       </form>
     </div>
   </div>
 
   <!-- MODAL CONFIRMAR EXCLUSÃO DE NINHADA (Aba Maternidade da Ficha) -->
-  <div id="modal-excluir-ninhada-ficha" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
-    <div class="bg-creme rounded-[28px] p-7 max-w-[420px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 text-center relative">
-      <div class="w-12 h-12 rounded-full bg-vermelhobg text-vermelho flex items-center justify-center text-2xl mx-auto mb-4">
+  <div id="modal-excluir-ninhada-ficha"
+    class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-creme rounded-[28px] p-7 max-w-[420px] w-full mx-4 shadow-2xl border border-[#EFECE6] transform scale-95 transition-transform duration-200 text-center relative">
+      <div
+        class="w-12 h-12 rounded-full bg-vermelhobg text-vermelho flex items-center justify-center text-2xl mx-auto mb-4">
         <i class="ri-error-warning-line"></i>
       </div>
       <h3 class="font-serif text-xl font-extrabold text-[#1C1105] mb-2">Excluir Ninhada</h3>
-      <p class="text-xs text-[#6B7280] mb-6 leading-relaxed">Tem certeza que deseja excluir esta ninhada? Esta ação não pode ser desfeita.</p>
+      <p class="text-xs text-[#6B7280] mb-6 leading-relaxed">Tem certeza que deseja excluir esta ninhada? Esta ação não
+        pode ser desfeita.</p>
       <div class="flex items-center gap-3">
-        <button type="button" id="btn-cancelar-exclusao-ninhada-ficha" class="flex-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#1C1105] font-bold text-xs py-3 rounded-2xl hover:bg-bege transition-colors">Cancelar</button>
-        <button type="button" id="btn-confirmar-exclusao-ninhada-ficha" class="flex-1 bg-vermelho text-white font-bold text-xs py-3 rounded-2xl hover:bg-red-600 transition-colors">Sim, excluir</button>
+        <button type="button" id="btn-cancelar-exclusao-ninhada-ficha"
+          class="flex-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#1C1105] font-bold text-xs py-3 rounded-2xl hover:bg-bege transition-colors">Cancelar</button>
+        <button type="button" id="btn-confirmar-exclusao-ninhada-ficha"
+          class="flex-1 bg-vermelho text-white font-bold text-xs py-3 rounded-2xl hover:bg-red-600 transition-colors">Sim,
+          excluir</button>
       </div>
     </div>
   </div>
 
-  <div id="toast-sucesso-cao" class="fixed top-6 right-8 z-50 flex items-center gap-2.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
-    <div class="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs"><i class="ri-check-line"></i></div>
+  <div id="toast-sucesso-cao"
+    class="fixed top-6 right-8 z-50 flex items-center gap-2.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
+    <div class="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs"><i
+        class="ri-check-line"></i></div>
     <span class="text-xs font-semibold">Operação realizada com sucesso!</span>
   </div>
 
@@ -548,4 +734,5 @@
     });
   </script>
 </body>
+
 </html>

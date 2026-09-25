@@ -1,48 +1,55 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CanilManager - Meu Perfil</title>
 
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          marromescuro: '#1C1105',     
-          marromescuro2: '#3C240B',    
-          laranja: '#D97706',          
-          laranjaclaro: '#FEF3C7',     
-          creme: '#F8F5F0',            
-          bege: '#EFECE6',             
-          verdeok: '#10B981',
-          verdeokbg: '#D1FAE5',
-          vermelho: '#EF4444',
-          vermelhobg: '#FEE2E2',
-        },
-        fontFamily: {
-          serif: ['Playfair Display', 'Georgia', 'serif'],
-          sans: ['Plus Jakarta Sans', 'sans-serif'],
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CanilManager - Meu Perfil</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            marromescuro: '#1C1105',
+            marromescuro2: '#3C240B',
+            laranja: '#D97706',
+            laranjaclaro: '#FEF3C7',
+            creme: '#F8F5F0',
+            bege: '#EFECE6',
+            verdeok: '#10B981',
+            verdeokbg: '#D1FAE5',
+            vermelho: '#EF4444',
+            vermelhobg: '#FEE2E2',
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          }
         }
       }
     }
-  }
-</script>
-<!-- Remix Icon -->
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </script>
+  <!-- Remix Icon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
 </head>
+
 <body class="font-sans bg-creme text-marromescuro flex min-h-screen relative">
 
   <!-- HEADER MOBILE -->
-  <header class="fixed top-0 left-0 right-0 w-full z-40 bg-creme border-b border-[#EFECE6] px-4 py-3 flex items-center justify-between md:hidden shadow-sm">
-    <button id="btn-open-sidebar" type="button" class="p-2 rounded-lg bg-white border border-[#EFECE6] text-marromescuro hover:text-laranja focus:outline-none transition-colors" aria-label="Abrir Menu">
+  <header
+    class="fixed top-0 left-0 right-0 w-full z-40 bg-creme border-b border-[#EFECE6] px-4 py-3 flex items-center justify-between md:hidden shadow-sm">
+    <button id="btn-open-sidebar" type="button"
+      class="p-2 rounded-lg bg-white border border-[#EFECE6] text-marromescuro hover:text-laranja focus:outline-none transition-colors"
+      aria-label="Abrir Menu">
       <i class="ri-menu-line text-xl"></i>
     </button>
     <div class="font-serif text-lg font-extrabold text-marromescuro absolute left-1/2 -translate-x-1/2">
@@ -55,15 +62,19 @@
   <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity"></div>
 
   <!-- SIDEBAR -->
-  <aside id="sidebar" class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 h-screen border-r border-white/5 justify-between z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+  <aside id="sidebar"
+    class="w-60 bg-marromescuro text-[#d8cabb] flex flex-col p-5 fixed top-0 left-0 bottom-0 h-screen border-r border-white/5 justify-between z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
     <div class="sidebar-top">
       <div class="flex items-center justify-between mb-1 relative">
         <div class="font-serif text-xl font-extrabold text-white">Canil<span class="text-laranja">Manager</span></div>
         <div class="flex items-center gap-2">
-          <button class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
+          <button
+            class="relative w-8 h-8 rounded-full border border-white/10 hover:border-laranja/50 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer">
             <i class="ri-notification-3-line text-base"></i>
           </button>
-          <button id="btn-close-sidebar" type="button" class="md:hidden w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer" title="Fechar menu">
+          <button id="btn-close-sidebar" type="button"
+            class="md:hidden w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer"
+            title="Fechar menu">
             <i class="ri-close-line text-base"></i>
           </button>
         </div>
@@ -72,27 +83,34 @@
       <div class="text-[10px] text-[#a8998a] mb-8 tracking-wider uppercase">Gestão do seu canil</div>
 
       <nav class="flex flex-col gap-1.5">
-        <a href="dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+        <a href="dashboard.html"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-layout-grid-line text-base"></i> Tela Principal
         </a>
-        <a href="cachorros.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+        <a href="cachorros.html"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-baidu-line text-base"></i> Cachorros
         </a>
-        <a href="maternidade.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+        <a href="maternidade.html"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-heart-pulse-line text-base"></i> Maternidade
         </a>
-        <a href="vacinas.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+        <a href="vacinas.html"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-syringe-line text-base"></i> Vacinas
         </a>
-        <a href="racoes.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
+        <a href="racoes.html"
+          class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#cdbfaf] hover:bg-white/5 text-xs font-medium transition-all">
           <i class="ri-goblet-line text-base"></i> Rações
         </a>
       </nav>
     </div>
 
     <!-- RODAPÉ DA SIDEBAR (PERFIL ATIVO) -->
-    <a href="perfil.html" class="flex items-center gap-2.5 pt-3 pb-3 px-3 -mx-3 border-t border-white/10 bg-marromescuro2 rounded-xl transition-colors cursor-pointer shadow-sm">
-      <div id="sidebar-avatar-container" class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs overflow-hidden">
+    <a href="perfil.html"
+      class="flex items-center gap-2.5 pt-3 pb-3 px-3 -mx-3 border-t border-white/10 bg-marromescuro2 rounded-xl transition-colors cursor-pointer shadow-sm">
+      <div id="sidebar-avatar-container"
+        class="w-8 h-8 rounded-full bg-laranja text-white flex items-center justify-center font-bold text-xs overflow-hidden">
         <img id="sidebar-avatar-img" class="w-full h-full object-cover hidden" src="" alt="Avatar">
         <span id="sidebar-avatar-inicial">C</span>
       </div>
@@ -111,69 +129,80 @@
     </header>
 
     <div class="grid grid-cols-12 gap-6 items-start">
-      
+
       <!-- COLUNA ESQUERDA (CARDS MENORES) -->
       <div class="col-span-12 lg:col-span-4 space-y-4">
-        
+
         <!-- CARD FOTO E RESUMO -->
-        <div class="bg-white border border-[#EFECE6] rounded-[24px] p-8 flex flex-col items-center text-center shadow-sm">
+        <div
+          class="bg-white border border-[#EFECE6] rounded-[24px] p-8 flex flex-col items-center text-center shadow-sm">
           <div class="relative group mb-4">
-            <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-[#FAF8F5] shadow-sm bg-bege flex items-center justify-center text-3xl text-gray-400 font-serif relative">
+            <div
+              class="w-24 h-24 rounded-full overflow-hidden border-4 border-[#FAF8F5] shadow-sm bg-bege flex items-center justify-center text-3xl text-gray-400 font-serif relative">
               <img id="perfil-avatar-img" class="w-full h-full object-cover hidden" src="" alt="Foto de perfil">
               <span id="perfil-avatar-letra">C</span>
             </div>
             <!-- Botão para carregar foto -->
-            <label for="input-avatar" class="absolute bottom-0 right-0 w-7 h-7 bg-laranja hover:bg-opacity-90 text-white rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow-md transition-all">
+            <label for="input-avatar"
+              class="absolute bottom-0 right-0 w-7 h-7 bg-laranja hover:bg-opacity-90 text-white rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow-md transition-all">
               <i class="ri-camera-fill text-xs"></i>
             </label>
             <input type="file" id="input-avatar" accept="image/*" class="hidden">
           </div>
-          
+
           <h2 id="perfil-nome-card" class="font-serif text-xl font-bold text-[#111827] mb-1">Carlos Oliveira</h2>
           <p id="perfil-email-card" class="text-xs text-[#6B7280] mb-4">admin@canil.com</p>
-          
-          <div class="text-[10px] text-[#6B7280] font-medium bg-[#FAF8F5] px-3 py-1.5 rounded-full border border-[#EFECE6]">
+
+          <div
+            class="text-[10px] text-[#6B7280] font-medium bg-[#FAF8F5] px-3 py-1.5 rounded-full border border-[#EFECE6]">
             Membro desde 14/03/2024
           </div>
         </div>
 
         <!-- CARD SAIR DA CONTA -->
         <div class="bg-white border border-[#EFECE6] rounded-2xl p-2 shadow-sm">
-          <button id="btn-sair-conta" class="w-full flex items-center justify-center gap-2 text-vermelho font-bold text-xs py-3.5 hover:bg-vermelhobg rounded-xl transition-colors">
+          <button id="btn-sair-conta"
+            class="w-full flex items-center justify-center gap-2 text-vermelho font-bold text-xs py-3.5 hover:bg-vermelhobg rounded-xl transition-colors">
             <i class="ri-logout-box-r-line text-sm"></i> Sair da conta
           </button>
         </div>
 
         <!-- CARD EXCLUIR CONTA DEFINITIVAMENTE -->
         <div class="bg-white border border-[#EFECE6] rounded-2xl p-2 shadow-sm mt-4">
-          <button id="btn-excluir-conta" class="w-full flex items-center justify-center gap-2 text-red-600 font-bold text-xs py-3.5 bg-transparent hover:bg-red-50 rounded-xl transition-colors">
+          <button id="btn-excluir-conta"
+            class="w-full flex items-center justify-center gap-2 text-red-600 font-bold text-xs py-3.5 bg-transparent hover:bg-red-50 rounded-xl transition-colors">
             <i class="ri-delete-bin-line text-sm"></i> Excluir conta definitivamente
           </button>
         </div>
 
       </div>
 
-     <!-- COLUNA DIREITA (INFORMAÇÕES E ABAS) -->
+      <!-- COLUNA DIREITA (INFORMAÇÕES E ABAS) -->
       <div class="col-span-12 lg:col-span-8 bg-white border border-[#EFECE6] rounded-[24px] p-6 md:p-8 shadow-sm">
-        
+
         <!-- CABEÇALHO DAS ABAS -->
         <div class="flex flex-wrap items-center justify-between border-b border-[#EFECE6] mb-8 gap-4">
           <div class="flex gap-6 overflow-x-auto">
-            <button id="aba-dados" class="flex items-center gap-2 text-xs font-bold text-laranja border-b-2 border-laranja pb-4 transition-colors whitespace-nowrap">
+            <button id="aba-dados"
+              class="flex items-center gap-2 text-xs font-bold text-laranja border-b-2 border-laranja pb-4 transition-colors whitespace-nowrap">
               <i class="ri-user-line text-sm"></i> Dados Pessoais
             </button>
-            <button id="aba-canil" class="flex items-center gap-2 text-xs font-medium text-[#6B7280] hover:text-[#111827] border-b-2 border-transparent pb-4 transition-colors whitespace-nowrap">
+            <button id="aba-canil"
+              class="flex items-center gap-2 text-xs font-medium text-[#6B7280] hover:text-[#111827] border-b-2 border-transparent pb-4 transition-colors whitespace-nowrap">
               <i class="ri-home-4-line text-sm"></i> Canil
             </button>
           </div>
           <div class="flex items-center gap-3">
-            <button id="btn-cancelar-edicao" class="hidden text-xs font-bold text-[#6B7280] hover:text-[#111827] px-4 py-2 transition-colors">
+            <button id="btn-cancelar-edicao"
+              class="hidden text-xs font-bold text-[#6B7280] hover:text-[#111827] px-4 py-2 transition-colors">
               Cancelar
             </button>
-            <button id="btn-salvar-edicao" class="hidden bg-laranja hover:bg-opacity-95 text-white font-bold text-[11px] px-4 py-2 rounded-lg transition-all shadow-sm">
+            <button id="btn-salvar-edicao"
+              class="hidden bg-laranja hover:bg-opacity-95 text-white font-bold text-[11px] px-4 py-2 rounded-lg transition-all shadow-sm">
               Salvar
             </button>
-            <button id="btn-editar-perfil" class="bg-laranja hover:bg-opacity-90 text-white font-bold text-[11px] px-4 py-2 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
+            <button id="btn-editar-perfil"
+              class="bg-laranja hover:bg-opacity-90 text-white font-bold text-[11px] px-4 py-2 rounded-lg flex items-center gap-1.5 transition-colors shadow-sm">
               <i class="ri-pencil-fill"></i> Editar
             </button>
           </div>
@@ -183,8 +212,10 @@
         <div id="conteudo-dados" class="grid grid-cols-2 gap-8">
           <div>
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Nome Completo</div>
-            <div id="perfil-nome-detalhe" class="perfil-visualizacao text-sm font-bold text-[#111827]">Carlos Oliveira</div>
-            <input type="text" id="input-perfil-nome" class="perfil-edicao hidden w-full max-w-sm bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+            <div id="perfil-nome-detalhe" class="perfil-visualizacao text-sm font-bold text-[#111827]">Carlos Oliveira
+            </div>
+            <input type="text" id="input-perfil-nome"
+              class="perfil-edicao hidden w-full max-w-sm bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
           </div>
 
           <div>
@@ -195,8 +226,10 @@
 
           <div>
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Telefone</div>
-            <div id="perfil-telefone-detalhe" class="perfil-visualizacao text-sm font-bold text-[#111827]">(31) 98765-4321</div>
-            <input type="text" id="input-perfil-telefone" class="perfil-edicao hidden w-full max-w-sm bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+            <div id="perfil-telefone-detalhe" class="perfil-visualizacao text-sm font-bold text-[#111827]">(31)
+              98765-4321</div>
+            <input type="text" id="input-perfil-telefone"
+              class="perfil-edicao hidden w-full max-w-sm bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
           </div>
         </div>
 
@@ -204,26 +237,32 @@
         <div id="conteudo-canil" class="grid grid-cols-2 gap-8 hidden">
           <div class="col-span-2">
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Nome do Canil</div>
-            <div id="perfil-canil-nome" class="perfil-visualizacao text-sm font-bold text-[#111827]">Canil Villa Dog</div>
-            <input type="text" id="input-canil-nome" class="perfil-edicao hidden w-full max-w-md bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+            <div id="perfil-canil-nome" class="perfil-visualizacao text-sm font-bold text-[#111827]">Canil Villa Dog
+            </div>
+            <input type="text" id="input-canil-nome"
+              class="perfil-edicao hidden w-full max-w-md bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
           </div>
 
           <div class="col-span-2">
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Endereço</div>
-            <div id="perfil-canil-endereco" class="perfil-visualizacao text-sm font-bold text-[#111827]">Rua dos Pinheiros, 450</div>
-            <input type="text" id="input-canil-endereco" class="perfil-edicao hidden w-full max-w-md bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+            <div id="perfil-canil-endereco" class="perfil-visualizacao text-sm font-bold text-[#111827]">Rua dos
+              Pinheiros, 450</div>
+            <input type="text" id="input-canil-endereco"
+              class="perfil-edicao hidden w-full max-w-md bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
           </div>
 
           <div>
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Cidade</div>
             <div id="perfil-canil-cidade" class="perfil-visualizacao text-sm font-bold text-[#111827]">Igarapé</div>
-            <input type="text" id="input-canil-cidade" class="perfil-edicao hidden w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
+            <input type="text" id="input-canil-cidade"
+              class="perfil-edicao hidden w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm">
           </div>
 
           <div>
             <div class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Estado</div>
             <div id="perfil-canil-estado" class="perfil-visualizacao text-sm font-bold text-[#111827]">MG</div>
-            <input type="text" id="input-canil-estado" maxlength="2" class="perfil-edicao hidden w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm uppercase">
+            <input type="text" id="input-canil-estado" maxlength="2"
+              class="perfil-edicao hidden w-full bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl py-3 px-4 text-xs font-bold text-[#111827] focus:outline-none focus:border-laranja focus:ring-1 focus:ring-laranja transition-all shadow-sm uppercase">
           </div>
         </div>
 
@@ -234,7 +273,8 @@
   </main>
 
   <!-- TOAST DE NOTIFICAÇÃO -->
-  <div id="toast-sucesso" class="fixed top-6 right-8 z-50 flex items-center gap-2.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
+  <div id="toast-sucesso"
+    class="fixed top-6 right-8 z-50 flex items-center gap-2.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] px-4 py-3 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px]">
     <div class="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs">
       <i class="ri-check-line"></i>
     </div>
@@ -242,7 +282,8 @@
   </div>
 
   <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO DE CONTA -->
-  <div id="modal-excluir-conta" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-all duration-300">
+  <div id="modal-excluir-conta"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-all duration-300">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#EFECE6] transform transition-all">
       <div class="flex items-center gap-3 text-red-600 mb-4">
         <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
@@ -252,16 +293,19 @@
           Tem certeza que deseja excluir sua conta?
         </h3>
       </div>
-      
+
       <p class="text-xs text-gray-600 leading-relaxed mb-6">
-        <strong class="text-red-600 font-semibold">Atenção:</strong> Esta ação é irreversível. Todos os seus dados, incluindo ficha de cachorros, controle de vacinas, cios, ninhadas e fotos serão apagados permanentemente.
+        <strong class="text-red-600 font-semibold">Atenção:</strong> Esta ação é irreversível. Todos os seus dados,
+        incluindo ficha de cachorros, controle de vacinas, cios, ninhadas e fotos serão apagados permanentemente.
       </p>
 
       <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">
-        <button id="btn-cancelar-exclusao" type="button" class="px-4 py-2.5 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">
+        <button id="btn-cancelar-exclusao" type="button"
+          class="px-4 py-2.5 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">
           Cancelar
         </button>
-        <button id="btn-confirmar-exclusao" type="button" class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm flex items-center gap-2">
+        <button id="btn-confirmar-exclusao" type="button"
+          class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm flex items-center gap-2">
           <i class="ri-delete-bin-line"></i> Sim, excluir tudo
         </button>
       </div>
@@ -294,4 +338,5 @@
     });
   </script>
 </body>
+
 </html>
