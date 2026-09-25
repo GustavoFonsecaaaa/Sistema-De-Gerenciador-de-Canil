@@ -35,11 +35,9 @@ const registrarUsuario = async (req, res) => {
         .json({ mensagem: "Este email já está cadastrado no sistema." });
     }
 
-    res
-      .status(500)
-      .json({
-        mensagem: "Erro interno no servidor ao tentar cadastrar o usuário.",
-      });
+    res.status(500).json({
+      mensagem: "Erro interno no servidor ao tentar cadastrar o usuário.",
+    });
   }
 };
 
@@ -165,19 +163,15 @@ const excluirMinhaConta = async (req, res) => {
       `✅ Usuário ID: ${usuario_id} e todos os registros dependentes foram excluídos com sucesso!`,
     );
 
-    res
-      .status(200)
-      .json({
-        mensagem: "Conta e dados associados foram excluídos com sucesso.",
-      });
+    res.status(200).json({
+      mensagem: "Conta e dados associados foram excluídos com sucesso.",
+    });
   } catch (erro) {
     await connection.rollback();
     console.error("❌ Erro ao excluir conta de usuário:", erro);
-    res
-      .status(500)
-      .json({
-        mensagem: "Erro interno no servidor ao tentar excluir a conta.",
-      });
+    res.status(500).json({
+      mensagem: "Erro interno no servidor ao tentar excluir a conta.",
+    });
   } finally {
     connection.release();
   }
@@ -187,4 +181,6 @@ module.exports = {
   registrarUsuario,
   loginUsuario,
   excluirMinhaConta,
+  obterPerfil,
+  atualizarPerfil,
 };
