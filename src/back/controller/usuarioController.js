@@ -75,6 +75,7 @@ const loginUsuario = async (req, res) => {
       mensagem: "Login realizado com sucesso!",
       usuarioId: usuario.id,
       nome: usuario.nome,
+      email: usuario.email,
       token,
     });
   } catch (erro) {
@@ -174,6 +175,90 @@ const excluirMinhaConta = async (req, res) => {
     });
   } finally {
     connection.release();
+  }
+};
+
+const obterPerfil = async (req, res) => {
+  try {
+    const usuario_id = req.usuario.id;
+    const [rows] = await pool.execute(
+      "SELECT id, nome, email FROM Usuario WHERE id = ?",
+      [usuario_id],
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ mensagem: "Usuário não encontrado." });
+    }
+
+    res.status(200).json(rows[0]);
+  } catch (erro) {
+    console.error("Erro ao obter perfil do usuário:", erro);
+    res
+      .status(500)
+      .json({ mensagem: "Erro interno no servidor ao obter dados do perfil." });
+  }
+};
+
+const atualizarPerfil = async (req, res) => {
+  try {
+    const usuario_id = req.usuario.id;
+    const { nome, email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ mensagem: "O campo email é obrigatório." });
+    }
+
+    // Verifica se outro usuário já usa esse email
+    const [existente] = await pool.execute(
+      "SELECT id FROM Usuario WHERE email = ? AND id != ?",
+      [email, usuario_id],
+    );
+
+    if (existente.length > 0) {
+      return res
+        .status(400)
+        .json({ mensagem: "Este email já está cadastrado por outro usuário." });
+    }
+
+    let sql;
+    let params;
+
+    if (nome) {
+      sql = "UPDATE Usuario SET nome = ?, email = ? WHERE id = ?";
+      params = [nome, email, usuario_id];
+    } else {
+      sql = "UPDATE Usuario SET email = ? WHERE id = ?";
+      params = [email, usuario_id];
+    }
+
+    const [resultado] = await pool.execute(sql, params);
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({ mensagem: "Usuário não encontrado." });
+    }
+
+    res.status(200).json({
+      mensagem: "Perfil atualizado com sucesso!",
+      usuario: {
+        id: usuario_id,
+        nome: nome || undefined,
+        email,
+      },
+    });
+  } catch (erro) {
+    console.error("Erro ao atualizar perfil do usuário:", erro);
+
+    if (erro.code === "ER_DUP_ENTRY") {
+      return res
+        .status(400)
+        .json({ mensagem: "Este email já está cadastrado no sistema." });
+    }
+
+    res
+      .status(500)
+      .json({
+        mensagem: "Erro interno no servidor ao tentar atualizar perfil.",
+      });
   }
 };
 
